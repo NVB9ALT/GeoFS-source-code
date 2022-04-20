@@ -2,6 +2,8 @@
 //control setters at line 15736
 //condensation effects at line 12800
 //aircraft stuff at line 14741
+//aircraft loading function at line 14835
+//cockpit loading function at line 14908
 
 /* @preserve
  * Leaflet 1.7.1, a JS library for interactive maps. http://leafletjs.com
