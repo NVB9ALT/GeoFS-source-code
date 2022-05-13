@@ -4,26 +4,27 @@
 //aircraft stuff at line 14741
 //aircraft loading function at line 14835
 //cockpit loading function at line 14908
+//geofs.runways at line 8750
 
 /* @preserve
- * Leaflet 1.7.1, a JS library for interactive maps. http://leafletjs.com
- * (c) 2010-2019 Vladimir Agafonkin, (c) 2010-2011 CloudMade
+ * Leaflet 1.8.0, a JS library for interactive maps. https://leafletjs.com
+ * (c) 2010-2022 Vladimir Agafonkin, (c) 2010-2011 CloudMade
  */
 !(function (t, i) {
-    "object" == typeof exports && "undefined" != typeof module ? i(exports) : "function" == typeof define && define.amd ? define(["exports"], i) : i((t.L = {}));
+    "object" == typeof exports && "undefined" != typeof module ? i(exports) : "function" == typeof define && define.amd ? define(["exports"], i) : i(((t = "undefined" != typeof globalThis ? globalThis : t || self).leaflet = {}));
 })(this, function (t) {
     "use strict";
-    function h(t) {
+    function l(t) {
         for (var i, e, n = 1, o = arguments.length; n < o; n++) for (i in (e = arguments[n])) t[i] = e[i];
         return t;
     }
-    var s =
+    var R =
         Object.create ||
         function (t) {
-            return (i.prototype = t), new i();
+            return (N.prototype = t), new N();
         };
-    function i() {}
-    function p(t, i) {
+    function N() {}
+    function a(t, i) {
         var e = Array.prototype.slice;
         if (t.bind) return t.bind.apply(t, e.call(arguments, 1));
         var n = e.call(arguments, 2);
@@ -31,11 +32,11 @@
             return t.apply(i, n.length ? n.concat(e.call(arguments)) : arguments);
         };
     }
-    var e = 0;
-    function m(t) {
-        return (t._leaflet_id = t._leaflet_id || ++e), t._leaflet_id;
+    var D = 0;
+    function h(t) {
+        return "_leaflet_id" in t || (t._leaflet_id = ++D), t._leaflet_id;
     }
-    function n(t, i, e) {
+    function j(t, i, e) {
         var n,
             o,
             s = function () {
@@ -46,137 +47,144 @@
             };
         return r;
     }
-    function o(t, i, e) {
+    function H(t, i, e) {
         var n = i[1],
-            o = i[0],
-            s = n - o;
-        return t === n && e ? t : ((((t - o) % s) + s) % s) + o;
+            i = i[0],
+            o = n - i;
+        return t === n && e ? t : ((((t - i) % o) + o) % o) + i;
     }
-    function a() {
+    function u() {
         return !1;
     }
-    function r(t, i) {
-        var e = Math.pow(10, void 0 === i ? 6 : i);
-        return Math.round(t * e) / e;
+    function e(t, i) {
+        if (!1 === i) return t;
+        i = Math.pow(10, void 0 === i ? 6 : i);
+        return Math.round(t * i) / i;
     }
-    function u(t) {
+    function W(t) {
         return t.trim ? t.trim() : t.replace(/^\s+|\s+$/g, "");
     }
-    function l(t) {
-        return u(t).split(/\s+/);
+    function F(t) {
+        return W(t).split(/\s+/);
     }
     function c(t, i) {
-        for (var e in (Object.prototype.hasOwnProperty.call(t, "options") || (t.options = t.options ? s(t.options) : {}), i)) t.options[e] = i[e];
+        for (var e in (Object.prototype.hasOwnProperty.call(t, "options") || (t.options = t.options ? R(t.options) : {}), i)) t.options[e] = i[e];
         return t.options;
     }
-    function _(t, i, e) {
-        var n = [];
-        for (var o in t) n.push(encodeURIComponent(e ? o.toUpperCase() : o) + "=" + encodeURIComponent(t[o]));
-        return (i && -1 !== i.indexOf("?") ? "&" : "?") + n.join("&");
+    function U(t, i, e) {
+        var n,
+            o = [];
+        for (n in t) o.push(encodeURIComponent(e ? n.toUpperCase() : n) + "=" + encodeURIComponent(t[n]));
+        return (i && -1 !== i.indexOf("?") ? "&" : "?") + o.join("&");
     }
-    var d = /\{ *([\w_-]+) *\}/g;
-    function f(t, n) {
-        return t.replace(d, function (t, i) {
-            var e = n[i];
-            if (void 0 === e) throw new Error("No value provided for variable " + t);
-            return "function" == typeof e && (e = e(n)), e;
+    var V = /\{ *([\w_ -]+) *\}/g;
+    function q(t, e) {
+        return t.replace(V, function (t, i) {
+            i = e[i];
+            if (void 0 === i) throw new Error("No value provided for variable " + t);
+            return (i = "function" == typeof i ? i(e) : i);
         });
     }
-    var g =
+    var d =
         Array.isArray ||
         function (t) {
             return "[object Array]" === Object.prototype.toString.call(t);
         };
-    function v(t, i) {
+    function G(t, i) {
         for (var e = 0; e < t.length; e++) if (t[e] === i) return e;
         return -1;
     }
-    var y = "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
-    function x(t) {
+    var K = "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
+    function Y(t) {
         return window["webkit" + t] || window["moz" + t] || window["ms" + t];
     }
-    var w = 0;
-    function P(t) {
+    var X = 0;
+    function J(t) {
         var i = +new Date(),
-            e = Math.max(0, 16 - (i - w));
-        return (w = i + e), window.setTimeout(t, e);
+            e = Math.max(0, 16 - (i - X));
+        return (X = i + e), window.setTimeout(t, e);
     }
-    var b = window.requestAnimationFrame || x("RequestAnimationFrame") || P,
-        T =
+    var $ = window.requestAnimationFrame || Y("RequestAnimationFrame") || J,
+        Q =
             window.cancelAnimationFrame ||
-            x("CancelAnimationFrame") ||
-            x("CancelRequestAnimationFrame") ||
+            Y("CancelAnimationFrame") ||
+            Y("CancelRequestAnimationFrame") ||
             function (t) {
                 window.clearTimeout(t);
             };
-    function M(t, i, e) {
-        if (!e || b !== P) return b.call(window, p(t, i));
+    function x(t, i, e) {
+        if (!e || $ !== J) return $.call(window, a(t, i));
         t.call(i);
     }
-    function z(t) {
-        t && T.call(window, t);
+    function r(t) {
+        t && Q.call(window, t);
     }
-    var C = {
-        extend: h,
-        create: s,
-        bind: p,
-        lastId: e,
-        stamp: m,
-        throttle: n,
-        wrapNum: o,
-        falseFn: a,
-        formatNum: r,
-        trim: u,
-        splitWords: l,
+    var tt = {
+        __proto__: null,
+        extend: l,
+        create: R,
+        bind: a,
+        get lastId() {
+            return D;
+        },
+        stamp: h,
+        throttle: j,
+        wrapNum: H,
+        falseFn: u,
+        formatNum: e,
+        trim: W,
+        splitWords: F,
         setOptions: c,
-        getParamString: _,
-        template: f,
-        isArray: g,
-        indexOf: v,
-        emptyImageUrl: y,
-        requestFn: b,
-        cancelFn: T,
-        requestAnimFrame: M,
-        cancelAnimFrame: z,
+        getParamString: U,
+        template: q,
+        isArray: d,
+        indexOf: G,
+        emptyImageUrl: K,
+        requestFn: $,
+        cancelFn: Q,
+        requestAnimFrame: x,
+        cancelAnimFrame: r,
     };
-    function S() {}
-    (S.extend = function (t) {
+    function it() {}
+    (it.extend = function (t) {
         function i() {
-            this.initialize && this.initialize.apply(this, arguments), this.callInitHooks();
+            c(this), this.initialize && this.initialize.apply(this, arguments), this.callInitHooks();
         }
-        var e = (i.__super__ = this.prototype),
-            n = s(e);
-        for (var o in (((n.constructor = i).prototype = n), this)) Object.prototype.hasOwnProperty.call(this, o) && "prototype" !== o && "__super__" !== o && (i[o] = this[o]);
+        var e,
+            n = (i.__super__ = this.prototype),
+            o = R(n);
+        for (e in (((o.constructor = i).prototype = o), this)) Object.prototype.hasOwnProperty.call(this, e) && "prototype" !== e && "__super__" !== e && (i[e] = this[e]);
+        if ((t.statics && l(i, t.statics), t.includes)) {
+            var s = t.includes;
+            if ("undefined" != typeof L && L && L.Mixin) {
+                s = d(s) ? s : [s];
+                for (var r = 0; r < s.length; r++) s[r] === L.Mixin.Events && console.warn("Deprecated include of L.Mixin.Events: this property will be removed in future releases, please inherit from L.Evented instead.", new Error().stack);
+            }
+            l.apply(null, [o].concat(t.includes));
+        }
         return (
-            t.statics && (h(i, t.statics), delete t.statics),
-            t.includes &&
-                ((function (t) {
-                    if ("undefined" == typeof L || !L || !L.Mixin) return;
-                    t = g(t) ? t : [t];
-                    for (var i = 0; i < t.length; i++)
-                        t[i] === L.Mixin.Events && console.warn("Deprecated include of L.Mixin.Events: this property will be removed in future releases, please inherit from L.Evented instead.", new Error().stack);
-                })(t.includes),
-                h.apply(null, [n].concat(t.includes)),
-                delete t.includes),
-            n.options && (t.options = h(s(n.options), t.options)),
-            h(n, t),
-            (n._initHooks = []),
-            (n.callInitHooks = function () {
+            l(o, t),
+            delete o.statics,
+            delete o.includes,
+            o.options && ((o.options = n.options ? R(n.options) : {}), l(o.options, t.options)),
+            (o._initHooks = []),
+            (o.callInitHooks = function () {
                 if (!this._initHooksCalled) {
-                    e.callInitHooks && e.callInitHooks.call(this), (this._initHooksCalled = !0);
-                    for (var t = 0, i = n._initHooks.length; t < i; t++) n._initHooks[t].call(this);
+                    n.callInitHooks && n.callInitHooks.call(this), (this._initHooksCalled = !0);
+                    for (var t = 0, i = o._initHooks.length; t < i; t++) o._initHooks[t].call(this);
                 }
             }),
             i
         );
     }),
-        (S.include = function (t) {
-            return h(this.prototype, t), this;
+        (it.include = function (t) {
+            var i = this.prototype.options;
+            return l(this.prototype, t), t.options && ((this.prototype.options = i), this.mergeOptions(t.options)), this;
         }),
-        (S.mergeOptions = function (t) {
-            return h(this.prototype.options, t), this;
+        (it.mergeOptions = function (t) {
+            return l(this.prototype.options, t), this;
         }),
-        (S.addInitHook = function (t) {
+        (it.addInitHook = function (t) {
             var i = Array.prototype.slice.call(arguments, 1),
                 e =
                     "function" == typeof t
@@ -186,140 +194,145 @@
                           };
             return (this.prototype._initHooks = this.prototype._initHooks || []), this.prototype._initHooks.push(e), this;
         });
-    var Z = {
-        on: function (t, i, e) {
-            if ("object" == typeof t) for (var n in t) this._on(n, t[n], i);
-            else for (var o = 0, s = (t = l(t)).length; o < s; o++) this._on(t[o], i, e);
-            return this;
-        },
-        off: function (t, i, e) {
-            if (t)
-                if ("object" == typeof t) for (var n in t) this._off(n, t[n], i);
-                else for (var o = 0, s = (t = l(t)).length; o < s; o++) this._off(t[o], i, e);
-            else delete this._events;
-            return this;
-        },
-        _on: function (t, i, e) {
-            this._events = this._events || {};
-            var n = this._events[t];
-            n || ((n = []), (this._events[t] = n)), e === this && (e = void 0);
-            for (var o = { fn: i, ctx: e }, s = n, r = 0, a = s.length; r < a; r++) if (s[r].fn === i && s[r].ctx === e) return;
-            s.push(o);
-        },
-        _off: function (t, i, e) {
-            var n, o, s;
-            if (this._events && (n = this._events[t]))
-                if (i) {
-                    if ((e === this && (e = void 0), n))
+    var i = {
+            on: function (t, i, e) {
+                if ("object" == typeof t) for (var n in t) this._on(n, t[n], i);
+                else for (var o = 0, s = (t = F(t)).length; o < s; o++) this._on(t[o], i, e);
+                return this;
+            },
+            off: function (t, i, e) {
+                if (arguments.length)
+                    if ("object" == typeof t) for (var n in t) this._off(n, t[n], i);
+                    else {
+                        t = F(t);
+                        for (var o = 1 === arguments.length, s = 0, r = t.length; s < r; s++) o ? this._off(t[s]) : this._off(t[s], i, e);
+                    }
+                else delete this._events;
+                return this;
+            },
+            _on: function (t, i, e) {
+                if ("function" != typeof i) console.warn("wrong listener type: " + typeof i);
+                else {
+                    this._events = this._events || {};
+                    for (var n = this._events[t], t = (n || (this._events[t] = n = []), { fn: i, ctx: (e = e === this ? void 0 : e) }), o = n, s = 0, r = o.length; s < r; s++) if (o[s].fn === i && o[s].ctx === e) return;
+                    o.push(t);
+                }
+            },
+            _off: function (t, i, e) {
+                var n, o, s;
+                if (this._events && (n = this._events[t]))
+                    if (1 === arguments.length) {
+                        if (this._firingCount) for (o = 0, s = n.length; o < s; o++) n[o].fn = u;
+                        delete this._events[t];
+                    } else if ((e === this && (e = void 0), "function" != typeof i)) console.warn("wrong listener type: " + typeof i);
+                    else {
                         for (o = 0, s = n.length; o < s; o++) {
                             var r = n[o];
-                            if (r.ctx === e && r.fn === i) return (r.fn = a), this._firingCount && (this._events[t] = n = n.slice()), void n.splice(o, 1);
+                            if (r.ctx === e && r.fn === i) return this._firingCount && ((r.fn = u), (this._events[t] = n = n.slice())), void n.splice(o, 1);
                         }
-                } else {
-                    for (o = 0, s = n.length; o < s; o++) n[o].fn = a;
-                    delete this._events[t];
-                }
-        },
-        fire: function (t, i, e) {
-            if (!this.listens(t, e)) return this;
-            var n = h({}, i, { type: t, target: this, sourceTarget: (i && i.sourceTarget) || this });
-            if (this._events) {
-                var o = this._events[t];
-                if (o) {
-                    this._firingCount = this._firingCount + 1 || 1;
-                    for (var s = 0, r = o.length; s < r; s++) {
-                        var a = o[s];
-                        a.fn.call(a.ctx || this, n);
+                        console.warn("listener not found");
                     }
-                    this._firingCount--;
+            },
+            fire: function (t, i, e) {
+                if (!this.listens(t, e)) return this;
+                var n = l({}, i, { type: t, target: this, sourceTarget: (i && i.sourceTarget) || this });
+                if (this._events) {
+                    var o = this._events[t];
+                    if (o) {
+                        this._firingCount = this._firingCount + 1 || 1;
+                        for (var s = 0, r = o.length; s < r; s++) {
+                            var a = o[s];
+                            a.fn.call(a.ctx || this, n);
+                        }
+                        this._firingCount--;
+                    }
                 }
-            }
-            return e && this._propagateEvent(n), this;
+                return e && this._propagateEvent(n), this;
+            },
+            listens: function (t, i) {
+                "string" != typeof t && console.warn('"string" type argument expected');
+                var e = this._events && this._events[t];
+                if (e && e.length) return !0;
+                if (i) for (var n in this._eventParents) if (this._eventParents[n].listens(t, i)) return !0;
+                return !1;
+            },
+            once: function (t, i, e) {
+                if ("object" == typeof t) {
+                    for (var n in t) this.once(n, t[n], i);
+                    return this;
+                }
+                var o = a(function () {
+                    this.off(t, i, e).off(t, o, e);
+                }, this);
+                return this.on(t, i, e).on(t, o, e);
+            },
+            addEventParent: function (t) {
+                return (this._eventParents = this._eventParents || {}), (this._eventParents[h(t)] = t), this;
+            },
+            removeEventParent: function (t) {
+                return this._eventParents && delete this._eventParents[h(t)], this;
+            },
+            _propagateEvent: function (t) {
+                for (var i in this._eventParents) this._eventParents[i].fire(t.type, l({ layer: t.target, propagatedFrom: t.target }, t), !0);
+            },
         },
-        listens: function (t, i) {
-            var e = this._events && this._events[t];
-            if (e && e.length) return !0;
-            if (i) for (var n in this._eventParents) if (this._eventParents[n].listens(t, i)) return !0;
-            return !1;
-        },
-        once: function (t, i, e) {
-            if ("object" == typeof t) {
-                for (var n in t) this.once(n, t[n], i);
-                return this;
-            }
-            var o = p(function () {
-                this.off(t, i, e).off(t, o, e);
-            }, this);
-            return this.on(t, i, e).on(t, o, e);
-        },
-        addEventParent: function (t) {
-            return (this._eventParents = this._eventParents || {}), (this._eventParents[m(t)] = t), this;
-        },
-        removeEventParent: function (t) {
-            return this._eventParents && delete this._eventParents[m(t)], this;
-        },
-        _propagateEvent: function (t) {
-            for (var i in this._eventParents) this._eventParents[i].fire(t.type, h({ layer: t.target, propagatedFrom: t.target }, t), !0);
-        },
-    };
-    (Z.addEventListener = Z.on), (Z.removeEventListener = Z.clearAllEventListeners = Z.off), (Z.addOneTimeEventListener = Z.once), (Z.fireEvent = Z.fire), (Z.hasEventListeners = Z.listens);
-    var E = S.extend(Z);
-    function k(t, i, e) {
+        et = ((i.addEventListener = i.on), (i.removeEventListener = i.clearAllEventListeners = i.off), (i.addOneTimeEventListener = i.once), (i.fireEvent = i.fire), (i.hasEventListeners = i.listens), it.extend(i));
+    function p(t, i, e) {
         (this.x = e ? Math.round(t) : t), (this.y = e ? Math.round(i) : i);
     }
-    var B =
+    var nt =
         Math.trunc ||
         function (t) {
             return 0 < t ? Math.floor(t) : Math.ceil(t);
         };
-    function A(t, i, e) {
-        return t instanceof k ? t : g(t) ? new k(t[0], t[1]) : null == t ? t : "object" == typeof t && "x" in t && "y" in t ? new k(t.x, t.y) : new k(t, i, e);
+    function _(t, i, e) {
+        return t instanceof p ? t : d(t) ? new p(t[0], t[1]) : null == t ? t : "object" == typeof t && "x" in t && "y" in t ? new p(t.x, t.y) : new p(t, i, e);
     }
-    function I(t, i) {
+    function m(t, i) {
         if (t) for (var e = i ? [t, i] : t, n = 0, o = e.length; n < o; n++) this.extend(e[n]);
     }
-    function O(t, i) {
-        return !t || t instanceof I ? t : new I(t, i);
+    function f(t, i) {
+        return !t || t instanceof m ? t : new m(t, i);
     }
-    function R(t, i) {
+    function s(t, i) {
         if (t) for (var e = i ? [t, i] : t, n = 0, o = e.length; n < o; n++) this.extend(e[n]);
     }
-    function N(t, i) {
-        return t instanceof R ? t : new R(t, i);
+    function g(t, i) {
+        return t instanceof s ? t : new s(t, i);
     }
-    function D(t, i, e) {
+    function v(t, i, e) {
         if (isNaN(t) || isNaN(i)) throw new Error("Invalid LatLng object: (" + t + ", " + i + ")");
         (this.lat = +t), (this.lng = +i), void 0 !== e && (this.alt = +e);
     }
-    function j(t, i, e) {
-        return t instanceof D
+    function w(t, i, e) {
+        return t instanceof v
             ? t
-            : g(t) && "object" != typeof t[0]
+            : d(t) && "object" != typeof t[0]
             ? 3 === t.length
-                ? new D(t[0], t[1], t[2])
+                ? new v(t[0], t[1], t[2])
                 : 2 === t.length
-                ? new D(t[0], t[1])
+                ? new v(t[0], t[1])
                 : null
             : null == t
             ? t
             : "object" == typeof t && "lat" in t
-            ? new D(t.lat, "lng" in t ? t.lng : t.lon, t.alt)
+            ? new v(t.lat, "lng" in t ? t.lng : t.lon, t.alt)
             : void 0 === i
             ? null
-            : new D(t, i, e);
+            : new v(t, i, e);
     }
-    (k.prototype = {
+    (p.prototype = {
         clone: function () {
-            return new k(this.x, this.y);
+            return new p(this.x, this.y);
         },
         add: function (t) {
-            return this.clone()._add(A(t));
+            return this.clone()._add(_(t));
         },
         _add: function (t) {
             return (this.x += t.x), (this.y += t.y), this;
         },
         subtract: function (t) {
-            return this.clone()._subtract(A(t));
+            return this.clone()._subtract(_(t));
         },
         _subtract: function (t) {
             return (this.x -= t.x), (this.y -= t.y), this;
@@ -337,10 +350,10 @@
             return (this.x *= t), (this.y *= t), this;
         },
         scaleBy: function (t) {
-            return new k(this.x * t.x, this.y * t.y);
+            return new p(this.x * t.x, this.y * t.y);
         },
         unscaleBy: function (t) {
-            return new k(this.x / t.x, this.y / t.y);
+            return new p(this.x / t.x, this.y / t.y);
         },
         round: function () {
             return this.clone()._round();
@@ -364,27 +377,27 @@
             return this.clone()._trunc();
         },
         _trunc: function () {
-            return (this.x = B(this.x)), (this.y = B(this.y)), this;
+            return (this.x = nt(this.x)), (this.y = nt(this.y)), this;
         },
         distanceTo: function (t) {
-            var i = (t = A(t)).x - this.x,
-                e = t.y - this.y;
-            return Math.sqrt(i * i + e * e);
+            var i = (t = _(t)).x - this.x,
+                t = t.y - this.y;
+            return Math.sqrt(i * i + t * t);
         },
         equals: function (t) {
-            return (t = A(t)).x === this.x && t.y === this.y;
+            return (t = _(t)).x === this.x && t.y === this.y;
         },
         contains: function (t) {
-            return (t = A(t)), Math.abs(t.x) <= Math.abs(this.x) && Math.abs(t.y) <= Math.abs(this.y);
+            return (t = _(t)), Math.abs(t.x) <= Math.abs(this.x) && Math.abs(t.y) <= Math.abs(this.y);
         },
         toString: function () {
-            return "Point(" + r(this.x) + ", " + r(this.y) + ")";
+            return "Point(" + e(this.x) + ", " + e(this.y) + ")";
         },
     }),
-        (I.prototype = {
+        (m.prototype = {
             extend: function (t) {
                 return (
-                    (t = A(t)),
+                    (t = _(t)),
                     this.min || this.max
                         ? ((this.min.x = Math.min(t.x, this.min.x)), (this.max.x = Math.max(t.x, this.max.x)), (this.min.y = Math.min(t.y, this.min.y)), (this.max.y = Math.max(t.y, this.max.y)))
                         : ((this.min = t.clone()), (this.max = t.clone())),
@@ -392,13 +405,13 @@
                 );
             },
             getCenter: function (t) {
-                return new k((this.min.x + this.max.x) / 2, (this.min.y + this.max.y) / 2, t);
+                return new p((this.min.x + this.max.x) / 2, (this.min.y + this.max.y) / 2, t);
             },
             getBottomLeft: function () {
-                return new k(this.min.x, this.max.y);
+                return new p(this.min.x, this.max.y);
             },
             getTopRight: function () {
-                return new k(this.max.x, this.min.y);
+                return new p(this.max.x, this.min.y);
             },
             getTopLeft: function () {
                 return this.min;
@@ -411,47 +424,47 @@
             },
             contains: function (t) {
                 var i, e;
-                return (t = ("number" == typeof t[0] || t instanceof k ? A : O)(t)) instanceof I ? ((i = t.min), (e = t.max)) : (i = e = t), i.x >= this.min.x && e.x <= this.max.x && i.y >= this.min.y && e.y <= this.max.y;
+                return (t = ("number" == typeof t[0] || t instanceof p ? _ : f)(t)) instanceof m ? ((i = t.min), (e = t.max)) : (i = e = t), i.x >= this.min.x && e.x <= this.max.x && i.y >= this.min.y && e.y <= this.max.y;
             },
             intersects: function (t) {
-                t = O(t);
+                t = f(t);
                 var i = this.min,
                     e = this.max,
                     n = t.min,
-                    o = t.max,
-                    s = o.x >= i.x && n.x <= e.x,
-                    r = o.y >= i.y && n.y <= e.y;
-                return s && r;
+                    t = t.max,
+                    o = t.x >= i.x && n.x <= e.x,
+                    t = t.y >= i.y && n.y <= e.y;
+                return o && t;
             },
             overlaps: function (t) {
-                t = O(t);
+                t = f(t);
                 var i = this.min,
                     e = this.max,
                     n = t.min,
-                    o = t.max,
-                    s = o.x > i.x && n.x < e.x,
-                    r = o.y > i.y && n.y < e.y;
-                return s && r;
+                    t = t.max,
+                    o = t.x > i.x && n.x < e.x,
+                    t = t.y > i.y && n.y < e.y;
+                return o && t;
             },
             isValid: function () {
                 return !(!this.min || !this.max);
             },
         }),
-        (R.prototype = {
+        (s.prototype = {
             extend: function (t) {
                 var i,
                     e,
                     n = this._southWest,
                     o = this._northEast;
-                if (t instanceof D) e = i = t;
+                if (t instanceof v) e = i = t;
                 else {
-                    if (!(t instanceof R)) return t ? this.extend(j(t) || N(t)) : this;
+                    if (!(t instanceof s)) return t ? this.extend(w(t) || g(t)) : this;
                     if (((i = t._southWest), (e = t._northEast), !i || !e)) return this;
                 }
                 return (
                     n || o
                         ? ((n.lat = Math.min(i.lat, n.lat)), (n.lng = Math.min(i.lng, n.lng)), (o.lat = Math.max(e.lat, o.lat)), (o.lng = Math.max(e.lng, o.lng)))
-                        : ((this._southWest = new D(i.lat, i.lng)), (this._northEast = new D(e.lat, e.lng))),
+                        : ((this._southWest = new v(i.lat, i.lng)), (this._northEast = new v(e.lat, e.lng))),
                     this
                 );
             },
@@ -459,11 +472,11 @@
                 var i = this._southWest,
                     e = this._northEast,
                     n = Math.abs(i.lat - e.lat) * t,
-                    o = Math.abs(i.lng - e.lng) * t;
-                return new R(new D(i.lat - n, i.lng - o), new D(e.lat + n, e.lng + o));
+                    t = Math.abs(i.lng - e.lng) * t;
+                return new s(new v(i.lat - n, i.lng - t), new v(e.lat + n, e.lng + t));
             },
             getCenter: function () {
-                return new D((this._southWest.lat + this._northEast.lat) / 2, (this._southWest.lng + this._northEast.lng) / 2);
+                return new v((this._southWest.lat + this._northEast.lat) / 2, (this._southWest.lng + this._northEast.lng) / 2);
             },
             getSouthWest: function () {
                 return this._southWest;
@@ -472,10 +485,10 @@
                 return this._northEast;
             },
             getNorthWest: function () {
-                return new D(this.getNorth(), this.getWest());
+                return new v(this.getNorth(), this.getWest());
             },
             getSouthEast: function () {
-                return new D(this.getSouth(), this.getEast());
+                return new v(this.getSouth(), this.getEast());
             },
             getWest: function () {
                 return this._southWest.lng;
@@ -490,54 +503,51 @@
                 return this._northEast.lat;
             },
             contains: function (t) {
-                t = ("number" == typeof t[0] || t instanceof D || "lat" in t ? j : N)(t);
+                t = ("number" == typeof t[0] || t instanceof v || "lat" in t ? w : g)(t);
                 var i,
                     e,
                     n = this._southWest,
                     o = this._northEast;
-                return t instanceof R ? ((i = t.getSouthWest()), (e = t.getNorthEast())) : (i = e = t), i.lat >= n.lat && e.lat <= o.lat && i.lng >= n.lng && e.lng <= o.lng;
+                return t instanceof s ? ((i = t.getSouthWest()), (e = t.getNorthEast())) : (i = e = t), i.lat >= n.lat && e.lat <= o.lat && i.lng >= n.lng && e.lng <= o.lng;
             },
             intersects: function (t) {
-                t = N(t);
+                t = g(t);
                 var i = this._southWest,
                     e = this._northEast,
                     n = t.getSouthWest(),
-                    o = t.getNorthEast(),
-                    s = o.lat >= i.lat && n.lat <= e.lat,
-                    r = o.lng >= i.lng && n.lng <= e.lng;
-                return s && r;
+                    t = t.getNorthEast(),
+                    o = t.lat >= i.lat && n.lat <= e.lat,
+                    t = t.lng >= i.lng && n.lng <= e.lng;
+                return o && t;
             },
             overlaps: function (t) {
-                t = N(t);
+                t = g(t);
                 var i = this._southWest,
                     e = this._northEast,
                     n = t.getSouthWest(),
-                    o = t.getNorthEast(),
-                    s = o.lat > i.lat && n.lat < e.lat,
-                    r = o.lng > i.lng && n.lng < e.lng;
-                return s && r;
+                    t = t.getNorthEast(),
+                    o = t.lat > i.lat && n.lat < e.lat,
+                    t = t.lng > i.lng && n.lng < e.lng;
+                return o && t;
             },
             toBBoxString: function () {
                 return [this.getWest(), this.getSouth(), this.getEast(), this.getNorth()].join(",");
             },
             equals: function (t, i) {
-                return !!t && ((t = N(t)), this._southWest.equals(t.getSouthWest(), i) && this._northEast.equals(t.getNorthEast(), i));
+                return !!t && ((t = g(t)), this._southWest.equals(t.getSouthWest(), i) && this._northEast.equals(t.getNorthEast(), i));
             },
             isValid: function () {
                 return !(!this._southWest || !this._northEast);
             },
         });
-    var W,
-        H = {
+    var ot = {
             latLngToPoint: function (t, i) {
-                var e = this.projection.project(t),
-                    n = this.scale(i);
-                return this.transformation._transform(e, n);
+                (t = this.projection.project(t)), (i = this.scale(i));
+                return this.transformation._transform(t, i);
             },
             pointToLatLng: function (t, i) {
-                var e = this.scale(i),
-                    n = this.transformation.untransform(t, e);
-                return this.projection.unproject(n);
+                (i = this.scale(i)), (t = this.transformation.untransform(t, i));
+                return this.projection.unproject(t);
             },
             project: function (t) {
                 return this.projection.project(t);
@@ -554,47 +564,46 @@
             getProjectedBounds: function (t) {
                 if (this.infinite) return null;
                 var i = this.projection.bounds,
-                    e = this.scale(t);
-                return new I(this.transformation.transform(i.min, e), this.transformation.transform(i.max, e));
+                    t = this.scale(t);
+                return new m(this.transformation.transform(i.min, t), this.transformation.transform(i.max, t));
             },
-            infinite: !(D.prototype = {
+            infinite: !(v.prototype = {
                 equals: function (t, i) {
-                    return !!t && ((t = j(t)), Math.max(Math.abs(this.lat - t.lat), Math.abs(this.lng - t.lng)) <= (void 0 === i ? 1e-9 : i));
+                    return !!t && ((t = w(t)), Math.max(Math.abs(this.lat - t.lat), Math.abs(this.lng - t.lng)) <= (void 0 === i ? 1e-9 : i));
                 },
                 toString: function (t) {
-                    return "LatLng(" + r(this.lat, t) + ", " + r(this.lng, t) + ")";
+                    return "LatLng(" + e(this.lat, t) + ", " + e(this.lng, t) + ")";
                 },
                 distanceTo: function (t) {
-                    return F.distance(this, j(t));
+                    return st.distance(this, w(t));
                 },
                 wrap: function () {
-                    return F.wrapLatLng(this);
+                    return st.wrapLatLng(this);
                 },
                 toBounds: function (t) {
-                    var i = (180 * t) / 40075017,
-                        e = i / Math.cos((Math.PI / 180) * this.lat);
-                    return N([this.lat - i, this.lng - e], [this.lat + i, this.lng + e]);
+                    var t = (180 * t) / 40075017,
+                        i = t / Math.cos((Math.PI / 180) * this.lat);
+                    return g([this.lat - t, this.lng - i], [this.lat + t, this.lng + i]);
                 },
                 clone: function () {
-                    return new D(this.lat, this.lng, this.alt);
+                    return new v(this.lat, this.lng, this.alt);
                 },
             }),
             wrapLatLng: function (t) {
-                var i = this.wrapLng ? o(t.lng, this.wrapLng, !0) : t.lng;
-                return new D(this.wrapLat ? o(t.lat, this.wrapLat, !0) : t.lat, i, t.alt);
+                var i = this.wrapLng ? H(t.lng, this.wrapLng, !0) : t.lng;
+                return new v(this.wrapLat ? H(t.lat, this.wrapLat, !0) : t.lat, i, t.alt);
             },
             wrapLatLngBounds: function (t) {
                 var i = t.getCenter(),
                     e = this.wrapLatLng(i),
                     n = i.lat - e.lat,
-                    o = i.lng - e.lng;
-                if (0 == n && 0 == o) return t;
-                var s = t.getSouthWest(),
-                    r = t.getNorthEast();
-                return new R(new D(s.lat - n, s.lng - o), new D(r.lat - n, r.lng - o));
+                    i = i.lng - e.lng;
+                if (0 == n && 0 == i) return t;
+                (e = t.getSouthWest()), (t = t.getNorthEast());
+                return new s(new v(e.lat - n, e.lng - i), new v(t.lat - n, t.lng - i));
             },
         },
-        F = h({}, H, {
+        st = l({}, ot, {
             wrapLng: [-180, 180],
             R: 6371e3,
             distance: function (t, i) {
@@ -602,90 +611,90 @@
                     n = t.lat * e,
                     o = i.lat * e,
                     s = Math.sin(((i.lat - t.lat) * e) / 2),
-                    r = Math.sin(((i.lng - t.lng) * e) / 2),
-                    a = s * s + Math.cos(n) * Math.cos(o) * r * r,
-                    h = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                return this.R * h;
+                    i = Math.sin(((i.lng - t.lng) * e) / 2),
+                    t = s * s + Math.cos(n) * Math.cos(o) * i * i,
+                    e = 2 * Math.atan2(Math.sqrt(t), Math.sqrt(1 - t));
+                return this.R * e;
             },
         }),
-        U = 6378137,
-        V = {
-            R: U,
+        rt = 6378137,
+        rt = {
+            R: rt,
             MAX_LATITUDE: 85.0511287798,
             project: function (t) {
                 var i = Math.PI / 180,
                     e = this.MAX_LATITUDE,
-                    n = Math.max(Math.min(e, t.lat), -e),
-                    o = Math.sin(n * i);
-                return new k(this.R * t.lng * i, (this.R * Math.log((1 + o) / (1 - o))) / 2);
+                    e = Math.max(Math.min(e, t.lat), -e),
+                    e = Math.sin(e * i);
+                return new p(this.R * t.lng * i, (this.R * Math.log((1 + e) / (1 - e))) / 2);
             },
             unproject: function (t) {
                 var i = 180 / Math.PI;
-                return new D((2 * Math.atan(Math.exp(t.y / this.R)) - Math.PI / 2) * i, (t.x * i) / this.R);
+                return new v((2 * Math.atan(Math.exp(t.y / this.R)) - Math.PI / 2) * i, (t.x * i) / this.R);
             },
-            bounds: new I([-(W = U * Math.PI), -W], [W, W]),
+            bounds: new m([-(rt = rt * Math.PI), -rt], [rt, rt]),
         };
-    function q(t, i, e, n) {
-        if (g(t)) return (this._a = t[0]), (this._b = t[1]), (this._c = t[2]), void (this._d = t[3]);
+    function at(t, i, e, n) {
+        if (d(t)) return (this._a = t[0]), (this._b = t[1]), (this._c = t[2]), void (this._d = t[3]);
         (this._a = t), (this._b = i), (this._c = e), (this._d = n);
     }
-    function G(t, i, e, n) {
-        return new q(t, i, e, n);
+    function ht(t, i, e, n) {
+        return new at(t, i, e, n);
     }
-    q.prototype = {
+    at.prototype = {
         transform: function (t, i) {
             return this._transform(t.clone(), i);
         },
         _transform: function (t, i) {
-            return (i = i || 1), (t.x = i * (this._a * t.x + this._b)), (t.y = i * (this._c * t.y + this._d)), t;
+            return (t.x = (i = i || 1) * (this._a * t.x + this._b)), (t.y = i * (this._c * t.y + this._d)), t;
         },
         untransform: function (t, i) {
-            return (i = i || 1), new k((t.x / i - this._b) / this._a, (t.y / i - this._d) / this._c);
+            return new p((t.x / (i = i || 1) - this._b) / this._a, (t.y / i - this._d) / this._c);
         },
     };
-    var K,
-        Y = h({}, F, { code: "EPSG:3857", projection: V, transformation: G((K = 0.5 / (Math.PI * V.R)), 0.5, -K, 0.5) }),
-        X = h({}, Y, { code: "EPSG:900913" });
-    function J(t) {
+    var lt = l({}, st, { code: "EPSG:3857", projection: rt, transformation: ht((lt = 0.5 / (Math.PI * rt.R)), 0.5, -lt, 0.5) }),
+        ut = l({}, lt, { code: "EPSG:900913" });
+    function ct(t) {
         return document.createElementNS("http://www.w3.org/2000/svg", t);
     }
-    function $(t, i) {
+    function dt(t, i) {
         for (var e, n, o, s, r = "", a = 0, h = t.length; a < h; a++) {
             for (e = 0, n = (o = t[a]).length; e < n; e++) r += (e ? "L" : "M") + (s = o[e]).x + " " + s.y;
-            r += i ? (Zt ? "z" : "x") : "";
+            r += i ? (P.svg ? "z" : "x") : "";
         }
         return r || "M0 0";
     }
-    var Q = document.documentElement.style,
-        tt = "ActiveXObject" in window,
-        it = tt && !document.addEventListener,
-        et = "msLaunchUri" in navigator && !("documentMode" in document),
-        nt = kt("webkit"),
-        ot = kt("android"),
-        st = kt("android 2") || kt("android 3"),
-        rt = parseInt(/WebKit\/([0-9]+)|$/.exec(navigator.userAgent)[1], 10),
-        at = ot && kt("Google") && rt < 537 && !("AudioNode" in window),
-        ht = !!window.opera,
-        ut = !et && kt("chrome"),
-        lt = kt("gecko") && !nt && !ht && !tt,
-        ct = !ut && kt("safari"),
-        _t = kt("phantom"),
-        dt = "OTransition" in Q,
-        pt = 0 === navigator.platform.indexOf("Win"),
-        mt = tt && "transition" in Q,
-        ft = "WebKitCSSMatrix" in window && "m11" in new window.WebKitCSSMatrix() && !st,
-        gt = "MozPerspective" in Q,
-        vt = !window.L_DISABLE_3D && (mt || ft || gt) && !dt && !_t,
-        yt = "undefined" != typeof orientation || kt("mobile"),
-        xt = yt && nt,
-        wt = yt && ft,
-        Pt = !window.PointerEvent && window.MSPointerEvent,
-        Lt = !(!window.PointerEvent && !Pt),
-        bt = !window.L_NO_TOUCH && (Lt || "ontouchstart" in window || (window.DocumentTouch && document instanceof window.DocumentTouch)),
-        Tt = yt && ht,
-        Mt = yt && lt,
-        zt = 1 < (window.devicePixelRatio || window.screen.deviceXDPI / window.screen.logicalXDPI),
-        Ct = (function () {
+    var _t = document.documentElement.style,
+        pt = "ActiveXObject" in window,
+        mt = pt && !document.addEventListener,
+        n = "msLaunchUri" in navigator && !("documentMode" in document),
+        ft = y("webkit"),
+        gt = y("android"),
+        vt = y("android 2") || y("android 3"),
+        yt = parseInt(/WebKit\/([0-9]+)|$/.exec(navigator.userAgent)[1], 10),
+        yt = gt && y("Google") && yt < 537 && !("AudioNode" in window),
+        xt = !!window.opera,
+        wt = !n && y("chrome"),
+        Pt = y("gecko") && !ft && !xt && !pt,
+        bt = !wt && y("safari"),
+        Lt = y("phantom"),
+        o = "OTransition" in _t,
+        Tt = 0 === navigator.platform.indexOf("Win"),
+        zt = pt && "transition" in _t,
+        Mt = "WebKitCSSMatrix" in window && "m11" in new window.WebKitCSSMatrix() && !vt,
+        _t = "MozPerspective" in _t,
+        Ct = !window.L_DISABLE_3D && (zt || Mt || _t) && !o && !Lt,
+        Zt = "undefined" != typeof orientation || y("mobile"),
+        St = Zt && ft,
+        kt = Zt && Mt,
+        Et = !window.PointerEvent && window.MSPointerEvent,
+        Bt = !(!window.PointerEvent && !Et),
+        At = "ontouchstart" in window || !!window.TouchEvent,
+        It = !window.L_NO_TOUCH && (At || Bt),
+        Ot = Zt && xt,
+        Rt = Zt && Pt,
+        Nt = 1 < (window.devicePixelRatio || window.screen.deviceXDPI / window.screen.logicalXDPI),
+        Dt = (function () {
             var t = !1;
             try {
                 var i = Object.defineProperty({}, "passive", {
@@ -693,390 +702,371 @@
                         t = !0;
                     },
                 });
-                window.addEventListener("testPassiveEventSupport", a, i), window.removeEventListener("testPassiveEventSupport", a, i);
+                window.addEventListener("testPassiveEventSupport", u, i), window.removeEventListener("testPassiveEventSupport", u, i);
             } catch (t) {}
             return t;
         })(),
-        St = !!document.createElement("canvas").getContext,
-        Zt = !(!document.createElementNS || !J("svg").createSVGRect),
-        Et =
-            !Zt &&
-            (function () {
-                try {
-                    var t = document.createElement("div");
-                    t.innerHTML = '<v:shape adj="1"/>';
-                    var i = t.firstChild;
-                    return (i.style.behavior = "url(#default#VML)"), i && "object" == typeof i.adj;
-                } catch (t) {
-                    return !1;
-                }
-            })();
-    function kt(t) {
+        jt = !!document.createElement("canvas").getContext,
+        Ht = !(!document.createElementNS || !ct("svg").createSVGRect),
+        Wt = !!Ht && (((Wt = document.createElement("div")).innerHTML = "<svg/>"), "http://www.w3.org/2000/svg" === (Wt.firstChild && Wt.firstChild.namespaceURI));
+    function y(t) {
         return 0 <= navigator.userAgent.toLowerCase().indexOf(t);
     }
-    var Bt = {
-            ie: tt,
-            ielt9: it,
-            edge: et,
-            webkit: nt,
-            android: ot,
-            android23: st,
-            androidStock: at,
-            opera: ht,
-            chrome: ut,
-            gecko: lt,
-            safari: ct,
-            phantom: _t,
-            opera12: dt,
-            win: pt,
-            ie3d: mt,
-            webkit3d: ft,
-            gecko3d: gt,
-            any3d: vt,
-            mobile: yt,
-            mobileWebkit: xt,
-            mobileWebkit3d: wt,
-            msPointer: Pt,
-            pointer: Lt,
-            touch: bt,
-            mobileOpera: Tt,
-            mobileGecko: Mt,
-            retina: zt,
-            passiveEvents: Ct,
-            canvas: St,
-            svg: Zt,
-            vml: Et,
+    var P = {
+            ie: pt,
+            ielt9: mt,
+            edge: n,
+            webkit: ft,
+            android: gt,
+            android23: vt,
+            androidStock: yt,
+            opera: xt,
+            chrome: wt,
+            gecko: Pt,
+            safari: bt,
+            phantom: Lt,
+            opera12: o,
+            win: Tt,
+            ie3d: zt,
+            webkit3d: Mt,
+            gecko3d: _t,
+            any3d: Ct,
+            mobile: Zt,
+            mobileWebkit: St,
+            mobileWebkit3d: kt,
+            msPointer: Et,
+            pointer: Bt,
+            touch: It,
+            touchNative: At,
+            mobileOpera: Ot,
+            mobileGecko: Rt,
+            retina: Nt,
+            passiveEvents: Dt,
+            canvas: jt,
+            svg: Ht,
+            vml:
+                !Ht &&
+                (function () {
+                    try {
+                        var t = document.createElement("div"),
+                            i = ((t.innerHTML = '<v:shape adj="1"/>'), t.firstChild);
+                        return (i.style.behavior = "url(#default#VML)"), i && "object" == typeof i.adj;
+                    } catch (t) {
+                        return !1;
+                    }
+                })(),
+            inlineSvg: Wt,
         },
-        At = Pt ? "MSPointerDown" : "pointerdown",
-        It = Pt ? "MSPointerMove" : "pointermove",
-        Ot = Pt ? "MSPointerUp" : "pointerup",
-        Rt = Pt ? "MSPointerCancel" : "pointercancel",
-        Nt = {},
-        Dt = !1;
-    function jt(t, i, e, n) {
-        function o(t) {
-            Ut(t, r);
-        }
-        var s, r, a, h, u, l, c, _;
-        function d(t) {
-            (t.pointerType === (t.MSPOINTER_TYPE_MOUSE || "mouse") && 0 === t.buttons) || Ut(t, h);
-        }
+        Ft = P.msPointer ? "MSPointerDown" : "pointerdown",
+        Ut = P.msPointer ? "MSPointerMove" : "pointermove",
+        Vt = P.msPointer ? "MSPointerUp" : "pointerup",
+        qt = P.msPointer ? "MSPointerCancel" : "pointercancel",
+        Gt = { touchstart: Ft, touchmove: Ut, touchend: Vt, touchcancel: qt },
+        Kt = {
+            touchstart: function (t, i) {
+                i.MSPOINTER_TYPE_TOUCH && i.pointerType === i.MSPOINTER_TYPE_TOUCH && B(i);
+                ii(t, i);
+            },
+            touchmove: ii,
+            touchend: ii,
+            touchcancel: ii,
+        },
+        Yt = {},
+        Xt = !1;
+    function Jt(t, i, e) {
         return (
-            "touchstart" === i
-                ? ((u = t),
-                  (l = e),
-                  (c = n),
-                  (_ = p(function (t) {
-                      t.MSPOINTER_TYPE_TOUCH && t.pointerType === t.MSPOINTER_TYPE_TOUCH && Ri(t), Ut(t, l);
-                  })),
-                  (u["_leaflet_touchstart" + c] = _),
-                  u.addEventListener(At, _, !1),
-                  Dt || (document.addEventListener(At, Wt, !0), document.addEventListener(It, Ht, !0), document.addEventListener(Ot, Ft, !0), document.addEventListener(Rt, Ft, !0), (Dt = !0)))
-                : "touchmove" === i
-                ? ((h = e), ((a = t)["_leaflet_touchmove" + n] = d), a.addEventListener(It, d, !1))
-                : "touchend" === i && ((r = e), ((s = t)["_leaflet_touchend" + n] = o), s.addEventListener(Ot, o, !1), s.addEventListener(Rt, o, !1)),
-            this
+            "touchstart" !== i || Xt || (document.addEventListener(Ft, $t, !0), document.addEventListener(Ut, Qt, !0), document.addEventListener(Vt, ti, !0), document.addEventListener(qt, ti, !0), (Xt = !0)),
+            Kt[i] ? ((e = Kt[i].bind(this, e)), t.addEventListener(Gt[i], e, !1), e) : (console.warn("wrong event specified:", i), L.Util.falseFn)
         );
     }
-    function Wt(t) {
-        Nt[t.pointerId] = t;
+    function $t(t) {
+        Yt[t.pointerId] = t;
     }
-    function Ht(t) {
-        Nt[t.pointerId] && (Nt[t.pointerId] = t);
+    function Qt(t) {
+        Yt[t.pointerId] && (Yt[t.pointerId] = t);
     }
-    function Ft(t) {
-        delete Nt[t.pointerId];
+    function ti(t) {
+        delete Yt[t.pointerId];
     }
-    function Ut(t, i) {
-        for (var e in ((t.touches = []), Nt)) t.touches.push(Nt[e]);
-        (t.changedTouches = [t]), i(t);
+    function ii(t, i) {
+        if (i.pointerType !== (i.MSPOINTER_TYPE_MOUSE || "mouse")) {
+            for (var e in ((i.touches = []), Yt)) i.touches.push(Yt[e]);
+            (i.changedTouches = [i]), t(i);
+        }
     }
-    var Vt = Pt ? "MSPointerDown" : Lt ? "pointerdown" : "touchstart",
-        qt = Pt ? "MSPointerUp" : Lt ? "pointerup" : "touchend",
-        Gt = "_leaflet_";
-    var Kt,
-        Yt,
-        Xt,
-        Jt,
-        $t,
-        Qt,
-        ti = fi(["transform", "webkitTransform", "OTransform", "MozTransform", "msTransform"]),
-        ii = fi(["webkitTransition", "transition", "OTransition", "MozTransition", "msTransition"]),
-        ei = "webkitTransition" === ii || "OTransition" === ii ? ii + "End" : "transitionend";
-    function ni(t) {
+    var ei = 200;
+    function ni(t, e) {
+        t.addEventListener("dblclick", e);
+        var n,
+            o = 0;
+        function i(t) {
+            var i;
+            1 !== t.detail
+                ? (n = t.detail)
+                : "mouse" === t.pointerType ||
+                  (t.sourceCapabilities && !t.sourceCapabilities.firesTouchEvents) ||
+                  ((i = Date.now()) - o <= ei
+                      ? 2 === ++n &&
+                        e(
+                            (function (t) {
+                                var i,
+                                    e,
+                                    n = {};
+                                for (e in t) (i = t[e]), (n[e] = i && i.bind ? i.bind(t) : i);
+                                return ((t = n).type = "dblclick"), (n.detail = 2), (n.isTrusted = !1), (n._simulated = !0), n;
+                            })(t)
+                        )
+                      : (n = 1),
+                  (o = i));
+        }
+        return t.addEventListener("click", i), { dblclick: e, simDblclick: i };
+    }
+    var oi,
+        si,
+        ri,
+        ai,
+        hi,
+        li,
+        ui = wi(["transform", "webkitTransform", "OTransform", "MozTransform", "msTransform"]),
+        ci = wi(["webkitTransition", "transition", "OTransition", "MozTransition", "msTransition"]),
+        di = "webkitTransition" === ci || "OTransition" === ci ? ci + "End" : "transitionend";
+    function _i(t) {
         return "string" == typeof t ? document.getElementById(t) : t;
     }
-    function oi(t, i) {
-        var e,
-            n = t.style[i] || (t.currentStyle && t.currentStyle[i]);
-        return (n && "auto" !== n) || !document.defaultView || (n = (e = document.defaultView.getComputedStyle(t, null)) ? e[i] : null), "auto" === n ? null : n;
+    function pi(t, i) {
+        var e = t.style[i] || (t.currentStyle && t.currentStyle[i]);
+        return "auto" === (e = (e && "auto" !== e) || !document.defaultView ? e : (t = document.defaultView.getComputedStyle(t, null)) ? t[i] : null) ? null : e;
     }
-    function si(t, i, e) {
-        var n = document.createElement(t);
-        return (n.className = i || ""), e && e.appendChild(n), n;
+    function b(t, i, e) {
+        t = document.createElement(t);
+        return (t.className = i || ""), e && e.appendChild(t), t;
     }
-    function ri(t) {
+    function T(t) {
         var i = t.parentNode;
         i && i.removeChild(t);
     }
-    function ai(t) {
+    function mi(t) {
         for (; t.firstChild; ) t.removeChild(t.firstChild);
     }
-    function hi(t) {
+    function fi(t) {
         var i = t.parentNode;
         i && i.lastChild !== t && i.appendChild(t);
     }
-    function ui(t) {
+    function gi(t) {
         var i = t.parentNode;
         i && i.firstChild !== t && i.insertBefore(t, i.firstChild);
     }
-    function li(t, i) {
+    function vi(t, i) {
         if (void 0 !== t.classList) return t.classList.contains(i);
-        var e = pi(t);
-        return 0 < e.length && new RegExp("(^|\\s)" + i + "(\\s|$)").test(e);
+        t = xi(t);
+        return 0 < t.length && new RegExp("(^|\\s)" + i + "(\\s|$)").test(t);
     }
-    function ci(t, i) {
+    function z(t, i) {
         var e;
-        if (void 0 !== t.classList) for (var n = l(i), o = 0, s = n.length; o < s; o++) t.classList.add(n[o]);
-        else li(t, i) || di(t, ((e = pi(t)) ? e + " " : "") + i);
+        if (void 0 !== t.classList) for (var n = F(i), o = 0, s = n.length; o < s; o++) t.classList.add(n[o]);
+        else vi(t, i) || yi(t, ((e = xi(t)) ? e + " " : "") + i);
     }
-    function _i(t, i) {
-        void 0 !== t.classList ? t.classList.remove(i) : di(t, u((" " + pi(t) + " ").replace(" " + i + " ", " ")));
+    function M(t, i) {
+        void 0 !== t.classList ? t.classList.remove(i) : yi(t, W((" " + xi(t) + " ").replace(" " + i + " ", " ")));
     }
-    function di(t, i) {
+    function yi(t, i) {
         void 0 === t.className.baseVal ? (t.className = i) : (t.className.baseVal = i);
     }
-    function pi(t) {
-        return t.correspondingElement && (t = t.correspondingElement), void 0 === t.className.baseVal ? t.className : t.className.baseVal;
+    function xi(t) {
+        return void 0 === (t = t.correspondingElement ? t.correspondingElement : t).className.baseVal ? t.className : t.className.baseVal;
     }
-    function mi(t, i) {
-        "opacity" in t.style
-            ? (t.style.opacity = i)
-            : "filter" in t.style &&
-              (function (t, i) {
-                  var e = !1,
-                      n = "DXImageTransform.Microsoft.Alpha";
-                  try {
-                      e = t.filters.item(n);
-                  } catch (t) {
-                      if (1 === i) return;
-                  }
-                  (i = Math.round(100 * i)), e ? ((e.Enabled = 100 !== i), (e.Opacity = i)) : (t.style.filter += " progid:" + n + "(opacity=" + i + ")");
-              })(t, i);
+    function C(t, i) {
+        if ("opacity" in t.style) t.style.opacity = i;
+        else if ("filter" in t.style) {
+            var e = !1,
+                n = "DXImageTransform.Microsoft.Alpha";
+            try {
+                e = t.filters.item(n);
+            } catch (t) {
+                if (1 === i) return;
+            }
+            (i = Math.round(100 * i)), e ? ((e.Enabled = 100 !== i), (e.Opacity = i)) : (t.style.filter += " progid:" + n + "(opacity=" + i + ")");
+        }
     }
-    function fi(t) {
+    function wi(t) {
         for (var i = document.documentElement.style, e = 0; e < t.length; e++) if (t[e] in i) return t[e];
         return !1;
     }
-    function gi(t, i, e) {
-        var n = i || new k(0, 0);
-        t.style[ti] = (mt ? "translate(" + n.x + "px," + n.y + "px)" : "translate3d(" + n.x + "px," + n.y + "px,0)") + (e ? " scale(" + e + ")" : "");
+    function Pi(t, i, e) {
+        i = i || new p(0, 0);
+        t.style[ui] = (P.ie3d ? "translate(" + i.x + "px," + i.y + "px)" : "translate3d(" + i.x + "px," + i.y + "px,0)") + (e ? " scale(" + e + ")" : "");
     }
-    function vi(t, i) {
-        (t._leaflet_pos = i), vt ? gi(t, i) : ((t.style.left = i.x + "px"), (t.style.top = i.y + "px"));
-    }
-    function yi(t) {
-        return t._leaflet_pos || new k(0, 0);
-    }
-    function xi() {
-        zi(window, "dragstart", Ri);
-    }
-    function wi() {
-        Si(window, "dragstart", Ri);
-    }
-    function Pi(t) {
-        for (; -1 === t.tabIndex; ) t = t.parentNode;
-        t.style && (Li(), (Qt = ($t = t).style.outline), (t.style.outline = "none"), zi(window, "keydown", Li));
-    }
-    function Li() {
-        $t && (($t.style.outline = Qt), (Qt = $t = void 0), Si(window, "keydown", Li));
+    function Z(t, i) {
+        (t._leaflet_pos = i), P.any3d ? Pi(t, i) : ((t.style.left = i.x + "px"), (t.style.top = i.y + "px"));
     }
     function bi(t) {
+        return t._leaflet_pos || new p(0, 0);
+    }
+    function Li() {
+        S(window, "dragstart", B);
+    }
+    function Ti() {
+        E(window, "dragstart", B);
+    }
+    function zi(t) {
+        for (; -1 === t.tabIndex; ) t = t.parentNode;
+        t.style && (Mi(), (li = (hi = t).style.outline), (t.style.outline = "none"), S(window, "keydown", Mi));
+    }
+    function Mi() {
+        hi && ((hi.style.outline = li), (li = hi = void 0), E(window, "keydown", Mi));
+    }
+    function Ci(t) {
         for (; !(((t = t.parentNode).offsetWidth && t.offsetHeight) || t === document.body); );
         return t;
     }
-    function Ti(t) {
+    function Zi(t) {
         var i = t.getBoundingClientRect();
         return { x: i.width / t.offsetWidth || 1, y: i.height / t.offsetHeight || 1, boundingClientRect: i };
     }
-    Jt =
+    ai =
         "onselectstart" in document
-            ? ((Xt = function () {
-                  zi(window, "selectstart", Ri);
+            ? ((ri = function () {
+                  S(window, "selectstart", B);
               }),
               function () {
-                  Si(window, "selectstart", Ri);
+                  E(window, "selectstart", B);
               })
-            : ((Yt = fi(["userSelect", "WebkitUserSelect", "OUserSelect", "MozUserSelect", "msUserSelect"])),
-              (Xt = function () {
+            : ((si = wi(["userSelect", "WebkitUserSelect", "OUserSelect", "MozUserSelect", "msUserSelect"])),
+              (ri = function () {
                   var t;
-                  Yt && ((t = document.documentElement.style), (Kt = t[Yt]), (t[Yt] = "none"));
+                  si && ((t = document.documentElement.style), (oi = t[si]), (t[si] = "none"));
               }),
               function () {
-                  Yt && ((document.documentElement.style[Yt] = Kt), (Kt = void 0));
+                  si && ((document.documentElement.style[si] = oi), (oi = void 0));
               });
-    var Mi = {
-        TRANSFORM: ti,
-        TRANSITION: ii,
-        TRANSITION_END: ei,
-        get: ni,
-        getStyle: oi,
-        create: si,
-        remove: ri,
-        empty: ai,
-        toFront: hi,
-        toBack: ui,
-        hasClass: li,
-        addClass: ci,
-        removeClass: _i,
-        setClass: di,
-        getClass: pi,
-        setOpacity: mi,
-        testProp: fi,
-        setTransform: gi,
-        setPosition: vi,
-        getPosition: yi,
-        disableTextSelection: Xt,
-        enableTextSelection: Jt,
-        disableImageDrag: xi,
-        enableImageDrag: wi,
-        preventOutline: Pi,
-        restoreOutline: Li,
-        getSizedParentNode: bi,
-        getScale: Ti,
+    pt = {
+        __proto__: null,
+        TRANSFORM: ui,
+        TRANSITION: ci,
+        TRANSITION_END: di,
+        get: _i,
+        getStyle: pi,
+        create: b,
+        remove: T,
+        empty: mi,
+        toFront: fi,
+        toBack: gi,
+        hasClass: vi,
+        addClass: z,
+        removeClass: M,
+        setClass: yi,
+        getClass: xi,
+        setOpacity: C,
+        testProp: wi,
+        setTransform: Pi,
+        setPosition: Z,
+        getPosition: bi,
+        get disableTextSelection() {
+            return ri;
+        },
+        get enableTextSelection() {
+            return ai;
+        },
+        disableImageDrag: Li,
+        enableImageDrag: Ti,
+        preventOutline: zi,
+        restoreOutline: Mi,
+        getSizedParentNode: Ci,
+        getScale: Zi,
     };
-    function zi(t, i, e, n) {
-        if ("object" == typeof i) for (var o in i) ki(t, o, i[o], e);
-        else for (var s = 0, r = (i = l(i)).length; s < r; s++) ki(t, i[s], e, n);
+    function S(t, i, e, n) {
+        if (i && "object" == typeof i) for (var o in i) Ei(t, o, i[o], e);
+        else for (var s = 0, r = (i = F(i)).length; s < r; s++) Ei(t, i[s], e, n);
         return this;
     }
-    var Ci = "_leaflet_events";
-    function Si(t, i, e, n) {
-        if ("object" == typeof i) for (var o in i) Bi(t, o, i[o], e);
-        else if (i) for (var s = 0, r = (i = l(i)).length; s < r; s++) Bi(t, i[s], e, n);
-        else {
-            for (var a in t[Ci]) Bi(t, a, t[Ci][a]);
-            delete t[Ci];
-        }
+    var k = "_leaflet_events";
+    function E(t, i, e, n) {
+        if (1 === arguments.length) Si(t), delete t[k];
+        else if (i && "object" == typeof i) for (var o in i) Bi(t, o, i[o], e);
+        else if (((i = F(i)), 2 === arguments.length))
+            Si(t, function (t) {
+                return -1 !== G(i, t);
+            });
+        else for (var s = 0, r = i.length; s < r; s++) Bi(t, i[s], e, n);
         return this;
     }
-    function Zi() {
-        return Lt && !et && !ct;
-    }
-    var Ei = { mouseenter: "mouseover", mouseleave: "mouseout", wheel: !("onwheel" in window) && "mousewheel" };
-    function ki(i, t, e, n) {
-        var o = t + m(e) + (n ? "_" + m(n) : "");
-        if (i[Ci] && i[Ci][o]) return this;
-        var s,
-            r,
-            a,
-            h,
-            u,
-            l,
-            c = function (t) {
-                return e.call(n || i, t || window.event);
-            },
-            _ = c;
-        function d(t) {
-            if (Lt) {
-                if (!t.isPrimary) return;
-                if ("mouse" === t.pointerType) return;
-            } else if (1 < t.touches.length) return;
-            var i = Date.now(),
-                e = i - (h || i);
-            (u = t.touches ? t.touches[0] : t), (l = 0 < e && e <= 250), (h = i);
+    function Si(t, i) {
+        for (var e in t[k]) {
+            var n = e.split(/\d/)[0];
+            (i && !i(n)) || Bi(t, n, null, null, e);
         }
-        function p(t) {
-            if (l && !u.cancelBubble) {
-                if (Lt) {
-                    if ("mouse" === t.pointerType) return;
-                    var i,
-                        e,
-                        n = {};
-                    for (e in u) (i = u[e]), (n[e] = i && i.bind ? i.bind(u) : i);
-                    u = n;
-                }
-                (u.type = "dblclick"), (u.button = 0), r(u), (h = null);
-            }
-        }
-        Lt && 0 === t.indexOf("touch")
-            ? jt(i, t, c, o)
-            : bt && "dblclick" === t && !Zi()
-            ? ((r = c),
-              (l = !1),
-              ((s = i)[Gt + Vt + (a = o)] = d),
-              (s[Gt + qt + a] = p),
-              (s[Gt + "dblclick" + a] = r),
-              s.addEventListener(Vt, d, !!Ct && { passive: !1 }),
-              s.addEventListener(qt, p, !!Ct && { passive: !1 }),
-              s.addEventListener("dblclick", r, !1))
-            : "addEventListener" in i
-            ? "touchstart" === t || "touchmove" === t || "wheel" === t || "mousewheel" === t
-                ? i.addEventListener(Ei[t] || t, c, !!Ct && { passive: !1 })
-                : "mouseenter" === t || "mouseleave" === t
-                ? ((c = function (t) {
-                      (t = t || window.event), Vi(i, t) && _(t);
-                  }),
-                  i.addEventListener(Ei[t], c, !1))
-                : i.addEventListener(t, _, !1)
-            : "attachEvent" in i && i.attachEvent("on" + t, c),
-            (i[Ci] = i[Ci] || {}),
-            (i[Ci][o] = c);
     }
-    function Bi(t, i, e, n) {
+    var ki = { mouseenter: "mouseover", mouseleave: "mouseout", wheel: !("onwheel" in window) && "mousewheel" };
+    function Ei(i, t, e, n) {
         var o,
             s,
+            r = t + h(e) + (n ? "_" + h(n) : "");
+        (i[k] && i[k][r]) ||
+            ((s = o = function (t) {
+                return e.call(n || i, t || window.event);
+            }),
+            !P.touchNative && P.pointer && 0 === t.indexOf("touch")
+                ? (o = Jt(i, t, o))
+                : P.touch && "dblclick" === t
+                ? (o = ni(i, o))
+                : "addEventListener" in i
+                ? "touchstart" === t || "touchmove" === t || "wheel" === t || "mousewheel" === t
+                    ? i.addEventListener(ki[t] || t, o, !!P.passiveEvents && { passive: !1 })
+                    : "mouseenter" === t || "mouseleave" === t
+                    ? i.addEventListener(
+                          ki[t],
+                          (o = function (t) {
+                              (t = t || window.event), Hi(i, t) && s(t);
+                          }),
+                          !1
+                      )
+                    : i.addEventListener(t, s, !1)
+                : i.attachEvent("on" + t, o),
+            (i[k] = i[k] || {}),
+            (i[k][r] = o));
+    }
+    function Bi(t, i, e, n, o) {
+        o = o || i + h(e) + (n ? "_" + h(n) : "");
+        var s,
             r,
-            a,
-            h,
-            u,
-            l,
-            c,
-            _ = i + m(e) + (n ? "_" + m(n) : ""),
-            d = t[Ci] && t[Ci][_];
-        if (!d) return this;
-        Lt && 0 === i.indexOf("touch")
-            ? ((c = (u = t)["_leaflet_" + (l = i) + _]),
-              "touchstart" === l ? u.removeEventListener(At, c, !1) : "touchmove" === l ? u.removeEventListener(It, c, !1) : "touchend" === l && (u.removeEventListener(Ot, c, !1), u.removeEventListener(Rt, c, !1)))
-            : bt && "dblclick" === i && !Zi()
-            ? ((r = (o = t)[Gt + Vt + (s = _)]),
-              (a = o[Gt + qt + s]),
-              (h = o[Gt + "dblclick" + s]),
-              o.removeEventListener(Vt, r, !!Ct && { passive: !1 }),
-              o.removeEventListener(qt, a, !!Ct && { passive: !1 }),
-              o.removeEventListener("dblclick", h, !1))
-            : "removeEventListener" in t
-            ? t.removeEventListener(Ei[i] || i, d, !1)
-            : "detachEvent" in t && t.detachEvent("on" + i, d),
-            (t[Ci][_] = null);
+            e = t[k] && t[k][o];
+        e &&
+            (!P.touchNative && P.pointer && 0 === i.indexOf("touch")
+                ? ((n = t), (r = e), Gt[(s = i)] ? n.removeEventListener(Gt[s], r, !1) : console.warn("wrong event specified:", s))
+                : P.touch && "dblclick" === i
+                ? ((n = e), (r = t).removeEventListener("dblclick", n.dblclick), r.removeEventListener("click", n.simDblclick))
+                : "removeEventListener" in t
+                ? t.removeEventListener(ki[i] || i, e, !1)
+                : t.detachEvent("on" + i, e),
+            (t[k][o] = null));
     }
     function Ai(t) {
-        return t.stopPropagation ? t.stopPropagation() : t.originalEvent ? (t.originalEvent._stopped = !0) : (t.cancelBubble = !0), Ui(t), this;
+        return t.stopPropagation ? t.stopPropagation() : t.originalEvent ? (t.originalEvent._stopped = !0) : (t.cancelBubble = !0), this;
     }
     function Ii(t) {
-        return ki(t, "wheel", Ai), this;
+        return Ei(t, "wheel", Ai), this;
     }
     function Oi(t) {
-        return zi(t, "mousedown touchstart dblclick", Ai), ki(t, "click", Fi), this;
+        return S(t, "mousedown touchstart dblclick contextmenu", Ai), (t._leaflet_disable_click = !0), this;
     }
-    function Ri(t) {
+    function B(t) {
         return t.preventDefault ? t.preventDefault() : (t.returnValue = !1), this;
     }
-    function Ni(t) {
-        return Ri(t), Ai(t), this;
+    function Ri(t) {
+        return B(t), Ai(t), this;
     }
-    function Di(t, i) {
-        if (!i) return new k(t.clientX, t.clientY);
-        var e = Ti(i),
+    function Ni(t, i) {
+        if (!i) return new p(t.clientX, t.clientY);
+        var e = Zi(i),
             n = e.boundingClientRect;
-        return new k((t.clientX - n.left) / e.x - i.clientLeft, (t.clientY - n.top) / e.y - i.clientTop);
+        return new p((t.clientX - n.left) / e.x - i.clientLeft, (t.clientY - n.top) / e.y - i.clientTop);
     }
-    var ji = pt && ut ? 2 * window.devicePixelRatio : lt ? window.devicePixelRatio : 1;
-    function Wi(t) {
-        return et
+    var Di = P.win && P.chrome ? 2 * window.devicePixelRatio : P.gecko ? window.devicePixelRatio : 1;
+    function ji(t) {
+        return P.edge
             ? t.wheelDeltaY / 2
             : t.deltaY && 0 === t.deltaMode
-            ? -t.deltaY / ji
+            ? -t.deltaY / Di
             : t.deltaY && 1 === t.deltaMode
             ? 20 * -t.deltaY
             : t.deltaY && 2 === t.deltaMode
@@ -1091,15 +1081,7 @@
             ? (t.detail / -32765) * 60
             : 0;
     }
-    var Hi = {};
-    function Fi(t) {
-        Hi[t.type] = !0;
-    }
-    function Ui(t) {
-        var i = Hi[t.type];
-        return (Hi[t.type] = !1), i;
-    }
-    function Vi(t, i) {
+    function Hi(t, i) {
         var e = i.relatedTarget;
         if (!e) return !0;
         try {
@@ -1109,30 +1091,29 @@
         }
         return e !== t;
     }
-    var qi = {
-            on: zi,
-            off: Si,
+    var mt = {
+            __proto__: null,
+            on: S,
+            off: E,
             stopPropagation: Ai,
             disableScrollPropagation: Ii,
             disableClickPropagation: Oi,
-            preventDefault: Ri,
-            stop: Ni,
-            getMousePosition: Di,
-            getWheelDelta: Wi,
-            fakeStop: Fi,
-            skipped: Ui,
-            isExternalTarget: Vi,
-            addListener: zi,
-            removeListener: Si,
+            preventDefault: B,
+            stop: Ri,
+            getMousePosition: Ni,
+            getWheelDelta: ji,
+            isExternalTarget: Hi,
+            addListener: S,
+            removeListener: E,
         },
-        Gi = E.extend({
+        Wi = et.extend({
             run: function (t, i, e, n) {
                 this.stop(),
                     (this._el = t),
                     (this._inProgress = !0),
                     (this._duration = e || 0.25),
                     (this._easeOutPower = 1 / Math.max(n || 0.5, 0.2)),
-                    (this._startPos = yi(t)),
+                    (this._startPos = bi(t)),
                     (this._offset = i.subtract(this._startPos)),
                     (this._startTime = +new Date()),
                     this.fire("start"),
@@ -1142,27 +1123,27 @@
                 this._inProgress && (this._step(!0), this._complete());
             },
             _animate: function () {
-                (this._animId = M(this._animate, this)), this._step();
+                (this._animId = x(this._animate, this)), this._step();
             },
             _step: function (t) {
-                var i = new Date() - this._startTime,
+                var i = +new Date() - this._startTime,
                     e = 1e3 * this._duration;
                 i < e ? this._runFrame(this._easeOut(i / e), t) : (this._runFrame(1), this._complete());
             },
             _runFrame: function (t, i) {
-                var e = this._startPos.add(this._offset.multiplyBy(t));
-                i && e._round(), vi(this._el, e), this.fire("step");
+                t = this._startPos.add(this._offset.multiplyBy(t));
+                i && t._round(), Z(this._el, t), this.fire("step");
             },
             _complete: function () {
-                z(this._animId), (this._inProgress = !1), this.fire("end");
+                r(this._animId), (this._inProgress = !1), this.fire("end");
             },
             _easeOut: function (t) {
                 return 1 - Math.pow(1 - t, this._easeOutPower);
             },
         }),
-        Ki = E.extend({
+        A = et.extend({
             options: {
-                crs: Y,
+                crs: lt,
                 center: void 0,
                 zoom: void 0,
                 minZoom: void 0,
@@ -1187,20 +1168,20 @@
                     (this._sizeChanged = !0),
                     this._initContainer(t),
                     this._initLayout(),
-                    (this._onResize = p(this._onResize, this)),
+                    (this._onResize = a(this._onResize, this)),
                     this._initEvents(),
                     i.maxBounds && this.setMaxBounds(i.maxBounds),
                     void 0 !== i.zoom && (this._zoom = this._limitZoom(i.zoom)),
-                    i.center && void 0 !== i.zoom && this.setView(j(i.center), i.zoom, { reset: !0 }),
+                    i.center && void 0 !== i.zoom && this.setView(w(i.center), i.zoom, { reset: !0 }),
                     this.callInitHooks(),
-                    (this._zoomAnimated = ii && vt && !Tt && this.options.zoomAnimation),
-                    this._zoomAnimated && (this._createAnimProxy(), zi(this._proxy, ei, this._catchTransitionEnd, this)),
+                    (this._zoomAnimated = ci && P.any3d && !P.mobileOpera && this.options.zoomAnimation),
+                    this._zoomAnimated && (this._createAnimProxy(), S(this._proxy, di, this._catchTransitionEnd, this)),
                     this._addLayers(this.options.layers);
             },
             setView: function (t, i, e) {
                 if (
-                    ((i = void 0 === i ? this._zoom : this._limitZoom(i)), (t = this._limitCenter(j(t), i, this.options.maxBounds)), (e = e || {}), this._stop(), this._loaded && !e.reset && !0 !== e) &&
-                    (void 0 !== e.animate && ((e.zoom = h({ animate: e.animate }, e.zoom)), (e.pan = h({ animate: e.animate, duration: e.duration }, e.pan))),
+                    ((i = void 0 === i ? this._zoom : this._limitZoom(i)), (t = this._limitCenter(w(t), i, this.options.maxBounds)), (e = e || {}), this._stop(), this._loaded && !e.reset && !0 !== e) &&
+                    (void 0 !== e.animate && ((e.zoom = l({ animate: e.animate }, e.zoom)), (e.pan = l({ animate: e.animate, duration: e.duration }, e.pan))),
                     this._zoom !== i ? this._tryAnimatedZoom && this._tryAnimatedZoom(t, i, e.zoom) : this._tryAnimatedPan(t, e.pan))
                 )
                     return clearTimeout(this._sizeTimer), this;
@@ -1210,33 +1191,31 @@
                 return this._loaded ? this.setView(this.getCenter(), t, { zoom: i }) : ((this._zoom = t), this);
             },
             zoomIn: function (t, i) {
-                return (t = t || (vt ? this.options.zoomDelta : 1)), this.setZoom(this._zoom + t, i);
+                return (t = t || (P.any3d ? this.options.zoomDelta : 1)), this.setZoom(this._zoom + t, i);
             },
             zoomOut: function (t, i) {
-                return (t = t || (vt ? this.options.zoomDelta : 1)), this.setZoom(this._zoom - t, i);
+                return (t = t || (P.any3d ? this.options.zoomDelta : 1)), this.setZoom(this._zoom - t, i);
             },
             setZoomAround: function (t, i, e) {
                 var n = this.getZoomScale(i),
                     o = this.getSize().divideBy(2),
-                    s = (t instanceof k ? t : this.latLngToContainerPoint(t)).subtract(o).multiplyBy(1 - 1 / n),
-                    r = this.containerPointToLatLng(o.add(s));
-                return this.setView(r, i, { zoom: e });
+                    t = (t instanceof p ? t : this.latLngToContainerPoint(t)).subtract(o).multiplyBy(1 - 1 / n),
+                    n = this.containerPointToLatLng(o.add(t));
+                return this.setView(n, i, { zoom: e });
             },
             _getBoundsCenterZoom: function (t, i) {
-                (i = i || {}), (t = t.getBounds ? t.getBounds() : N(t));
-                var e = A(i.paddingTopLeft || i.padding || [0, 0]),
-                    n = A(i.paddingBottomRight || i.padding || [0, 0]),
+                (i = i || {}), (t = t.getBounds ? t.getBounds() : g(t));
+                var e = _(i.paddingTopLeft || i.padding || [0, 0]),
+                    n = _(i.paddingBottomRight || i.padding || [0, 0]),
                     o = this.getBoundsZoom(t, !1, e.add(n));
                 if ((o = "number" == typeof i.maxZoom ? Math.min(i.maxZoom, o) : o) === 1 / 0) return { center: t.getCenter(), zoom: o };
-                var s = n.subtract(e).divideBy(2),
-                    r = this.project(t.getSouthWest(), o),
-                    a = this.project(t.getNorthEast(), o);
-                return { center: this.unproject(r.add(a).divideBy(2).add(s), o), zoom: o };
+                (i = n.subtract(e).divideBy(2)), (n = this.project(t.getSouthWest(), o)), (e = this.project(t.getNorthEast(), o));
+                return { center: this.unproject(n.add(e).divideBy(2).add(i), o), zoom: o };
             },
             fitBounds: function (t, i) {
-                if (!(t = N(t)).isValid()) throw new Error("Bounds are not valid.");
-                var e = this._getBoundsCenterZoom(t, i);
-                return this.setView(e.center, e.zoom, i);
+                if (!(t = g(t)).isValid()) throw new Error("Bounds are not valid.");
+                t = this._getBoundsCenterZoom(t, i);
+                return this.setView(t.center, t.zoom, i);
             },
             fitWorld: function (t) {
                 return this.fitBounds(
@@ -1253,12 +1232,12 @@
             panBy: function (t, i) {
                 return (
                     (i = i || {}),
-                    (t = A(t).round()).x || t.y
+                    (t = _(t).round()).x || t.y
                         ? (!0 === i.animate || this.getSize().contains(t)
-                              ? (this._panAnim || ((this._panAnim = new Gi()), this._panAnim.on({ step: this._onPanTransitionStep, end: this._onPanTransitionEnd }, this)),
+                              ? (this._panAnim || ((this._panAnim = new Wi()), this._panAnim.on({ step: this._onPanTransitionStep, end: this._onPanTransitionEnd }, this)),
                                 i.noMoveStart || this.fire("movestart"),
                                 !1 !== i.animate
-                                    ? (ci(this._mapPane, "leaflet-pan-anim"), (e = this._getMapPanePos().subtract(t).round()), this._panAnim.run(this._mapPane, e, i.duration || 0.25, i.easeLinearity))
+                                    ? (z(this._mapPane, "leaflet-pan-anim"), (e = this._getMapPanePos().subtract(t).round()), this._panAnim.run(this._mapPane, e, i.duration || 0.25, i.easeLinearity))
                                     : (this._rawPanBy(t), this.fire("move").fire("moveend")))
                               : this._resetView(this.unproject(this.project(this.getCenter()).add(t)), this.getZoom()),
                           this)
@@ -1266,58 +1245,53 @@
                 );
                 var e;
             },
-            flyTo: function (s, r, t) {
-                if (!1 === (t = t || {}).animate || !vt) return this.setView(s, r, t);
+            flyTo: function (n, o, t) {
+                if (!1 === (t = t || {}).animate || !P.any3d) return this.setView(n, o, t);
                 this._stop();
-                var a = this.project(this.getCenter()),
-                    h = this.project(s),
+                var s = this.project(this.getCenter()),
+                    r = this.project(n),
                     i = this.getSize(),
-                    u = this._zoom;
-                (s = j(s)), (r = void 0 === r ? u : r);
-                var l = Math.max(i.x, i.y),
-                    n = l * this.getZoomScale(u, r),
-                    c = h.distanceTo(a) || 1,
-                    _ = 1.42,
-                    o = _ * _;
-                function e(t) {
-                    var i = (n * n - l * l + (t ? -1 : 1) * o * o * c * c) / (2 * (t ? n : l) * o * c),
-                        e = Math.sqrt(i * i + 1) - i;
-                    return e < 1e-9 ? -18 : Math.log(e);
-                }
+                    a = this._zoom,
+                    h = ((n = w(n)), (o = void 0 === o ? a : o), Math.max(i.x, i.y)),
+                    e = h * this.getZoomScale(a, o),
+                    l = r.distanceTo(s) || 1,
+                    u = 1.42,
+                    c = u * u;
                 function d(t) {
+                    (t = (e * e - h * h + (t ? -1 : 1) * c * c * l * l) / (2 * (t ? e : h) * c * l)), (t = Math.sqrt(t * t + 1) - t);
+                    return t < 1e-9 ? -18 : Math.log(t);
+                }
+                function _(t) {
                     return (Math.exp(t) - Math.exp(-t)) / 2;
                 }
                 function p(t) {
                     return (Math.exp(t) + Math.exp(-t)) / 2;
                 }
-                var m = e(0);
+                var m = d(0);
                 function f(t) {
-                    return (l * (p(m) * (d((i = m + _ * t)) / p(i)) - d(m))) / o;
-                    var i;
+                    return (h * (p(m) * (_((t = m + u * t)) / p(t)) - _(m))) / c;
                 }
                 var g = Date.now(),
-                    v = (e(1) - m) / _,
+                    v = (d(1) - m) / u,
                     y = t.duration ? 1e3 * t.duration : 1e3 * v * 0.8;
                 return (
                     this._moveStart(!0, t.noMoveStart),
                     function t() {
-                        var i,
-                            e,
-                            n = (Date.now() - g) / y,
-                            o = ((i = n), (1 - Math.pow(1 - i, 1.5)) * v);
-                        n <= 1
-                            ? ((this._flyToFrame = M(t, this)), this._move(this.unproject(a.add(h.subtract(a).multiplyBy(f(o) / c)), u), this.getScaleZoom(l / ((e = o), l * (p(m) / p(m + _ * e))), u), { flyTo: !0 }))
-                            : this._move(s, r)._moveEnd(!0);
+                        var i = (Date.now() - g) / y,
+                            e = (1 - Math.pow(1 - i, 1.5)) * v;
+                        i <= 1
+                            ? ((this._flyToFrame = x(t, this)), this._move(this.unproject(s.add(r.subtract(s).multiplyBy(f(e) / l)), a), this.getScaleZoom(h / ((i = e), h * (p(m) / p(m + u * i))), a), { flyTo: !0 }))
+                            : this._move(n, o)._moveEnd(!0);
                     }.call(this),
                     this
                 );
             },
             flyToBounds: function (t, i) {
-                var e = this._getBoundsCenterZoom(t, i);
-                return this.flyTo(e.center, e.zoom, i);
+                t = this._getBoundsCenterZoom(t, i);
+                return this.flyTo(t.center, t.zoom, i);
             },
             setMaxBounds: function (t) {
-                return (t = N(t)).isValid()
+                return (t = g(t)).isValid()
                     ? (this.options.maxBounds && this.off("moveend", this._panInsideMaxBounds), (this.options.maxBounds = t), this._loaded && this._panInsideMaxBounds(), this.on("moveend", this._panInsideMaxBounds))
                     : ((this.options.maxBounds = null), this.off("moveend", this._panInsideMaxBounds));
             },
@@ -1332,45 +1306,41 @@
             panInsideBounds: function (t, i) {
                 this._enforcingBounds = !0;
                 var e = this.getCenter(),
-                    n = this._limitCenter(e, this._zoom, N(t));
-                return e.equals(n) || this.panTo(n, i), (this._enforcingBounds = !1), this;
+                    t = this._limitCenter(e, this._zoom, g(t));
+                return e.equals(t) || this.panTo(t, i), (this._enforcingBounds = !1), this;
             },
             panInside: function (t, i) {
-                var e,
-                    n,
-                    o = A((i = i || {}).paddingTopLeft || i.padding || [0, 0]),
-                    s = A(i.paddingBottomRight || i.padding || [0, 0]),
-                    r = this.getCenter(),
-                    a = this.project(r),
-                    h = this.project(t),
-                    u = this.getPixelBounds(),
-                    l = u.getSize().divideBy(2),
-                    c = O([u.min.add(o), u.max.subtract(s)]);
+                var e = _((i = i || {}).paddingTopLeft || i.padding || [0, 0]),
+                    n = _(i.paddingBottomRight || i.padding || [0, 0]),
+                    o = this.project(this.getCenter()),
+                    t = this.project(t),
+                    s = this.getPixelBounds(),
+                    e = f([s.min.add(e), s.max.subtract(n)]),
+                    s = e.getSize();
                 return (
-                    c.contains(h) ||
+                    e.contains(t) ||
                         ((this._enforcingBounds = !0),
-                        (e = a.subtract(h)),
-                        (n = A(h.x + e.x, h.y + e.y)),
-                        (h.x < c.min.x || h.x > c.max.x) && ((n.x = a.x - e.x), 0 < e.x ? (n.x += l.x - o.x) : (n.x -= l.x - s.x)),
-                        (h.y < c.min.y || h.y > c.max.y) && ((n.y = a.y - e.y), 0 < e.y ? (n.y += l.y - o.y) : (n.y -= l.y - s.y)),
-                        this.panTo(this.unproject(n), i),
+                        (n = t.subtract(e.getCenter())),
+                        (e = e.extend(t).getSize().subtract(s)),
+                        (o.x += n.x < 0 ? -e.x : e.x),
+                        (o.y += n.y < 0 ? -e.y : e.y),
+                        this.panTo(this.unproject(o), i),
                         (this._enforcingBounds = !1)),
                     this
                 );
             },
             invalidateSize: function (t) {
                 if (!this._loaded) return this;
-                t = h({ animate: !1, pan: !0 }, !0 === t ? { animate: !0 } : t);
-                var i = this.getSize();
-                (this._sizeChanged = !0), (this._lastCenter = null);
-                var e = this.getSize(),
+                t = l({ animate: !1, pan: !0 }, !0 === t ? { animate: !0 } : t);
+                var i = this.getSize(),
+                    e = ((this._sizeChanged = !0), (this._lastCenter = null), this.getSize()),
                     n = i.divideBy(2).round(),
                     o = e.divideBy(2).round(),
-                    s = n.subtract(o);
-                return s.x || s.y
+                    n = n.subtract(o);
+                return n.x || n.y
                     ? (t.animate && t.pan
-                          ? this.panBy(s)
-                          : (t.pan && this._rawPanBy(s), this.fire("move"), t.debounceMoveend ? (clearTimeout(this._sizeTimer), (this._sizeTimer = setTimeout(p(this.fire, this, "moveend"), 200))) : this.fire("moveend")),
+                          ? this.panBy(n)
+                          : (t.pan && this._rawPanBy(n), this.fire("move"), t.debounceMoveend ? (clearTimeout(this._sizeTimer), (this._sizeTimer = setTimeout(a(this.fire, this, "moveend"), 200))) : this.fire("moveend")),
                       this.fire("resize", { oldSize: i, newSize: e }))
                     : this;
             },
@@ -1378,57 +1348,61 @@
                 return this.setZoom(this._limitZoom(this._zoom)), this.options.zoomSnap || this.fire("viewreset"), this._stop();
             },
             locate: function (t) {
-                if (((t = this._locateOptions = h({ timeout: 1e4, watch: !1 }, t)), !("geolocation" in navigator))) return this._handleGeolocationError({ code: 0, message: "Geolocation not supported." }), this;
-                var i = p(this._handleGeolocationResponse, this),
-                    e = p(this._handleGeolocationError, this);
+                if (((t = this._locateOptions = l({ timeout: 1e4, watch: !1 }, t)), !("geolocation" in navigator))) return this._handleGeolocationError({ code: 0, message: "Geolocation not supported." }), this;
+                var i = a(this._handleGeolocationResponse, this),
+                    e = a(this._handleGeolocationError, this);
                 return t.watch ? (this._locationWatchId = navigator.geolocation.watchPosition(i, e, t)) : navigator.geolocation.getCurrentPosition(i, e, t), this;
             },
             stopLocate: function () {
                 return navigator.geolocation && navigator.geolocation.clearWatch && navigator.geolocation.clearWatch(this._locationWatchId), this._locateOptions && (this._locateOptions.setView = !1), this;
             },
             _handleGeolocationError: function (t) {
-                var i = t.code,
-                    e = t.message || (1 === i ? "permission denied" : 2 === i ? "position unavailable" : "timeout");
-                this._locateOptions.setView && !this._loaded && this.fitWorld(), this.fire("locationerror", { code: i, message: "Geolocation error: " + e + "." });
+                var i;
+                this._container._leaflet_id &&
+                    ((i = t.code),
+                    (t = t.message || (1 === i ? "permission denied" : 2 === i ? "position unavailable" : "timeout")),
+                    this._locateOptions.setView && !this._loaded && this.fitWorld(),
+                    this.fire("locationerror", { code: i, message: "Geolocation error: " + t + "." }));
             },
             _handleGeolocationResponse: function (t) {
-                var i,
-                    e = new D(t.coords.latitude, t.coords.longitude),
-                    n = e.toBounds(2 * t.coords.accuracy),
-                    o = this._locateOptions;
-                o.setView && ((i = this.getBoundsZoom(n)), this.setView(e, o.maxZoom ? Math.min(i, o.maxZoom) : i));
-                var s = { latlng: e, bounds: n, timestamp: t.timestamp };
-                for (var r in t.coords) "number" == typeof t.coords[r] && (s[r] = t.coords[r]);
-                this.fire("locationfound", s);
+                if (this._container._leaflet_id) {
+                    var i,
+                        e,
+                        n = new v(t.coords.latitude, t.coords.longitude),
+                        o = n.toBounds(2 * t.coords.accuracy),
+                        s = this._locateOptions,
+                        r = (s.setView && ((i = this.getBoundsZoom(o)), this.setView(n, s.maxZoom ? Math.min(i, s.maxZoom) : i)), { latlng: n, bounds: o, timestamp: t.timestamp });
+                    for (e in t.coords) "number" == typeof t.coords[e] && (r[e] = t.coords[e]);
+                    this.fire("locationfound", r);
+                }
             },
             addHandler: function (t, i) {
                 if (!i) return this;
-                var e = (this[t] = new i(this));
-                return this._handlers.push(e), this.options[t] && e.enable(), this;
+                i = this[t] = new i(this);
+                return this._handlers.push(i), this.options[t] && i.enable(), this;
             },
             remove: function () {
-                if ((this._initEvents(!0), this.off("moveend", this._panInsideMaxBounds), this._containerId !== this._container._leaflet_id)) throw new Error("Map container is being reused by another instance");
+                if ((this._initEvents(!0), this.options.maxBounds && this.off("moveend", this._panInsideMaxBounds), this._containerId !== this._container._leaflet_id)) throw new Error("Map container is being reused by another instance");
                 try {
                     delete this._container._leaflet_id, delete this._containerId;
                 } catch (t) {
                     (this._container._leaflet_id = void 0), (this._containerId = void 0);
                 }
-                var t;
-                for (t in (void 0 !== this._locationWatchId && this.stopLocate(),
+                for (var t in (void 0 !== this._locationWatchId && this.stopLocate(),
                 this._stop(),
-                ri(this._mapPane),
+                T(this._mapPane),
                 this._clearControlPos && this._clearControlPos(),
-                this._resizeRequest && (z(this._resizeRequest), (this._resizeRequest = null)),
+                this._resizeRequest && (r(this._resizeRequest), (this._resizeRequest = null)),
                 this._clearHandlers(),
                 this._loaded && this.fire("unload"),
                 this._layers))
                     this._layers[t].remove();
-                for (t in this._panes) ri(this._panes[t]);
+                for (t in this._panes) T(this._panes[t]);
                 return (this._layers = []), (this._panes = []), delete this._mapPane, delete this._renderer, this;
             },
             createPane: function (t, i) {
-                var e = si("div", "leaflet-pane" + (t ? " leaflet-" + t.replace("Pane", "") + "-pane" : ""), i || this._mapPane);
-                return t && (this._panes[t] = e), e;
+                i = b("div", "leaflet-pane" + (t ? " leaflet-" + t.replace("Pane", "") + "-pane" : ""), i || this._mapPane);
+                return t && (this._panes[t] = i), i;
             },
             getCenter: function () {
                 return this._checkIfLoaded(), this._lastCenter && !this._moved() ? this._lastCenter : this.layerPointToLatLng(this._getCenterLayerPoint());
@@ -1438,7 +1412,7 @@
             },
             getBounds: function () {
                 var t = this.getPixelBounds();
-                return new R(this.unproject(t.getBottomLeft()), this.unproject(t.getTopRight()));
+                return new s(this.unproject(t.getBottomLeft()), this.unproject(t.getTopRight()));
             },
             getMinZoom: function () {
                 return void 0 === this.options.minZoom ? this._layersMinZoom || 0 : this.options.minZoom;
@@ -1447,27 +1421,27 @@
                 return void 0 === this.options.maxZoom ? (void 0 === this._layersMaxZoom ? 1 / 0 : this._layersMaxZoom) : this.options.maxZoom;
             },
             getBoundsZoom: function (t, i, e) {
-                (t = N(t)), (e = A(e || [0, 0]));
+                (t = g(t)), (e = _(e || [0, 0]));
                 var n = this.getZoom() || 0,
                     o = this.getMinZoom(),
                     s = this.getMaxZoom(),
                     r = t.getNorthWest(),
-                    a = t.getSouthEast(),
-                    h = this.getSize().subtract(e),
-                    u = O(this.project(a, n), this.project(r, n)).getSize(),
-                    l = vt ? this.options.zoomSnap : 1,
-                    c = h.x / u.x,
-                    _ = h.y / u.y,
-                    d = i ? Math.max(c, _) : Math.min(c, _),
-                    n = this.getScaleZoom(d, n);
-                return l && ((n = Math.round(n / (l / 100)) * (l / 100)), (n = i ? Math.ceil(n / l) * l : Math.floor(n / l) * l)), Math.max(o, Math.min(s, n));
+                    t = t.getSouthEast(),
+                    e = this.getSize().subtract(e),
+                    t = f(this.project(t, n), this.project(r, n)).getSize(),
+                    r = P.any3d ? this.options.zoomSnap : 1,
+                    a = e.x / t.x,
+                    e = e.y / t.y,
+                    t = i ? Math.max(a, e) : Math.min(a, e),
+                    n = this.getScaleZoom(t, n);
+                return r && ((n = Math.round(n / (r / 100)) * (r / 100)), (n = i ? Math.ceil(n / r) * r : Math.floor(n / r) * r)), Math.max(o, Math.min(s, n));
             },
             getSize: function () {
-                return (this._size && !this._sizeChanged) || ((this._size = new k(this._container.clientWidth || 0, this._container.clientHeight || 0)), (this._sizeChanged = !1)), this._size.clone();
+                return (this._size && !this._sizeChanged) || ((this._size = new p(this._container.clientWidth || 0, this._container.clientHeight || 0)), (this._sizeChanged = !1)), this._size.clone();
             },
             getPixelBounds: function (t, i) {
-                var e = this._getTopLeftPoint(t, i);
-                return new I(e, e.add(this.getSize()));
+                t = this._getTopLeftPoint(t, i);
+                return new m(t, t.add(this.getSize()));
             },
             getPixelOrigin: function () {
                 return this._checkIfLoaded(), this._pixelOrigin;
@@ -1489,48 +1463,47 @@
                 return (i = void 0 === i ? this._zoom : i), e.scale(t) / e.scale(i);
             },
             getScaleZoom: function (t, i) {
-                var e = this.options.crs;
-                i = void 0 === i ? this._zoom : i;
-                var n = e.zoom(t * e.scale(i));
-                return isNaN(n) ? 1 / 0 : n;
+                var e = this.options.crs,
+                    t = ((i = void 0 === i ? this._zoom : i), e.zoom(t * e.scale(i)));
+                return isNaN(t) ? 1 / 0 : t;
             },
             project: function (t, i) {
-                return (i = void 0 === i ? this._zoom : i), this.options.crs.latLngToPoint(j(t), i);
+                return (i = void 0 === i ? this._zoom : i), this.options.crs.latLngToPoint(w(t), i);
             },
             unproject: function (t, i) {
-                return (i = void 0 === i ? this._zoom : i), this.options.crs.pointToLatLng(A(t), i);
+                return (i = void 0 === i ? this._zoom : i), this.options.crs.pointToLatLng(_(t), i);
             },
             layerPointToLatLng: function (t) {
-                var i = A(t).add(this.getPixelOrigin());
-                return this.unproject(i);
+                t = _(t).add(this.getPixelOrigin());
+                return this.unproject(t);
             },
             latLngToLayerPoint: function (t) {
-                return this.project(j(t))._round()._subtract(this.getPixelOrigin());
+                return this.project(w(t))._round()._subtract(this.getPixelOrigin());
             },
             wrapLatLng: function (t) {
-                return this.options.crs.wrapLatLng(j(t));
+                return this.options.crs.wrapLatLng(w(t));
             },
             wrapLatLngBounds: function (t) {
-                return this.options.crs.wrapLatLngBounds(N(t));
+                return this.options.crs.wrapLatLngBounds(g(t));
             },
             distance: function (t, i) {
-                return this.options.crs.distance(j(t), j(i));
+                return this.options.crs.distance(w(t), w(i));
             },
             containerPointToLayerPoint: function (t) {
-                return A(t).subtract(this._getMapPanePos());
+                return _(t).subtract(this._getMapPanePos());
             },
             layerPointToContainerPoint: function (t) {
-                return A(t).add(this._getMapPanePos());
+                return _(t).add(this._getMapPanePos());
             },
             containerPointToLatLng: function (t) {
-                var i = this.containerPointToLayerPoint(A(t));
-                return this.layerPointToLatLng(i);
+                t = this.containerPointToLayerPoint(_(t));
+                return this.layerPointToLatLng(t);
             },
             latLngToContainerPoint: function (t) {
-                return this.layerPointToContainerPoint(this.latLngToLayerPoint(j(t)));
+                return this.layerPointToContainerPoint(this.latLngToLayerPoint(w(t)));
             },
             mouseEventToContainerPoint: function (t) {
-                return Di(t, this._container);
+                return Ni(t, this._container);
             },
             mouseEventToLayerPoint: function (t) {
                 return this.containerPointToLayerPoint(this.mouseEventToContainerPoint(t));
@@ -1539,54 +1512,62 @@
                 return this.layerPointToLatLng(this.mouseEventToLayerPoint(t));
             },
             _initContainer: function (t) {
-                var i = (this._container = ni(t));
-                if (!i) throw new Error("Map container not found.");
-                if (i._leaflet_id) throw new Error("Map container is already initialized.");
-                zi(i, "scroll", this._onScroll, this), (this._containerId = m(i));
+                t = this._container = _i(t);
+                if (!t) throw new Error("Map container not found.");
+                if (t._leaflet_id) throw new Error("Map container is already initialized.");
+                S(t, "scroll", this._onScroll, this), (this._containerId = h(t));
             },
             _initLayout: function () {
-                var t = this._container;
-                (this._fadeAnimated = this.options.fadeAnimation && vt),
-                    ci(t, "leaflet-container" + (bt ? " leaflet-touch" : "") + (zt ? " leaflet-retina" : "") + (it ? " leaflet-oldie" : "") + (ct ? " leaflet-safari" : "") + (this._fadeAnimated ? " leaflet-fade-anim" : ""));
-                var i = oi(t, "position");
+                var t = this._container,
+                    i =
+                        ((this._fadeAnimated = this.options.fadeAnimation && P.any3d),
+                        z(
+                            t,
+                            "leaflet-container" +
+                                (P.touch ? " leaflet-touch" : "") +
+                                (P.retina ? " leaflet-retina" : "") +
+                                (P.ielt9 ? " leaflet-oldie" : "") +
+                                (P.safari ? " leaflet-safari" : "") +
+                                (this._fadeAnimated ? " leaflet-fade-anim" : "")
+                        ),
+                        pi(t, "position"));
                 "absolute" !== i && "relative" !== i && "fixed" !== i && (t.style.position = "relative"), this._initPanes(), this._initControlPos && this._initControlPos();
             },
             _initPanes: function () {
                 var t = (this._panes = {});
                 (this._paneRenderers = {}),
                     (this._mapPane = this.createPane("mapPane", this._container)),
-                    vi(this._mapPane, new k(0, 0)),
+                    Z(this._mapPane, new p(0, 0)),
                     this.createPane("tilePane"),
-                    this.createPane("shadowPane"),
                     this.createPane("overlayPane"),
+                    this.createPane("shadowPane"),
                     this.createPane("markerPane"),
                     this.createPane("tooltipPane"),
                     this.createPane("popupPane"),
-                    this.options.markerZoomAnimation || (ci(t.markerPane, "leaflet-zoom-hide"), ci(t.shadowPane, "leaflet-zoom-hide"));
+                    this.options.markerZoomAnimation || (z(t.markerPane, "leaflet-zoom-hide"), z(t.shadowPane, "leaflet-zoom-hide"));
             },
             _resetView: function (t, i) {
-                vi(this._mapPane, new k(0, 0));
-                var e = !this._loaded;
-                (this._loaded = !0), (i = this._limitZoom(i)), this.fire("viewprereset");
-                var n = this._zoom !== i;
+                Z(this._mapPane, new p(0, 0));
+                var e = !this._loaded,
+                    n = ((this._loaded = !0), (i = this._limitZoom(i)), this.fire("viewprereset"), this._zoom !== i);
                 this._moveStart(n, !1)._move(t, i)._moveEnd(n), this.fire("viewreset"), e && this.fire("load");
             },
             _moveStart: function (t, i) {
                 return t && this.fire("zoomstart"), i || this.fire("movestart"), this;
             },
-            _move: function (t, i, e) {
+            _move: function (t, i, e, n) {
                 void 0 === i && (i = this._zoom);
-                var n = this._zoom !== i;
-                return (this._zoom = i), (this._lastCenter = t), (this._pixelOrigin = this._getNewPixelOrigin(t)), (n || (e && e.pinch)) && this.fire("zoom", e), this.fire("move", e);
+                var o = this._zoom !== i;
+                return (this._zoom = i), (this._lastCenter = t), (this._pixelOrigin = this._getNewPixelOrigin(t)), n ? e && e.pinch && this.fire("zoom", e) : ((o || (e && e.pinch)) && this.fire("zoom", e), this.fire("move", e)), this;
             },
             _moveEnd: function (t) {
                 return t && this.fire("zoomend"), this.fire("moveend");
             },
             _stop: function () {
-                return z(this._flyToFrame), this._panAnim && this._panAnim.stop(), this;
+                return r(this._flyToFrame), this._panAnim && this._panAnim.stop(), this;
             },
             _rawPanBy: function (t) {
-                vi(this._mapPane, this._getMapPanePos().subtract(t));
+                Z(this._mapPane, this._getMapPanePos().subtract(t));
             },
             _getZoomSpan: function () {
                 return this.getMaxZoom() - this.getMinZoom();
@@ -1599,14 +1580,14 @@
             },
             _initEvents: function (t) {
                 this._targets = {};
-                var i = t ? Si : zi;
-                i((this._targets[m(this._container)] = this)._container, "click dblclick mousedown mouseup mouseover mouseout mousemove contextmenu keypress keydown keyup", this._handleDOMEvent, this),
+                var i = t ? E : S;
+                i((this._targets[h(this._container)] = this)._container, "click dblclick mousedown mouseup mouseover mouseout mousemove contextmenu keypress keydown keyup", this._handleDOMEvent, this),
                     this.options.trackResize && i(window, "resize", this._onResize, this),
-                    vt && this.options.transform3DLimit && (t ? this.off : this.on).call(this, "moveend", this._onMoveEnd);
+                    P.any3d && this.options.transform3DLimit && (t ? this.off : this.on).call(this, "moveend", this._onMoveEnd);
             },
             _onResize: function () {
-                z(this._resizeRequest),
-                    (this._resizeRequest = M(function () {
+                r(this._resizeRequest),
+                    (this._resizeRequest = x(function () {
                         this.invalidateSize({ debounceMoveend: !0 });
                     }, this));
             },
@@ -1619,39 +1600,56 @@
             },
             _findEventTargets: function (t, i) {
                 for (var e, n = [], o = "mouseout" === i || "mouseover" === i, s = t.target || t.srcElement, r = !1; s; ) {
-                    if ((e = this._targets[m(s)]) && ("click" === i || "preclick" === i) && !t._simulated && this._draggableMoved(e)) {
+                    if ((e = this._targets[h(s)]) && ("click" === i || "preclick" === i) && this._draggableMoved(e)) {
                         r = !0;
                         break;
                     }
                     if (e && e.listens(i, !0)) {
-                        if (o && !Vi(s, t)) break;
+                        if (o && !Hi(s, t)) break;
                         if ((n.push(e), o)) break;
                     }
                     if (s === this._container) break;
                     s = s.parentNode;
                 }
-                return n.length || r || o || !Vi(s, t) || (n = [this]), n;
+                return (n = n.length || r || o || !this.listens(i, !0) ? n : [this]);
+            },
+            _isClickDisabled: function (t) {
+                for (; t !== this._container; ) {
+                    if (t._leaflet_disable_click) return !0;
+                    t = t.parentNode;
+                }
             },
             _handleDOMEvent: function (t) {
-                var i;
-                this._loaded && !Ui(t) && (("mousedown" !== (i = t.type) && "keypress" !== i && "keyup" !== i && "keydown" !== i) || Pi(t.target || t.srcElement), this._fireDOMEvent(t, i));
+                var i,
+                    e = t.target || t.srcElement;
+                !this._loaded || e._leaflet_disable_events || ("click" === t.type && this._isClickDisabled(e)) || ("mousedown" === (i = t.type) && zi(e), this._fireDOMEvent(t, i));
             },
             _mouseEvents: ["click", "dblclick", "mouseover", "mouseout", "contextmenu"],
             _fireDOMEvent: function (t, i, e) {
-                var n;
-                if (("click" === t.type && (((n = h({}, t)).type = "preclick"), this._fireDOMEvent(n, n.type, e)), !t._stopped && (e = (e || []).concat(this._findEventTargets(t, i))).length)) {
-                    var o = e[0];
-                    "contextmenu" === i && o.listens(i, !0) && Ri(t);
-                    var s,
-                        r = { originalEvent: t };
-                    "keypress" !== t.type &&
-                        "keydown" !== t.type &&
-                        "keyup" !== t.type &&
-                        ((s = o.getLatLng && (!o._radius || o._radius <= 10)),
-                        (r.containerPoint = s ? this.latLngToContainerPoint(o.getLatLng()) : this.mouseEventToContainerPoint(t)),
-                        (r.layerPoint = this.containerPointToLayerPoint(r.containerPoint)),
-                        (r.latlng = s ? o.getLatLng() : this.layerPointToLatLng(r.layerPoint)));
-                    for (var a = 0; a < e.length; a++) if ((e[a].fire(i, r, !0), r.originalEvent._stopped || (!1 === e[a].options.bubblingMouseEvents && -1 !== v(this._mouseEvents, i)))) return;
+                "click" === t.type && (((a = l({}, t)).type = "preclick"), this._fireDOMEvent(a, a.type, e));
+                var n = this._findEventTargets(t, i);
+                if (e) {
+                    for (var o = [], s = 0; s < e.length; s++) e[s].listens(i, !0) && o.push(e[s]);
+                    n = o.concat(n);
+                }
+                if (n.length) {
+                    "contextmenu" === i && B(t);
+                    var r,
+                        a = n[0],
+                        h = { originalEvent: t };
+                    for (
+                        "keypress" !== t.type &&
+                            "keydown" !== t.type &&
+                            "keyup" !== t.type &&
+                            ((r = a.getLatLng && (!a._radius || a._radius <= 10)),
+                            (h.containerPoint = r ? this.latLngToContainerPoint(a.getLatLng()) : this.mouseEventToContainerPoint(t)),
+                            (h.layerPoint = this.containerPointToLayerPoint(h.containerPoint)),
+                            (h.latlng = r ? a.getLatLng() : this.layerPointToLatLng(h.layerPoint))),
+                            s = 0;
+                        s < n.length;
+                        s++
+                    )
+                        if ((n[s].fire(i, h, !0), h.originalEvent._stopped || (!1 === n[s].options.bubblingMouseEvents && -1 !== G(this._mouseEvents, i)))) return;
                 }
             },
             _draggableMoved: function (t) {
@@ -1664,7 +1662,7 @@
                 return this._loaded ? t.call(i || this, { target: this }) : this.on("load", t, i), this;
             },
             _getMapPanePos: function () {
-                return yi(this._mapPane) || new k(0, 0);
+                return bi(this._mapPane) || new p(0, 0);
             },
             _moved: function () {
                 var t = this._getMapPanePos();
@@ -1678,12 +1676,12 @@
                 return this.project(t, i)._subtract(e)._add(this._getMapPanePos())._round();
             },
             _latLngToNewLayerPoint: function (t, i, e) {
-                var n = this._getNewPixelOrigin(e, i);
-                return this.project(t, i)._subtract(n);
+                e = this._getNewPixelOrigin(e, i);
+                return this.project(t, i)._subtract(e);
             },
             _latLngBoundsToNewLayerBounds: function (t, i, e) {
-                var n = this._getNewPixelOrigin(e, i);
-                return O([this.project(t.getSouthWest(), i)._subtract(n), this.project(t.getNorthWest(), i)._subtract(n), this.project(t.getSouthEast(), i)._subtract(n), this.project(t.getNorthEast(), i)._subtract(n)]);
+                e = this._getNewPixelOrigin(e, i);
+                return f([this.project(t.getSouthWest(), i)._subtract(e), this.project(t.getNorthWest(), i)._subtract(e), this.project(t.getSouthEast(), i)._subtract(e), this.project(t.getNorthEast(), i)._subtract(e)]);
             },
             _getCenterLayerPoint: function () {
                 return this.containerPointToLayerPoint(this.getSize()._divideBy(2));
@@ -1695,21 +1693,19 @@
                 if (!e) return t;
                 var n = this.project(t, i),
                     o = this.getSize().divideBy(2),
-                    s = new I(n.subtract(o), n.add(o)),
-                    r = this._getBoundsOffset(s, e, i);
-                return r.round().equals([0, 0]) ? t : this.unproject(n.add(r), i);
+                    o = new m(n.subtract(o), n.add(o)),
+                    o = this._getBoundsOffset(o, e, i);
+                return o.round().equals([0, 0]) ? t : this.unproject(n.add(o), i);
             },
             _limitOffset: function (t, i) {
                 if (!i) return t;
                 var e = this.getPixelBounds(),
-                    n = new I(e.min.add(t), e.max.add(t));
-                return t.add(this._getBoundsOffset(n, i));
+                    e = new m(e.min.add(t), e.max.add(t));
+                return t.add(this._getBoundsOffset(e, i));
             },
             _getBoundsOffset: function (t, i, e) {
-                var n = O(this.project(i.getNorthEast(), e), this.project(i.getSouthWest(), e)),
-                    o = n.min.subtract(t.min),
-                    s = n.max.subtract(t.max);
-                return new k(this._rebound(o.x, -s.x), this._rebound(o.y, -s.y));
+                (i = f(this.project(i.getNorthEast(), e), this.project(i.getSouthWest(), e))), (e = i.min.subtract(t.min)), (i = i.max.subtract(t.max));
+                return new p(this._rebound(e.x, -i.x), this._rebound(e.y, -i.y));
             },
             _rebound: function (t, i) {
                 return 0 < t + i ? Math.round(t - i) / 2 : Math.max(0, Math.ceil(t)) - Math.max(0, Math.floor(i));
@@ -1717,28 +1713,28 @@
             _limitZoom: function (t) {
                 var i = this.getMinZoom(),
                     e = this.getMaxZoom(),
-                    n = vt ? this.options.zoomSnap : 1;
+                    n = P.any3d ? this.options.zoomSnap : 1;
                 return n && (t = Math.round(t / n) * n), Math.max(i, Math.min(e, t));
             },
             _onPanTransitionStep: function () {
                 this.fire("move");
             },
             _onPanTransitionEnd: function () {
-                _i(this._mapPane, "leaflet-pan-anim"), this.fire("moveend");
+                M(this._mapPane, "leaflet-pan-anim"), this.fire("moveend");
             },
             _tryAnimatedPan: function (t, i) {
-                var e = this._getCenterOffset(t)._trunc();
-                return !(!0 !== (i && i.animate) && !this.getSize().contains(e)) && (this.panBy(e, i), !0);
+                t = this._getCenterOffset(t)._trunc();
+                return !(!0 !== (i && i.animate) && !this.getSize().contains(t)) && (this.panBy(t, i), !0);
             },
             _createAnimProxy: function () {
-                var t = (this._proxy = si("div", "leaflet-proxy leaflet-zoom-animated"));
+                var t = (this._proxy = b("div", "leaflet-proxy leaflet-zoom-animated"));
                 this._panes.mapPane.appendChild(t),
                     this.on(
                         "zoomanim",
                         function (t) {
-                            var i = ti,
+                            var i = ui,
                                 e = this._proxy.style[i];
-                            gi(this._proxy, this.project(t.center, t.zoom), this.getZoomScale(t.zoom, 1)), e === this._proxy.style[i] && this._animatingZoom && this._onZoomTransitionEnd();
+                            Pi(this._proxy, this.project(t.center, t.zoom), this.getZoomScale(t.zoom, 1)), e === this._proxy.style[i] && this._animatingZoom && this._onZoomTransitionEnd();
                         },
                         this
                     ),
@@ -1746,12 +1742,12 @@
                     this._on("unload", this._destroyAnimProxy, this);
             },
             _destroyAnimProxy: function () {
-                ri(this._proxy), this.off("load moveend", this._animMoveEnd, this), delete this._proxy;
+                T(this._proxy), this.off("load moveend", this._animMoveEnd, this), delete this._proxy;
             },
             _animMoveEnd: function () {
                 var t = this.getCenter(),
                     i = this.getZoom();
-                gi(this._proxy, this.project(t, i), this.getZoomScale(i, 1));
+                Pi(this._proxy, this.project(t, i), this.getZoomScale(i, 1));
             },
             _catchTransitionEnd: function (t) {
                 this._animatingZoom && 0 <= t.propertyName.indexOf("transform") && this._onZoomTransitionEnd();
@@ -1763,10 +1759,10 @@
                 if (this._animatingZoom) return !0;
                 if (((e = e || {}), !this._zoomAnimated || !1 === e.animate || this._nothingToAnimate() || Math.abs(i - this._zoom) > this.options.zoomAnimationThreshold)) return !1;
                 var n = this.getZoomScale(i),
-                    o = this._getCenterOffset(t)._divideBy(1 - 1 / n);
+                    n = this._getCenterOffset(t)._divideBy(1 - 1 / n);
                 return (
-                    !(!0 !== e.animate && !this.getSize().contains(o)) &&
-                    (M(function () {
+                    !(!0 !== e.animate && !this.getSize().contains(n)) &&
+                    (x(function () {
                         this._moveStart(!0, !1)._animateZoom(t, i, !0);
                     }, this),
                     !0)
@@ -1774,215 +1770,233 @@
             },
             _animateZoom: function (t, i, e, n) {
                 this._mapPane &&
-                    (e && ((this._animatingZoom = !0), (this._animateToCenter = t), (this._animateToZoom = i), ci(this._mapPane, "leaflet-zoom-anim")),
+                    (e && ((this._animatingZoom = !0), (this._animateToCenter = t), (this._animateToZoom = i), z(this._mapPane, "leaflet-zoom-anim")),
                     this.fire("zoomanim", { center: t, zoom: i, noUpdate: n }),
-                    setTimeout(p(this._onZoomTransitionEnd, this), 250));
+                    this._tempFireZoomEvent || (this._tempFireZoomEvent = this._zoom !== this._animateToZoom),
+                    this._move(this._animateToCenter, this._animateToZoom, void 0, !0),
+                    setTimeout(a(this._onZoomTransitionEnd, this), 250));
             },
             _onZoomTransitionEnd: function () {
                 this._animatingZoom &&
-                    (this._mapPane && _i(this._mapPane, "leaflet-zoom-anim"),
+                    (this._mapPane && M(this._mapPane, "leaflet-zoom-anim"),
                     (this._animatingZoom = !1),
-                    this._move(this._animateToCenter, this._animateToZoom),
-                    M(function () {
-                        this._moveEnd(!0);
-                    }, this));
+                    this._move(this._animateToCenter, this._animateToZoom, void 0, !0),
+                    this._tempFireZoomEvent && this.fire("zoom"),
+                    delete this._tempFireZoomEvent,
+                    this.fire("move"),
+                    this._moveEnd(!0));
             },
         });
-    function Yi(t) {
-        return new Xi(t);
+    function Fi(t) {
+        return new I(t);
     }
-    var Xi = S.extend({
-        options: { position: "topright" },
-        initialize: function (t) {
-            c(this, t);
-        },
-        getPosition: function () {
-            return this.options.position;
-        },
-        setPosition: function (t) {
-            var i = this._map;
-            return i && i.removeControl(this), (this.options.position = t), i && i.addControl(this), this;
-        },
-        getContainer: function () {
-            return this._container;
-        },
-        addTo: function (t) {
-            this.remove(), (this._map = t);
-            var i = (this._container = this.onAdd(t)),
-                e = this.getPosition(),
-                n = t._controlCorners[e];
-            return ci(i, "leaflet-control"), -1 !== e.indexOf("bottom") ? n.insertBefore(i, n.firstChild) : n.appendChild(i), this._map.on("unload", this.remove, this), this;
-        },
-        remove: function () {
-            return this._map && (ri(this._container), this.onRemove && this.onRemove(this._map), this._map.off("unload", this.remove, this), (this._map = null)), this;
-        },
-        _refocusOnMap: function (t) {
-            this._map && t && 0 < t.screenX && 0 < t.screenY && this._map.getContainer().focus();
-        },
-    });
-    Ki.include({
-        addControl: function (t) {
-            return t.addTo(this), this;
-        },
-        removeControl: function (t) {
-            return t.remove(), this;
-        },
-        _initControlPos: function () {
-            var n = (this._controlCorners = {}),
-                o = "leaflet-",
-                s = (this._controlContainer = si("div", o + "control-container", this._container));
-            function t(t, i) {
-                var e = o + t + " " + o + i;
-                n[t + i] = si("div", e, s);
-            }
-            t("top", "left"), t("top", "right"), t("bottom", "left"), t("bottom", "right");
-        },
-        _clearControlPos: function () {
-            for (var t in this._controlCorners) ri(this._controlCorners[t]);
-            ri(this._controlContainer), delete this._controlCorners, delete this._controlContainer;
-        },
-    });
-    var Ji = Xi.extend({
-            options: {
-                collapsed: !0,
-                position: "topright",
-                autoZIndex: !0,
-                hideSingleBase: !1,
-                sortLayers: !1,
-                sortFunction: function (t, i, e, n) {
-                    return e < n ? -1 : n < e ? 1 : 0;
-                },
+    var Ui,
+        I = it.extend({
+            options: { position: "topright" },
+            initialize: function (t) {
+                c(this, t);
             },
-            initialize: function (t, i, e) {
-                for (var n in (c(this, e), (this._layerControlInputs = []), (this._layers = []), (this._lastZIndex = 0), (this._handlingClick = !1), t)) this._addLayer(t[n], n);
-                for (n in i) this._addLayer(i[n], n, !0);
+            getPosition: function () {
+                return this.options.position;
             },
-            onAdd: function (t) {
-                this._initLayout(), this._update(), (this._map = t).on("zoomend", this._checkDisabledLayers, this);
-                for (var i = 0; i < this._layers.length; i++) this._layers[i].layer.on("add remove", this._onLayerChange, this);
+            setPosition: function (t) {
+                var i = this._map;
+                return i && i.removeControl(this), (this.options.position = t), i && i.addControl(this), this;
+            },
+            getContainer: function () {
                 return this._container;
             },
             addTo: function (t) {
-                return Xi.prototype.addTo.call(this, t), this._expandIfNotCollapsed();
+                this.remove(), (this._map = t);
+                var i = (this._container = this.onAdd(t)),
+                    e = this.getPosition(),
+                    t = t._controlCorners[e];
+                return z(i, "leaflet-control"), -1 !== e.indexOf("bottom") ? t.insertBefore(i, t.firstChild) : t.appendChild(i), this._map.on("unload", this.remove, this), this;
             },
-            onRemove: function () {
-                this._map.off("zoomend", this._checkDisabledLayers, this);
-                for (var t = 0; t < this._layers.length; t++) this._layers[t].layer.off("add remove", this._onLayerChange, this);
+            remove: function () {
+                return this._map && (T(this._container), this.onRemove && this.onRemove(this._map), this._map.off("unload", this.remove, this), (this._map = null)), this;
             },
-            addBaseLayer: function (t, i) {
-                return this._addLayer(t, i), this._map ? this._update() : this;
-            },
-            addOverlay: function (t, i) {
-                return this._addLayer(t, i, !0), this._map ? this._update() : this;
-            },
-            removeLayer: function (t) {
-                t.off("add remove", this._onLayerChange, this);
-                var i = this._getLayer(m(t));
-                return i && this._layers.splice(this._layers.indexOf(i), 1), this._map ? this._update() : this;
-            },
-            expand: function () {
-                ci(this._container, "leaflet-control-layers-expanded"), (this._section.style.height = null);
-                var t = this._map.getSize().y - (this._container.offsetTop + 50);
-                return (
-                    t < this._section.clientHeight ? (ci(this._section, "leaflet-control-layers-scrollbar"), (this._section.style.height = t + "px")) : _i(this._section, "leaflet-control-layers-scrollbar"), this._checkDisabledLayers(), this
-                );
-            },
-            collapse: function () {
-                return _i(this._container, "leaflet-control-layers-expanded"), this;
-            },
-            _initLayout: function () {
-                var t = "leaflet-control-layers",
-                    i = (this._container = si("div", t)),
-                    e = this.options.collapsed;
-                i.setAttribute("aria-haspopup", !0), Oi(i), Ii(i);
-                var n = (this._section = si("section", t + "-list"));
-                e && (this._map.on("click", this.collapse, this), ot || zi(i, { mouseenter: this.expand, mouseleave: this.collapse }, this));
-                var o = (this._layersLink = si("a", t + "-toggle", i));
-                (o.href = "#"),
-                    (o.title = "Layers"),
-                    bt ? (zi(o, "click", Ni), zi(o, "click", this.expand, this)) : zi(o, "focus", this.expand, this),
-                    e || this.expand(),
-                    (this._baseLayersList = si("div", t + "-base", n)),
-                    (this._separator = si("div", t + "-separator", n)),
-                    (this._overlaysList = si("div", t + "-overlays", n)),
-                    i.appendChild(n);
-            },
-            _getLayer: function (t) {
-                for (var i = 0; i < this._layers.length; i++) if (this._layers[i] && m(this._layers[i].layer) === t) return this._layers[i];
-            },
-            _addLayer: function (t, i, e) {
-                this._map && t.on("add remove", this._onLayerChange, this),
-                    this._layers.push({ layer: t, name: i, overlay: e }),
-                    this.options.sortLayers &&
-                        this._layers.sort(
-                            p(function (t, i) {
-                                return this.options.sortFunction(t.layer, i.layer, t.name, i.name);
-                            }, this)
-                        ),
-                    this.options.autoZIndex && t.setZIndex && (this._lastZIndex++, t.setZIndex(this._lastZIndex)),
-                    this._expandIfNotCollapsed();
-            },
-            _update: function () {
-                if (!this._container) return this;
-                ai(this._baseLayersList), ai(this._overlaysList), (this._layerControlInputs = []);
-                for (var t, i, e, n = 0, o = 0; o < this._layers.length; o++) (e = this._layers[o]), this._addItem(e), (i = i || e.overlay), (t = t || !e.overlay), (n += e.overlay ? 0 : 1);
-                return this.options.hideSingleBase && ((t = t && 1 < n), (this._baseLayersList.style.display = t ? "" : "none")), (this._separator.style.display = i && t ? "" : "none"), this;
-            },
-            _onLayerChange: function (t) {
-                this._handlingClick || this._update();
-                var i = this._getLayer(m(t.target)),
-                    e = i.overlay ? ("add" === t.type ? "overlayadd" : "overlayremove") : "add" === t.type ? "baselayerchange" : null;
-                e && this._map.fire(e, i);
-            },
-            _createRadioElement: function (t, i) {
-                var e = '<input type="radio" class="leaflet-control-layers-selector" name="' + t + '"' + (i ? ' checked="checked"' : "") + "/>",
-                    n = document.createElement("div");
-                return (n.innerHTML = e), n.firstChild;
-            },
-            _addItem: function (t) {
-                var i,
-                    e = document.createElement("label"),
-                    n = this._map.hasLayer(t.layer);
-                t.overlay ? (((i = document.createElement("input")).type = "checkbox"), (i.className = "leaflet-control-layers-selector"), (i.defaultChecked = n)) : (i = this._createRadioElement("leaflet-base-layers_" + m(this), n)),
-                    this._layerControlInputs.push(i),
-                    (i.layerId = m(t.layer)),
-                    zi(i, "click", this._onInputClick, this);
-                var o = document.createElement("span");
-                o.innerHTML = " " + t.name;
-                var s = document.createElement("div");
-                return e.appendChild(s), s.appendChild(i), s.appendChild(o), (t.overlay ? this._overlaysList : this._baseLayersList).appendChild(e), this._checkDisabledLayers(), e;
-            },
-            _onInputClick: function () {
-                var t,
-                    i,
-                    e = this._layerControlInputs,
-                    n = [],
-                    o = [];
-                this._handlingClick = !0;
-                for (var s = e.length - 1; 0 <= s; s--) (t = e[s]), (i = this._getLayer(t.layerId).layer), t.checked ? n.push(i) : t.checked || o.push(i);
-                for (s = 0; s < o.length; s++) this._map.hasLayer(o[s]) && this._map.removeLayer(o[s]);
-                for (s = 0; s < n.length; s++) this._map.hasLayer(n[s]) || this._map.addLayer(n[s]);
-                (this._handlingClick = !1), this._refocusOnMap();
-            },
-            _checkDisabledLayers: function () {
-                for (var t, i, e = this._layerControlInputs, n = this._map.getZoom(), o = e.length - 1; 0 <= o; o--)
-                    (t = e[o]), (i = this._getLayer(t.layerId).layer), (t.disabled = (void 0 !== i.options.minZoom && n < i.options.minZoom) || (void 0 !== i.options.maxZoom && n > i.options.maxZoom));
-            },
-            _expandIfNotCollapsed: function () {
-                return this._map && !this.options.collapsed && this.expand(), this;
-            },
-            _expand: function () {
-                return this.expand();
-            },
-            _collapse: function () {
-                return this.collapse();
+            _refocusOnMap: function (t) {
+                this._map && t && 0 < t.screenX && 0 < t.screenY && this._map.getContainer().focus();
             },
         }),
-        $i = Xi.extend({
-            options: { position: "topleft", zoomInText: "+", zoomInTitle: "Zoom in", zoomOutText: "&#x2212;", zoomOutTitle: "Zoom out" },
+        Vi =
+            (A.include({
+                addControl: function (t) {
+                    return t.addTo(this), this;
+                },
+                removeControl: function (t) {
+                    return t.remove(), this;
+                },
+                _initControlPos: function () {
+                    var e = (this._controlCorners = {}),
+                        n = "leaflet-",
+                        o = (this._controlContainer = b("div", n + "control-container", this._container));
+                    function t(t, i) {
+                        e[t + i] = b("div", n + t + " " + n + i, o);
+                    }
+                    t("top", "left"), t("top", "right"), t("bottom", "left"), t("bottom", "right");
+                },
+                _clearControlPos: function () {
+                    for (var t in this._controlCorners) T(this._controlCorners[t]);
+                    T(this._controlContainer), delete this._controlCorners, delete this._controlContainer;
+                },
+            }),
+            I.extend({
+                options: {
+                    collapsed: !0,
+                    position: "topright",
+                    autoZIndex: !0,
+                    hideSingleBase: !1,
+                    sortLayers: !1,
+                    sortFunction: function (t, i, e, n) {
+                        return e < n ? -1 : n < e ? 1 : 0;
+                    },
+                },
+                initialize: function (t, i, e) {
+                    for (var n in (c(this, e), (this._layerControlInputs = []), (this._layers = []), (this._lastZIndex = 0), (this._handlingClick = !1), t)) this._addLayer(t[n], n);
+                    for (n in i) this._addLayer(i[n], n, !0);
+                },
+                onAdd: function (t) {
+                    this._initLayout(), this._update(), (this._map = t).on("zoomend", this._checkDisabledLayers, this);
+                    for (var i = 0; i < this._layers.length; i++) this._layers[i].layer.on("add remove", this._onLayerChange, this);
+                    return this._container;
+                },
+                addTo: function (t) {
+                    return I.prototype.addTo.call(this, t), this._expandIfNotCollapsed();
+                },
+                onRemove: function () {
+                    this._map.off("zoomend", this._checkDisabledLayers, this);
+                    for (var t = 0; t < this._layers.length; t++) this._layers[t].layer.off("add remove", this._onLayerChange, this);
+                },
+                addBaseLayer: function (t, i) {
+                    return this._addLayer(t, i), this._map ? this._update() : this;
+                },
+                addOverlay: function (t, i) {
+                    return this._addLayer(t, i, !0), this._map ? this._update() : this;
+                },
+                removeLayer: function (t) {
+                    t.off("add remove", this._onLayerChange, this);
+                    t = this._getLayer(h(t));
+                    return t && this._layers.splice(this._layers.indexOf(t), 1), this._map ? this._update() : this;
+                },
+                expand: function () {
+                    z(this._container, "leaflet-control-layers-expanded"), (this._section.style.height = null);
+                    var t = this._map.getSize().y - (this._container.offsetTop + 50);
+                    return (
+                        t < this._section.clientHeight ? (z(this._section, "leaflet-control-layers-scrollbar"), (this._section.style.height = t + "px")) : M(this._section, "leaflet-control-layers-scrollbar"),
+                        this._checkDisabledLayers(),
+                        this
+                    );
+                },
+                collapse: function () {
+                    return M(this._container, "leaflet-control-layers-expanded"), this;
+                },
+                _initLayout: function () {
+                    var t = "leaflet-control-layers",
+                        i = (this._container = b("div", t)),
+                        e = this.options.collapsed,
+                        n = (i.setAttribute("aria-haspopup", !0), Oi(i), Ii(i), (this._section = b("section", t + "-list"))),
+                        o =
+                            (e &&
+                                (this._map.on("click", this.collapse, this),
+                                S(
+                                    i,
+                                    {
+                                        mouseenter: function () {
+                                            S(n, "click", B),
+                                                this.expand(),
+                                                setTimeout(function () {
+                                                    E(n, "click", B);
+                                                });
+                                        },
+                                        mouseleave: this.collapse,
+                                    },
+                                    this
+                                )),
+                            (this._layersLink = b("a", t + "-toggle", i)));
+                    (o.href = "#"),
+                        (o.title = "Layers"),
+                        o.setAttribute("role", "button"),
+                        S(o, "click", B),
+                        S(o, "focus", this.expand, this),
+                        e || this.expand(),
+                        (this._baseLayersList = b("div", t + "-base", n)),
+                        (this._separator = b("div", t + "-separator", n)),
+                        (this._overlaysList = b("div", t + "-overlays", n)),
+                        i.appendChild(n);
+                },
+                _getLayer: function (t) {
+                    for (var i = 0; i < this._layers.length; i++) if (this._layers[i] && h(this._layers[i].layer) === t) return this._layers[i];
+                },
+                _addLayer: function (t, i, e) {
+                    this._map && t.on("add remove", this._onLayerChange, this),
+                        this._layers.push({ layer: t, name: i, overlay: e }),
+                        this.options.sortLayers &&
+                            this._layers.sort(
+                                a(function (t, i) {
+                                    return this.options.sortFunction(t.layer, i.layer, t.name, i.name);
+                                }, this)
+                            ),
+                        this.options.autoZIndex && t.setZIndex && (this._lastZIndex++, t.setZIndex(this._lastZIndex)),
+                        this._expandIfNotCollapsed();
+                },
+                _update: function () {
+                    if (!this._container) return this;
+                    mi(this._baseLayersList), mi(this._overlaysList), (this._layerControlInputs = []);
+                    for (var t, i, e, n = 0, o = 0; o < this._layers.length; o++) (e = this._layers[o]), this._addItem(e), (i = i || e.overlay), (t = t || !e.overlay), (n += e.overlay ? 0 : 1);
+                    return this.options.hideSingleBase && (this._baseLayersList.style.display = (t = t && 1 < n) ? "" : "none"), (this._separator.style.display = i && t ? "" : "none"), this;
+                },
+                _onLayerChange: function (t) {
+                    this._handlingClick || this._update();
+                    var i = this._getLayer(h(t.target)),
+                        t = i.overlay ? ("add" === t.type ? "overlayadd" : "overlayremove") : "add" === t.type ? "baselayerchange" : null;
+                    t && this._map.fire(t, i);
+                },
+                _createRadioElement: function (t, i) {
+                    (t = '<input type="radio" class="leaflet-control-layers-selector" name="' + t + '"' + (i ? ' checked="checked"' : "") + "/>"), (i = document.createElement("div"));
+                    return (i.innerHTML = t), i.firstChild;
+                },
+                _addItem: function (t) {
+                    var i,
+                        e = document.createElement("label"),
+                        n = this._map.hasLayer(t.layer),
+                        n =
+                            (t.overlay
+                                ? (((i = document.createElement("input")).type = "checkbox"), (i.className = "leaflet-control-layers-selector"), (i.defaultChecked = n))
+                                : (i = this._createRadioElement("leaflet-base-layers_" + h(this), n)),
+                            this._layerControlInputs.push(i),
+                            (i.layerId = h(t.layer)),
+                            S(i, "click", this._onInputClick, this),
+                            document.createElement("span")),
+                        o = ((n.innerHTML = " " + t.name), document.createElement("span"));
+                    return e.appendChild(o), o.appendChild(i), o.appendChild(n), (t.overlay ? this._overlaysList : this._baseLayersList).appendChild(e), this._checkDisabledLayers(), e;
+                },
+                _onInputClick: function () {
+                    var t,
+                        i,
+                        e = this._layerControlInputs,
+                        n = [],
+                        o = [];
+                    this._handlingClick = !0;
+                    for (var s = e.length - 1; 0 <= s; s--) (t = e[s]), (i = this._getLayer(t.layerId).layer), t.checked ? n.push(i) : t.checked || o.push(i);
+                    for (s = 0; s < o.length; s++) this._map.hasLayer(o[s]) && this._map.removeLayer(o[s]);
+                    for (s = 0; s < n.length; s++) this._map.hasLayer(n[s]) || this._map.addLayer(n[s]);
+                    (this._handlingClick = !1), this._refocusOnMap();
+                },
+                _checkDisabledLayers: function () {
+                    for (var t, i, e = this._layerControlInputs, n = this._map.getZoom(), o = e.length - 1; 0 <= o; o--)
+                        (t = e[o]), (i = this._getLayer(t.layerId).layer), (t.disabled = (void 0 !== i.options.minZoom && n < i.options.minZoom) || (void 0 !== i.options.maxZoom && n > i.options.maxZoom));
+                },
+                _expandIfNotCollapsed: function () {
+                    return this._map && !this.options.collapsed && this.expand(), this;
+                },
+            })),
+        qi = I.extend({
+            options: { position: "topleft", zoomInText: '<span aria-hidden="true">+</span>', zoomInTitle: "Zoom in", zoomOutText: '<span aria-hidden="true">&#x2212;</span>', zoomOutTitle: "Zoom out" },
             onAdd: function (t) {
                 var i = "leaflet-control-zoom",
-                    e = si("div", i + " leaflet-bar"),
+                    e = b("div", i + " leaflet-bar"),
                     n = this.options;
                 return (
                     (this._zoomInButton = this._createButton(n.zoomInText, n.zoomInTitle, i + "-in", e, this._zoomIn)),
@@ -2008,71 +2022,97 @@
                 !this._disabled && this._map._zoom > this._map.getMinZoom() && this._map.zoomOut(this._map.options.zoomDelta * (t.shiftKey ? 3 : 1));
             },
             _createButton: function (t, i, e, n, o) {
-                var s = si("a", e, n);
-                return (s.innerHTML = t), (s.href = "#"), (s.title = i), s.setAttribute("role", "button"), s.setAttribute("aria-label", i), Oi(s), zi(s, "click", Ni), zi(s, "click", o, this), zi(s, "click", this._refocusOnMap, this), s;
+                e = b("a", e, n);
+                return (e.innerHTML = t), (e.href = "#"), (e.title = i), e.setAttribute("role", "button"), e.setAttribute("aria-label", i), Oi(e), S(e, "click", Ri), S(e, "click", o, this), S(e, "click", this._refocusOnMap, this), e;
             },
             _updateDisabled: function () {
                 var t = this._map,
                     i = "leaflet-disabled";
-                _i(this._zoomInButton, i), _i(this._zoomOutButton, i), (!this._disabled && t._zoom !== t.getMinZoom()) || ci(this._zoomOutButton, i), (!this._disabled && t._zoom !== t.getMaxZoom()) || ci(this._zoomInButton, i);
-            },
-        });
-    Ki.mergeOptions({ zoomControl: !0 }),
-        Ki.addInitHook(function () {
-            this.options.zoomControl && ((this.zoomControl = new $i()), this.addControl(this.zoomControl));
-        });
-    var Qi = Xi.extend({
-            options: { position: "bottomleft", maxWidth: 100, metric: !0, imperial: !0 },
-            onAdd: function (t) {
-                var i = "leaflet-control-scale",
-                    e = si("div", i),
-                    n = this.options;
-                return this._addScales(n, i + "-line", e), t.on(n.updateWhenIdle ? "moveend" : "move", this._update, this), t.whenReady(this._update, this), e;
-            },
-            onRemove: function (t) {
-                t.off(this.options.updateWhenIdle ? "moveend" : "move", this._update, this);
-            },
-            _addScales: function (t, i, e) {
-                t.metric && (this._mScale = si("div", i, e)), t.imperial && (this._iScale = si("div", i, e));
-            },
-            _update: function () {
-                var t = this._map,
-                    i = t.getSize().y / 2,
-                    e = t.distance(t.containerPointToLatLng([0, i]), t.containerPointToLatLng([this.options.maxWidth, i]));
-                this._updateScales(e);
-            },
-            _updateScales: function (t) {
-                this.options.metric && t && this._updateMetric(t), this.options.imperial && t && this._updateImperial(t);
-            },
-            _updateMetric: function (t) {
-                var i = this._getRoundNum(t),
-                    e = i < 1e3 ? i + " m" : i / 1e3 + " km";
-                this._updateScale(this._mScale, e, i / t);
-            },
-            _updateImperial: function (t) {
-                var i,
-                    e,
-                    n,
-                    o = 3.2808399 * t;
-                5280 < o ? ((i = o / 5280), (e = this._getRoundNum(i)), this._updateScale(this._iScale, e + " mi", e / i)) : ((n = this._getRoundNum(o)), this._updateScale(this._iScale, n + " ft", n / o));
-            },
-            _updateScale: function (t, i, e) {
-                (t.style.width = Math.round(this.options.maxWidth * e) + "px"), (t.innerHTML = i);
-            },
-            _getRoundNum: function (t) {
-                var i = Math.pow(10, (Math.floor(t) + "").length - 1),
-                    e = t / i;
-                return i * (e = 10 <= e ? 10 : 5 <= e ? 5 : 3 <= e ? 3 : 2 <= e ? 2 : 1);
+                M(this._zoomInButton, i),
+                    M(this._zoomOutButton, i),
+                    this._zoomInButton.setAttribute("aria-disabled", "false"),
+                    this._zoomOutButton.setAttribute("aria-disabled", "false"),
+                    (!this._disabled && t._zoom !== t.getMinZoom()) || (z(this._zoomOutButton, i), this._zoomOutButton.setAttribute("aria-disabled", "true")),
+                    (!this._disabled && t._zoom !== t.getMaxZoom()) || (z(this._zoomInButton, i), this._zoomInButton.setAttribute("aria-disabled", "true"));
             },
         }),
-        te = Xi.extend({
-            options: { position: "bottomright", prefix: '<a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a>' },
+        Gi =
+            (A.mergeOptions({ zoomControl: !0 }),
+            A.addInitHook(function () {
+                this.options.zoomControl && ((this.zoomControl = new qi()), this.addControl(this.zoomControl));
+            }),
+            I.extend({
+                options: { position: "bottomleft", maxWidth: 100, metric: !0, imperial: !0 },
+                onAdd: function (t) {
+                    var i = "leaflet-control-scale",
+                        e = b("div", i),
+                        n = this.options;
+                    return this._addScales(n, i + "-line", e), t.on(n.updateWhenIdle ? "moveend" : "move", this._update, this), t.whenReady(this._update, this), e;
+                },
+                onRemove: function (t) {
+                    t.off(this.options.updateWhenIdle ? "moveend" : "move", this._update, this);
+                },
+                _addScales: function (t, i, e) {
+                    t.metric && (this._mScale = b("div", i, e)), t.imperial && (this._iScale = b("div", i, e));
+                },
+                _update: function () {
+                    var t = this._map,
+                        i = t.getSize().y / 2,
+                        t = t.distance(t.containerPointToLatLng([0, i]), t.containerPointToLatLng([this.options.maxWidth, i]));
+                    this._updateScales(t);
+                },
+                _updateScales: function (t) {
+                    this.options.metric && t && this._updateMetric(t), this.options.imperial && t && this._updateImperial(t);
+                },
+                _updateMetric: function (t) {
+                    var i = this._getRoundNum(t);
+                    this._updateScale(this._mScale, i < 1e3 ? i + " m" : i / 1e3 + " km", i / t);
+                },
+                _updateImperial: function (t) {
+                    var i,
+                        e,
+                        t = 3.2808399 * t;
+                    5280 < t ? ((e = this._getRoundNum((i = t / 5280))), this._updateScale(this._iScale, e + " mi", e / i)) : ((e = this._getRoundNum(t)), this._updateScale(this._iScale, e + " ft", e / t));
+                },
+                _updateScale: function (t, i, e) {
+                    (t.style.width = Math.round(this.options.maxWidth * e) + "px"), (t.innerHTML = i);
+                },
+                _getRoundNum: function (t) {
+                    var i = Math.pow(10, (Math.floor(t) + "").length - 1),
+                        t = t / i;
+                    return i * (t = 10 <= t ? 10 : 5 <= t ? 5 : 3 <= t ? 3 : 2 <= t ? 2 : 1);
+                },
+            })),
+        Ki = I.extend({
+            options: {
+                position: "bottomright",
+                prefix:
+                    '<a href="https://leafletjs.com" title="A JavaScript library for interactive maps">' +
+                    (P.inlineSvg
+                        ? '<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="12" height="8"><path fill="#4C7BE1" d="M0 0h12v4H0z"/><path fill="#FFD500" d="M0 4h12v3H0z"/><path fill="#E0BC00" d="M0 7h12v1H0z"/></svg> '
+                        : "") +
+                    "Leaflet</a>",
+            },
             initialize: function (t) {
                 c(this, t), (this._attributions = {});
             },
             onAdd: function (t) {
-                for (var i in (((t.attributionControl = this)._container = si("div", "leaflet-control-attribution")), Oi(this._container), t._layers)) t._layers[i].getAttribution && this.addAttribution(t._layers[i].getAttribution());
-                return this._update(), this._container;
+                for (var i in (((t.attributionControl = this)._container = b("div", "leaflet-control-attribution")), Oi(this._container), t._layers)) t._layers[i].getAttribution && this.addAttribution(t._layers[i].getAttribution());
+                return this._update(), t.on("layeradd", this._addAttribution, this), this._container;
+            },
+            onRemove: function (t) {
+                t.off("layeradd", this._addAttribution, this);
+            },
+            _addAttribution: function (t) {
+                t.layer.getAttribution &&
+                    (this.addAttribution(t.layer.getAttribution()),
+                    t.layer.once(
+                        "remove",
+                        function () {
+                            this.removeAttribution(t.layer.getAttribution());
+                        },
+                        this
+                    ));
             },
             setPrefix: function (t) {
                 return (this.options.prefix = t), this._update(), this;
@@ -2085,128 +2125,134 @@
             },
             _update: function () {
                 if (this._map) {
-                    var t = [];
-                    for (var i in this._attributions) this._attributions[i] && t.push(i);
+                    var t,
+                        i = [];
+                    for (t in this._attributions) this._attributions[t] && i.push(t);
                     var e = [];
-                    this.options.prefix && e.push(this.options.prefix), t.length && e.push(t.join(", ")), (this._container.innerHTML = e.join(" | "));
+                    this.options.prefix && e.push(this.options.prefix), i.length && e.push(i.join(", ")), (this._container.innerHTML = e.join(' <span aria-hidden="true">|</span> '));
                 }
             },
-        });
-    Ki.mergeOptions({ attributionControl: !0 }),
-        Ki.addInitHook(function () {
-            this.options.attributionControl && new te().addTo(this);
-        });
-    (Xi.Layers = Ji),
-        (Xi.Zoom = $i),
-        (Xi.Scale = Qi),
-        (Xi.Attribution = te),
-        (Yi.layers = function (t, i, e) {
-            return new Ji(t, i, e);
         }),
-        (Yi.zoom = function (t) {
-            return new $i(t);
-        }),
-        (Yi.scale = function (t) {
-            return new Qi(t);
-        }),
-        (Yi.attribution = function (t) {
-            return new te(t);
-        });
-    var ie = S.extend({
-        initialize: function (t) {
-            this._map = t;
-        },
-        enable: function () {
-            return this._enabled || ((this._enabled = !0), this.addHooks()), this;
-        },
-        disable: function () {
-            return this._enabled && ((this._enabled = !1), this.removeHooks()), this;
-        },
-        enabled: function () {
-            return !!this._enabled;
-        },
-    });
-    ie.addTo = function (t, i) {
-        return t.addHandler(i, this), this;
-    };
-    var ee,
-        ne = { Events: Z },
-        oe = bt ? "touchstart mousedown" : "mousedown",
-        se = { mousedown: "mouseup", touchstart: "touchend", pointerdown: "touchend", MSPointerDown: "touchend" },
-        re = { mousedown: "mousemove", touchstart: "touchmove", pointerdown: "touchmove", MSPointerDown: "touchmove" },
-        ae = E.extend({
+        n =
+            (A.mergeOptions({ attributionControl: !0 }),
+            A.addInitHook(function () {
+                this.options.attributionControl && new Ki().addTo(this);
+            }),
+            (I.Layers = Vi),
+            (I.Zoom = qi),
+            (I.Scale = Gi),
+            (I.Attribution = Ki),
+            (Fi.layers = function (t, i, e) {
+                return new Vi(t, i, e);
+            }),
+            (Fi.zoom = function (t) {
+                return new qi(t);
+            }),
+            (Fi.scale = function (t) {
+                return new Gi(t);
+            }),
+            (Fi.attribution = function (t) {
+                return new Ki(t);
+            }),
+            it.extend({
+                initialize: function (t) {
+                    this._map = t;
+                },
+                enable: function () {
+                    return this._enabled || ((this._enabled = !0), this.addHooks()), this;
+                },
+                disable: function () {
+                    return this._enabled && ((this._enabled = !1), this.removeHooks()), this;
+                },
+                enabled: function () {
+                    return !!this._enabled;
+                },
+            })),
+        ft =
+            ((n.addTo = function (t, i) {
+                return t.addHandler(i, this), this;
+            }),
+            { Events: i }),
+        Yi = P.touch ? "touchstart mousedown" : "mousedown",
+        Xi = et.extend({
             options: { clickTolerance: 3 },
             initialize: function (t, i, e, n) {
                 c(this, n), (this._element = t), (this._dragStartTarget = i || t), (this._preventOutline = e);
             },
             enable: function () {
-                this._enabled || (zi(this._dragStartTarget, oe, this._onDown, this), (this._enabled = !0));
+                this._enabled || (S(this._dragStartTarget, Yi, this._onDown, this), (this._enabled = !0));
             },
             disable: function () {
-                this._enabled && (ae._dragging === this && this.finishDrag(), Si(this._dragStartTarget, oe, this._onDown, this), (this._enabled = !1), (this._moved = !1));
+                this._enabled && (Xi._dragging === this && this.finishDrag(!0), E(this._dragStartTarget, Yi, this._onDown, this), (this._enabled = !1), (this._moved = !1));
             },
             _onDown: function (t) {
                 var i, e;
-                !t._simulated &&
-                    this._enabled &&
+                this._enabled &&
                     ((this._moved = !1),
-                    li(this._element, "leaflet-zoom-anim") ||
-                        ae._dragging ||
-                        t.shiftKey ||
-                        (1 !== t.which && 1 !== t.button && !t.touches) ||
-                        ((ae._dragging = this)._preventOutline && Pi(this._element),
-                        xi(),
-                        Xt(),
-                        this._moving ||
-                            (this.fire("down"),
-                            (i = t.touches ? t.touches[0] : t),
-                            (e = bi(this._element)),
-                            (this._startPoint = new k(i.clientX, i.clientY)),
-                            (this._parentScale = Ti(e)),
-                            zi(document, re[t.type], this._onMove, this),
-                            zi(document, se[t.type], this._onUp, this))));
+                    vi(this._element, "leaflet-zoom-anim") ||
+                        (t.touches && 1 !== t.touches.length
+                            ? Xi._dragging === this && this.finishDrag()
+                            : Xi._dragging ||
+                              t.shiftKey ||
+                              (1 !== t.which && 1 !== t.button && !t.touches) ||
+                              ((Xi._dragging = this)._preventOutline && zi(this._element),
+                              Li(),
+                              ri(),
+                              this._moving ||
+                                  (this.fire("down"),
+                                  (e = t.touches ? t.touches[0] : t),
+                                  (i = Ci(this._element)),
+                                  (this._startPoint = new p(e.clientX, e.clientY)),
+                                  (this._startPos = bi(this._element)),
+                                  (this._parentScale = Zi(i)),
+                                  (e = "mousedown" === t.type),
+                                  S(document, e ? "mousemove" : "touchmove", this._onMove, this),
+                                  S(document, e ? "mouseup" : "touchend touchcancel", this._onUp, this)))));
             },
             _onMove: function (t) {
-                var i, e;
-                !t._simulated &&
-                    this._enabled &&
+                var i;
+                this._enabled &&
                     (t.touches && 1 < t.touches.length
                         ? (this._moved = !0)
-                        : ((e = new k((i = t.touches && 1 === t.touches.length ? t.touches[0] : t).clientX, i.clientY)._subtract(this._startPoint)).x || e.y) &&
-                          (Math.abs(e.x) + Math.abs(e.y) < this.options.clickTolerance ||
-                              ((e.x /= this._parentScale.x),
-                              (e.y /= this._parentScale.y),
-                              Ri(t),
-                              this._moved ||
-                                  (this.fire("dragstart"),
-                                  (this._moved = !0),
-                                  (this._startPos = yi(this._element).subtract(e)),
-                                  ci(document.body, "leaflet-dragging"),
-                                  (this._lastTarget = t.target || t.srcElement),
-                                  window.SVGElementInstance && this._lastTarget instanceof window.SVGElementInstance && (this._lastTarget = this._lastTarget.correspondingUseElement),
-                                  ci(this._lastTarget, "leaflet-drag-target")),
-                              (this._newPos = this._startPos.add(e)),
-                              (this._moving = !0),
-                              z(this._animRequest),
-                              (this._lastEvent = t),
-                              (this._animRequest = M(this._updatePosition, this, !0)))));
+                        : (!(i = new p((i = t.touches && 1 === t.touches.length ? t.touches[0] : t).clientX, i.clientY)._subtract(this._startPoint)).x && !i.y) ||
+                          Math.abs(i.x) + Math.abs(i.y) < this.options.clickTolerance ||
+                          ((i.x /= this._parentScale.x),
+                          (i.y /= this._parentScale.y),
+                          B(t),
+                          this._moved ||
+                              (this.fire("dragstart"),
+                              (this._moved = !0),
+                              z(document.body, "leaflet-dragging"),
+                              (this._lastTarget = t.target || t.srcElement),
+                              window.SVGElementInstance && this._lastTarget instanceof window.SVGElementInstance && (this._lastTarget = this._lastTarget.correspondingUseElement),
+                              z(this._lastTarget, "leaflet-drag-target")),
+                          (this._newPos = this._startPos.add(i)),
+                          (this._moving = !0),
+                          (this._lastEvent = t),
+                          this._updatePosition()));
             },
             _updatePosition: function () {
                 var t = { originalEvent: this._lastEvent };
-                this.fire("predrag", t), vi(this._element, this._newPos), this.fire("drag", t);
+                this.fire("predrag", t), Z(this._element, this._newPos), this.fire("drag", t);
             },
-            _onUp: function (t) {
-                !t._simulated && this._enabled && this.finishDrag();
+            _onUp: function () {
+                this._enabled && this.finishDrag();
             },
-            finishDrag: function () {
-                for (var t in (_i(document.body, "leaflet-dragging"), this._lastTarget && (_i(this._lastTarget, "leaflet-drag-target"), (this._lastTarget = null)), re))
-                    Si(document, re[t], this._onMove, this), Si(document, se[t], this._onUp, this);
-                wi(), Jt(), this._moved && this._moving && (z(this._animRequest), this.fire("dragend", { distance: this._newPos.distanceTo(this._startPos) })), (this._moving = !1), (ae._dragging = !1);
+            finishDrag: function (t) {
+                M(document.body, "leaflet-dragging"),
+                    this._lastTarget && (M(this._lastTarget, "leaflet-drag-target"), (this._lastTarget = null)),
+                    E(document, "mousemove touchmove", this._onMove, this),
+                    E(document, "mouseup touchend touchcancel", this._onUp, this),
+                    Ti(),
+                    ai(),
+                    this._moved && this._moving && this.fire("dragend", { noInertia: t, distance: this._newPos.distanceTo(this._startPos) }),
+                    (this._moving = !1),
+                    (Xi._dragging = !1);
             },
         });
-    function he(t, i) {
+    function Ji(t, i) {
         if (!i || !t.length) return t.slice();
-        var e = i * i;
+        i *= i;
         return (t = (function (t, i) {
             var e = t.length,
                 n = new (typeof Uint8Array != void 0 + "" ? Uint8Array : Array)(e);
@@ -2215,9 +2261,9 @@
                     var r,
                         a,
                         h,
-                        u = 0;
-                    for (a = o + 1; a <= s - 1; a++) (h = de(i[a], i[o], i[s], !0)), u < h && ((r = a), (u = h));
-                    n < u && ((e[r] = 1), t(i, e, n, o, r), t(i, e, n, r, s));
+                        l = 0;
+                    for (a = o + 1; a <= s - 1; a++) (h = ee(i[a], i[o], i[s], !0)), l < h && ((r = a), (l = h));
+                    n < l && ((e[r] = 1), t(i, e, n, o, r), t(i, e, n, r, s));
                 })(t, n, i, 0, e - 1);
             var o,
                 s = [];
@@ -2228,121 +2274,120 @@
                 for (var e = [t[0]], n = 1, o = 0, s = t.length; n < s; n++)
                     (function (t, i) {
                         var e = i.x - t.x,
-                            n = i.y - t.y;
-                        return e * e + n * n;
+                            i = i.y - t.y;
+                        return e * e + i * i;
                     })(t[n], t[o]) > i && (e.push(t[n]), (o = n));
                 o < s - 1 && e.push(t[s - 1]);
                 return e;
-            })(t, e)),
-            e
+            })(t, i)),
+            i
         ));
     }
-    function ue(t, i, e) {
-        return Math.sqrt(de(t, i, e, !0));
+    function $i(t, i, e) {
+        return Math.sqrt(ee(t, i, e, !0));
     }
-    function le(t, i, e, n, o) {
+    function Qi(t, i, e, n, o) {
         var s,
             r,
             a,
-            h = n ? ee : _e(t, e),
-            u = _e(i, e);
-        for (ee = u; ; ) {
-            if (!(h | u)) return [t, i];
-            if (h & u) return !1;
-            (a = _e((r = ce(t, i, (s = h || u), e, o)), e)), s === h ? ((t = r), (h = a)) : ((i = r), (u = a));
+            h = n ? Ui : ie(t, e),
+            l = ie(i, e);
+        for (Ui = l; ; ) {
+            if (!(h | l)) return [t, i];
+            if (h & l) return !1;
+            (a = ie((r = te(t, i, (s = h || l), e, o)), e)), s === h ? ((t = r), (h = a)) : ((i = r), (l = a));
         }
     }
-    function ce(t, i, e, n, o) {
+    function te(t, i, e, n, o) {
         var s,
             r,
             a = i.x - t.x,
-            h = i.y - t.y,
-            u = n.min,
-            l = n.max;
+            i = i.y - t.y,
+            h = n.min,
+            n = n.max;
         return (
-            8 & e ? ((s = t.x + (a * (l.y - t.y)) / h), (r = l.y)) : 4 & e ? ((s = t.x + (a * (u.y - t.y)) / h), (r = u.y)) : 2 & e ? ((s = l.x), (r = t.y + (h * (l.x - t.x)) / a)) : 1 & e && ((s = u.x), (r = t.y + (h * (u.x - t.x)) / a)),
-            new k(s, r, o)
+            8 & e ? ((s = t.x + (a * (n.y - t.y)) / i), (r = n.y)) : 4 & e ? ((s = t.x + (a * (h.y - t.y)) / i), (r = h.y)) : 2 & e ? ((s = n.x), (r = t.y + (i * (n.x - t.x)) / a)) : 1 & e && ((s = h.x), (r = t.y + (i * (h.x - t.x)) / a)),
+            new p(s, r, o)
         );
     }
-    function _e(t, i) {
+    function ie(t, i) {
         var e = 0;
         return t.x < i.min.x ? (e |= 1) : t.x > i.max.x && (e |= 2), t.y < i.min.y ? (e |= 4) : t.y > i.max.y && (e |= 8), e;
     }
-    function de(t, i, e, n) {
-        var o,
-            s = i.x,
-            r = i.y,
-            a = e.x - s,
-            h = e.y - r,
-            u = a * a + h * h;
-        return 0 < u && (1 < (o = ((t.x - s) * a + (t.y - r) * h) / u) ? ((s = e.x), (r = e.y)) : 0 < o && ((s += a * o), (r += h * o))), (a = t.x - s), (h = t.y - r), n ? a * a + h * h : new k(s, r);
+    function ee(t, i, e, n) {
+        var o = i.x,
+            i = i.y,
+            s = e.x - o,
+            r = e.y - i,
+            a = s * s + r * r;
+        return 0 < a && (1 < (a = ((t.x - o) * s + (t.y - i) * r) / a) ? ((o = e.x), (i = e.y)) : 0 < a && ((o += s * a), (i += r * a))), (s = t.x - o), (r = t.y - i), n ? s * s + r * r : new p(o, i);
     }
-    function pe(t) {
-        return !g(t[0]) || ("object" != typeof t[0][0] && void 0 !== t[0][0]);
+    function ne(t) {
+        return !d(t[0]) || ("object" != typeof t[0][0] && void 0 !== t[0][0]);
     }
-    function me(t) {
-        return console.warn("Deprecated use of _flat, please use L.LineUtil.isFlat instead."), pe(t);
+    function oe(t) {
+        return console.warn("Deprecated use of _flat, please use L.LineUtil.isFlat instead."), ne(t);
     }
-    var fe = {
-        simplify: he,
-        pointToSegmentDistance: ue,
+    gt = {
+        __proto__: null,
+        simplify: Ji,
+        pointToSegmentDistance: $i,
         closestPointOnSegment: function (t, i, e) {
-            return de(t, i, e);
+            return ee(t, i, e);
         },
-        clipSegment: le,
-        _getEdgeIntersection: ce,
-        _getBitCode: _e,
-        _sqClosestPointOnSegment: de,
-        isFlat: pe,
-        _flat: me,
+        clipSegment: Qi,
+        _getEdgeIntersection: te,
+        _getBitCode: ie,
+        _sqClosestPointOnSegment: ee,
+        isFlat: ne,
+        _flat: oe,
     };
-    function ge(t, i, e) {
-        for (var n, o, s, r, a, h, u, l = [1, 4, 2, 8], c = 0, _ = t.length; c < _; c++) t[c]._code = _e(t[c], i);
+    function se(t, i, e) {
+        for (var n, o, s, r, a, h, l, u = [1, 4, 2, 8], c = 0, d = t.length; c < d; c++) t[c]._code = ie(t[c], i);
         for (s = 0; s < 4; s++) {
-            for (h = l[s], n = [], c = 0, o = (_ = t.length) - 1; c < _; o = c++)
-                (r = t[c]), (a = t[o]), r._code & h ? a._code & h || (((u = ce(a, r, h, i, e))._code = _e(u, i)), n.push(u)) : (a._code & h && (((u = ce(a, r, h, i, e))._code = _e(u, i)), n.push(u)), n.push(r));
+            for (h = u[s], n = [], c = 0, o = (d = t.length) - 1; c < d; o = c++)
+                (r = t[c]), (a = t[o]), r._code & h ? a._code & h || (((l = te(a, r, h, i, e))._code = ie(l, i)), n.push(l)) : (a._code & h && (((l = te(a, r, h, i, e))._code = ie(l, i)), n.push(l)), n.push(r));
             t = n;
         }
         return t;
     }
-    var ve,
-        ye = { clipPolygon: ge },
-        xe = {
+    var vt = { __proto__: null, clipPolygon: se },
+        yt = {
             project: function (t) {
-                return new k(t.lng, t.lat);
+                return new p(t.lng, t.lat);
             },
             unproject: function (t) {
-                return new D(t.y, t.x);
+                return new v(t.y, t.x);
             },
-            bounds: new I([-180, -90], [180, 90]),
+            bounds: new m([-180, -90], [180, 90]),
         },
-        we = {
+        xt = {
             R: 6378137,
             R_MINOR: 6356752.314245179,
-            bounds: new I([-20037508.34279, -15496570.73972], [20037508.34279, 18764656.23138]),
+            bounds: new m([-20037508.34279, -15496570.73972], [20037508.34279, 18764656.23138]),
             project: function (t) {
                 var i = Math.PI / 180,
                     e = this.R,
                     n = t.lat * i,
                     o = this.R_MINOR / e,
-                    s = Math.sqrt(1 - o * o),
-                    r = s * Math.sin(n),
-                    a = Math.tan(Math.PI / 4 - n / 2) / Math.pow((1 - r) / (1 + r), s / 2),
-                    n = -e * Math.log(Math.max(a, 1e-10));
-                return new k(t.lng * i * e, n);
+                    o = Math.sqrt(1 - o * o),
+                    s = o * Math.sin(n),
+                    s = Math.tan(Math.PI / 4 - n / 2) / Math.pow((1 - s) / (1 + s), o / 2),
+                    n = -e * Math.log(Math.max(s, 1e-10));
+                return new p(t.lng * i * e, n);
             },
             unproject: function (t) {
-                for (var i, e = 180 / Math.PI, n = this.R, o = this.R_MINOR / n, s = Math.sqrt(1 - o * o), r = Math.exp(-t.y / n), a = Math.PI / 2 - 2 * Math.atan(r), h = 0, u = 0.1; h < 15 && 1e-7 < Math.abs(u); h++)
-                    (i = s * Math.sin(a)), (i = Math.pow((1 - i) / (1 + i), s / 2)), (a += u = Math.PI / 2 - 2 * Math.atan(r * i) - a);
-                return new D(a * e, (t.x * e) / n);
+                for (var i, e = 180 / Math.PI, n = this.R, o = this.R_MINOR / n, s = Math.sqrt(1 - o * o), r = Math.exp(-t.y / n), a = Math.PI / 2 - 2 * Math.atan(r), h = 0, l = 0.1; h < 15 && 1e-7 < Math.abs(l); h++)
+                    (i = s * Math.sin(a)), (i = Math.pow((1 - i) / (1 + i), s / 2)), (a += l = Math.PI / 2 - 2 * Math.atan(r * i) - a);
+                return new v(a * e, (t.x * e) / n);
             },
         },
-        Pe = { LonLat: xe, Mercator: we, SphericalMercator: V },
-        Le = h({}, F, { code: "EPSG:3395", projection: we, transformation: G((ve = 0.5 / (Math.PI * we.R)), 0.5, -ve, 0.5) }),
-        be = h({}, F, { code: "EPSG:4326", projection: xe, transformation: G(1 / 180, 1, -1 / 180, 0.5) }),
-        Te = h({}, H, {
-            projection: xe,
-            transformation: G(1, 0, -1, 0),
+        wt = { __proto__: null, LonLat: yt, Mercator: xt, SphericalMercator: rt },
+        bt = l({}, st, { code: "EPSG:3395", projection: xt, transformation: ht((Pt = 0.5 / (Math.PI * xt.R)), 0.5, -Pt, 0.5) }),
+        re = l({}, st, { code: "EPSG:4326", projection: yt, transformation: ht(1 / 180, 1, -1 / 180, 0.5) }),
+        Lt = l({}, ot, {
+            projection: yt,
+            transformation: ht(1, 0, -1, 0),
             scale: function (t) {
                 return Math.pow(2, t);
             },
@@ -2351,158 +2396,157 @@
             },
             distance: function (t, i) {
                 var e = i.lng - t.lng,
-                    n = i.lat - t.lat;
-                return Math.sqrt(e * e + n * n);
+                    i = i.lat - t.lat;
+                return Math.sqrt(e * e + i * i);
             },
             infinite: !0,
-        });
-    (H.Earth = F), (H.EPSG3395 = Le), (H.EPSG3857 = Y), (H.EPSG900913 = X), (H.EPSG4326 = be), (H.Simple = Te);
-    var Me = E.extend({
-        options: { pane: "overlayPane", attribution: null, bubblingMouseEvents: !0 },
-        addTo: function (t) {
-            return t.addLayer(this), this;
-        },
-        remove: function () {
-            return this.removeFrom(this._map || this._mapToAdd);
-        },
-        removeFrom: function (t) {
-            return t && t.removeLayer(this), this;
-        },
-        getPane: function (t) {
-            return this._map.getPane(t ? this.options[t] || t : this.options.pane);
-        },
-        addInteractiveTarget: function (t) {
-            return (this._map._targets[m(t)] = this);
-        },
-        removeInteractiveTarget: function (t) {
-            return delete this._map._targets[m(t)], this;
-        },
-        getAttribution: function () {
-            return this.options.attribution;
-        },
-        _layerAdd: function (t) {
-            var i,
-                e = t.target;
-            e.hasLayer(this) &&
-                ((this._map = e),
-                (this._zoomAnimated = e._zoomAnimated),
-                this.getEvents &&
-                    ((i = this.getEvents()),
-                    e.on(i, this),
-                    this.once(
-                        "remove",
-                        function () {
-                            e.off(i, this);
-                        },
-                        this
-                    )),
-                this.onAdd(e),
-                this.getAttribution && e.attributionControl && e.attributionControl.addAttribution(this.getAttribution()),
-                this.fire("add"),
-                e.fire("layeradd", { layer: this }));
-        },
-    });
-    Ki.include({
-        addLayer: function (t) {
-            if (!t._layerAdd) throw new Error("The provided object is not a Layer.");
-            var i = m(t);
-            return this._layers[i] || (((this._layers[i] = t)._mapToAdd = this), t.beforeAdd && t.beforeAdd(this), this.whenReady(t._layerAdd, t)), this;
-        },
-        removeLayer: function (t) {
-            var i = m(t);
-            return (
-                this._layers[i] &&
-                    (this._loaded && t.onRemove(this),
-                    t.getAttribution && this.attributionControl && this.attributionControl.removeAttribution(t.getAttribution()),
-                    delete this._layers[i],
-                    this._loaded && (this.fire("layerremove", { layer: t }), t.fire("remove")),
-                    (t._map = t._mapToAdd = null)),
-                this
-            );
-        },
-        hasLayer: function (t) {
-            return !!t && m(t) in this._layers;
-        },
-        eachLayer: function (t, i) {
-            for (var e in this._layers) t.call(i, this._layers[e]);
-            return this;
-        },
-        _addLayers: function (t) {
-            for (var i = 0, e = (t = t ? (g(t) ? t : [t]) : []).length; i < e; i++) this.addLayer(t[i]);
-        },
-        _addZoomLimit: function (t) {
-            (!isNaN(t.options.maxZoom) && isNaN(t.options.minZoom)) || ((this._zoomBoundLayers[m(t)] = t), this._updateZoomLevels());
-        },
-        _removeZoomLimit: function (t) {
-            var i = m(t);
-            this._zoomBoundLayers[i] && (delete this._zoomBoundLayers[i], this._updateZoomLevels());
-        },
-        _updateZoomLevels: function () {
-            var t = 1 / 0,
-                i = -1 / 0,
-                e = this._getZoomSpan();
-            for (var n in this._zoomBoundLayers) var o = this._zoomBoundLayers[n].options, t = void 0 === o.minZoom ? t : Math.min(t, o.minZoom), i = void 0 === o.maxZoom ? i : Math.max(i, o.maxZoom);
-            (this._layersMaxZoom = i === -1 / 0 ? void 0 : i),
-                (this._layersMinZoom = t === 1 / 0 ? void 0 : t),
-                e !== this._getZoomSpan() && this.fire("zoomlevelschange"),
-                void 0 === this.options.maxZoom && this._layersMaxZoom && this.getZoom() > this._layersMaxZoom && this.setZoom(this._layersMaxZoom),
-                void 0 === this.options.minZoom && this._layersMinZoom && this.getZoom() < this._layersMinZoom && this.setZoom(this._layersMinZoom);
-        },
-    });
-    var ze = Me.extend({
-            initialize: function (t, i) {
-                var e, n;
-                if ((c(this, i), (this._layers = {}), t)) for (e = 0, n = t.length; e < n; e++) this.addLayer(t[e]);
-            },
-            addLayer: function (t) {
-                var i = this.getLayerId(t);
-                return (this._layers[i] = t), this._map && this._map.addLayer(t), this;
-            },
-            removeLayer: function (t) {
-                var i = t in this._layers ? t : this.getLayerId(t);
-                return this._map && this._layers[i] && this._map.removeLayer(this._layers[i]), delete this._layers[i], this;
-            },
-            hasLayer: function (t) {
-                return !!t && ("number" == typeof t ? t : this.getLayerId(t)) in this._layers;
-            },
-            clearLayers: function () {
-                return this.eachLayer(this.removeLayer, this);
-            },
-            invoke: function (t) {
-                var i,
-                    e,
-                    n = Array.prototype.slice.call(arguments, 1);
-                for (i in this._layers) (e = this._layers[i])[t] && e[t].apply(e, n);
-                return this;
-            },
-            onAdd: function (t) {
-                this.eachLayer(t.addLayer, t);
-            },
-            onRemove: function (t) {
-                this.eachLayer(t.removeLayer, t);
-            },
-            eachLayer: function (t, i) {
-                for (var e in this._layers) t.call(i, this._layers[e]);
-                return this;
-            },
-            getLayer: function (t) {
-                return this._layers[t];
-            },
-            getLayers: function () {
-                var t = [];
-                return this.eachLayer(t.push, t), t;
-            },
-            setZIndex: function (t) {
-                return this.invoke("setZIndex", t);
-            },
-            getLayerId: m,
         }),
-        Ce = ze.extend({
+        o =
+            ((ot.Earth = st),
+            (ot.EPSG3395 = bt),
+            (ot.EPSG3857 = lt),
+            (ot.EPSG900913 = ut),
+            (ot.EPSG4326 = re),
+            (ot.Simple = Lt),
+            et.extend({
+                options: { pane: "overlayPane", attribution: null, bubblingMouseEvents: !0 },
+                addTo: function (t) {
+                    return t.addLayer(this), this;
+                },
+                remove: function () {
+                    return this.removeFrom(this._map || this._mapToAdd);
+                },
+                removeFrom: function (t) {
+                    return t && t.removeLayer(this), this;
+                },
+                getPane: function (t) {
+                    return this._map.getPane(t ? this.options[t] || t : this.options.pane);
+                },
+                addInteractiveTarget: function (t) {
+                    return (this._map._targets[h(t)] = this);
+                },
+                removeInteractiveTarget: function (t) {
+                    return delete this._map._targets[h(t)], this;
+                },
+                getAttribution: function () {
+                    return this.options.attribution;
+                },
+                _layerAdd: function (t) {
+                    var i,
+                        e = t.target;
+                    e.hasLayer(this) &&
+                        ((this._map = e),
+                        (this._zoomAnimated = e._zoomAnimated),
+                        this.getEvents &&
+                            ((i = this.getEvents()),
+                            e.on(i, this),
+                            this.once(
+                                "remove",
+                                function () {
+                                    e.off(i, this);
+                                },
+                                this
+                            )),
+                        this.onAdd(e),
+                        this.fire("add"),
+                        e.fire("layeradd", { layer: this }));
+                },
+            })),
+        ae =
+            (A.include({
+                addLayer: function (t) {
+                    if (!t._layerAdd) throw new Error("The provided object is not a Layer.");
+                    var i = h(t);
+                    return this._layers[i] || (((this._layers[i] = t)._mapToAdd = this), t.beforeAdd && t.beforeAdd(this), this.whenReady(t._layerAdd, t)), this;
+                },
+                removeLayer: function (t) {
+                    var i = h(t);
+                    return this._layers[i] && (this._loaded && t.onRemove(this), delete this._layers[i], this._loaded && (this.fire("layerremove", { layer: t }), t.fire("remove")), (t._map = t._mapToAdd = null)), this;
+                },
+                hasLayer: function (t) {
+                    return h(t) in this._layers;
+                },
+                eachLayer: function (t, i) {
+                    for (var e in this._layers) t.call(i, this._layers[e]);
+                    return this;
+                },
+                _addLayers: function (t) {
+                    for (var i = 0, e = (t = t ? (d(t) ? t : [t]) : []).length; i < e; i++) this.addLayer(t[i]);
+                },
+                _addZoomLimit: function (t) {
+                    (isNaN(t.options.maxZoom) && isNaN(t.options.minZoom)) || ((this._zoomBoundLayers[h(t)] = t), this._updateZoomLevels());
+                },
+                _removeZoomLimit: function (t) {
+                    t = h(t);
+                    this._zoomBoundLayers[t] && (delete this._zoomBoundLayers[t], this._updateZoomLevels());
+                },
+                _updateZoomLevels: function () {
+                    var t,
+                        i = 1 / 0,
+                        e = -1 / 0,
+                        n = this._getZoomSpan();
+                    for (t in this._zoomBoundLayers) var o = this._zoomBoundLayers[t].options, i = void 0 === o.minZoom ? i : Math.min(i, o.minZoom), e = void 0 === o.maxZoom ? e : Math.max(e, o.maxZoom);
+                    (this._layersMaxZoom = e === -1 / 0 ? void 0 : e),
+                        (this._layersMinZoom = i === 1 / 0 ? void 0 : i),
+                        n !== this._getZoomSpan() && this.fire("zoomlevelschange"),
+                        void 0 === this.options.maxZoom && this._layersMaxZoom && this.getZoom() > this._layersMaxZoom && this.setZoom(this._layersMaxZoom),
+                        void 0 === this.options.minZoom && this._layersMinZoom && this.getZoom() < this._layersMinZoom && this.setZoom(this._layersMinZoom);
+                },
+            }),
+            o.extend({
+                initialize: function (t, i) {
+                    var e, n;
+                    if ((c(this, i), (this._layers = {}), t)) for (e = 0, n = t.length; e < n; e++) this.addLayer(t[e]);
+                },
+                addLayer: function (t) {
+                    var i = this.getLayerId(t);
+                    return (this._layers[i] = t), this._map && this._map.addLayer(t), this;
+                },
+                removeLayer: function (t) {
+                    t = t in this._layers ? t : this.getLayerId(t);
+                    return this._map && this._layers[t] && this._map.removeLayer(this._layers[t]), delete this._layers[t], this;
+                },
+                hasLayer: function (t) {
+                    return ("number" == typeof t ? t : this.getLayerId(t)) in this._layers;
+                },
+                clearLayers: function () {
+                    return this.eachLayer(this.removeLayer, this);
+                },
+                invoke: function (t) {
+                    var i,
+                        e,
+                        n = Array.prototype.slice.call(arguments, 1);
+                    for (i in this._layers) (e = this._layers[i])[t] && e[t].apply(e, n);
+                    return this;
+                },
+                onAdd: function (t) {
+                    this.eachLayer(t.addLayer, t);
+                },
+                onRemove: function (t) {
+                    this.eachLayer(t.removeLayer, t);
+                },
+                eachLayer: function (t, i) {
+                    for (var e in this._layers) t.call(i, this._layers[e]);
+                    return this;
+                },
+                getLayer: function (t) {
+                    return this._layers[t];
+                },
+                getLayers: function () {
+                    var t = [];
+                    return this.eachLayer(t.push, t), t;
+                },
+                setZIndex: function (t) {
+                    return this.invoke("setZIndex", t);
+                },
+                getLayerId: h,
+            })),
+        he = ae.extend({
             addLayer: function (t) {
-                return this.hasLayer(t) ? this : (t.addEventParent(this), ze.prototype.addLayer.call(this, t), this.fire("layeradd", { layer: t }));
+                return this.hasLayer(t) ? this : (t.addEventParent(this), ae.prototype.addLayer.call(this, t), this.fire("layeradd", { layer: t }));
             },
             removeLayer: function (t) {
-                return this.hasLayer(t) ? (t in this._layers && (t = this._layers[t]), t.removeEventParent(this), ze.prototype.removeLayer.call(this, t), this.fire("layerremove", { layer: t })) : this;
+                return this.hasLayer(t) ? ((t = t in this._layers ? this._layers[t] : t).removeEventParent(this), ae.prototype.removeLayer.call(this, t), this.fire("layerremove", { layer: t })) : this;
             },
             setStyle: function (t) {
                 return this.invoke("setStyle", t);
@@ -2514,16 +2558,17 @@
                 return this.invoke("bringToBack");
             },
             getBounds: function () {
-                var t = new R();
-                for (var i in this._layers) {
-                    var e = this._layers[i];
-                    t.extend(e.getBounds ? e.getBounds() : e.getLatLng());
+                var t,
+                    i = new s();
+                for (t in this._layers) {
+                    var e = this._layers[t];
+                    i.extend(e.getBounds ? e.getBounds() : e.getLatLng());
                 }
-                return t;
+                return i;
             },
         }),
-        Se = S.extend({
-            options: { popupAnchor: [0, 0], tooltipAnchor: [0, 0] },
+        le = it.extend({
+            options: { popupAnchor: [0, 0], tooltipAnchor: [0, 0], crossOrigin: !1 },
             initialize: function (t) {
                 c(this, t);
             },
@@ -2539,97 +2584,103 @@
                     if ("icon" === t) throw new Error("iconUrl not set in Icon options (see the docs).");
                     return null;
                 }
-                var n = this._createImg(e, i && "IMG" === i.tagName ? i : null);
-                return this._setIconStyles(n, t), n;
+                e = this._createImg(e, i && "IMG" === i.tagName ? i : null);
+                return this._setIconStyles(e, t), (!this.options.crossOrigin && "" !== this.options.crossOrigin) || (e.crossOrigin = !0 === this.options.crossOrigin ? "" : this.options.crossOrigin), e;
             },
             _setIconStyles: function (t, i) {
                 var e = this.options,
-                    n = e[i + "Size"];
-                "number" == typeof n && (n = [n, n]);
-                var o = A(n),
-                    s = A(("shadow" === i && e.shadowAnchor) || e.iconAnchor || (o && o.divideBy(2, !0)));
-                (t.className = "leaflet-marker-" + i + " " + (e.className || "")), s && ((t.style.marginLeft = -s.x + "px"), (t.style.marginTop = -s.y + "px")), o && ((t.style.width = o.x + "px"), (t.style.height = o.y + "px"));
+                    n = e[i + "Size"],
+                    n = _((n = "number" == typeof n ? [n, n] : n)),
+                    o = _(("shadow" === i && e.shadowAnchor) || e.iconAnchor || (n && n.divideBy(2, !0)));
+                (t.className = "leaflet-marker-" + i + " " + (e.className || "")), o && ((t.style.marginLeft = -o.x + "px"), (t.style.marginTop = -o.y + "px")), n && ((t.style.width = n.x + "px"), (t.style.height = n.y + "px"));
             },
             _createImg: function (t, i) {
                 return ((i = i || document.createElement("img")).src = t), i;
             },
             _getIconUrl: function (t) {
-                return (zt && this.options[t + "RetinaUrl"]) || this.options[t + "Url"];
+                return (P.retina && this.options[t + "RetinaUrl"]) || this.options[t + "Url"];
             },
         });
-    var Ze = Se.extend({
+    var ue = le.extend({
             options: { iconUrl: "marker-icon.png", iconRetinaUrl: "marker-icon-2x.png", shadowUrl: "marker-shadow.png", iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], tooltipAnchor: [16, -28], shadowSize: [41, 41] },
             _getIconUrl: function (t) {
-                return Ze.imagePath || (Ze.imagePath = this._detectIconPath()), (this.options.imagePath || Ze.imagePath) + Se.prototype._getIconUrl.call(this, t);
+                return "string" != typeof ue.imagePath && (ue.imagePath = this._detectIconPath()), (this.options.imagePath || ue.imagePath) + le.prototype._getIconUrl.call(this, t);
+            },
+            _stripUrl: function (t) {
+                function i(t, i, e) {
+                    return (i = i.exec(t)) && i[e];
+                }
+                return (t = i(t, /^url\((['"])?(.+)\1\)$/, 2)) && i(t, /^(.*)marker-icon\.png$/, 1);
             },
             _detectIconPath: function () {
-                var t = si("div", "leaflet-default-icon-path", document.body),
-                    i = oi(t, "background-image") || oi(t, "backgroundImage");
-                return document.body.removeChild(t), (i = null === i || 0 !== i.indexOf("url") ? "" : i.replace(/^url\(["']?/, "").replace(/marker-icon\.png["']?\)$/, ""));
+                var t = b("div", "leaflet-default-icon-path", document.body),
+                    i = pi(t, "background-image") || pi(t, "backgroundImage");
+                if ((document.body.removeChild(t), (i = this._stripUrl(i)))) return i;
+                t = document.querySelector('link[href$="leaflet.css"]');
+                return t ? t.href.substring(0, t.href.length - "leaflet.css".length - 1) : "";
             },
         }),
-        Ee = ie.extend({
+        ce = n.extend({
             initialize: function (t) {
                 this._marker = t;
             },
             addHooks: function () {
                 var t = this._marker._icon;
-                this._draggable || (this._draggable = new ae(t, t, !0)),
+                this._draggable || (this._draggable = new Xi(t, t, !0)),
                     this._draggable.on({ dragstart: this._onDragStart, predrag: this._onPreDrag, drag: this._onDrag, dragend: this._onDragEnd }, this).enable(),
-                    ci(t, "leaflet-marker-draggable");
+                    z(t, "leaflet-marker-draggable");
             },
             removeHooks: function () {
-                this._draggable.off({ dragstart: this._onDragStart, predrag: this._onPreDrag, drag: this._onDrag, dragend: this._onDragEnd }, this).disable(), this._marker._icon && _i(this._marker._icon, "leaflet-marker-draggable");
+                this._draggable.off({ dragstart: this._onDragStart, predrag: this._onPreDrag, drag: this._onDrag, dragend: this._onDragEnd }, this).disable(), this._marker._icon && M(this._marker._icon, "leaflet-marker-draggable");
             },
             moved: function () {
                 return this._draggable && this._draggable._moved;
             },
             _adjustPan: function (t) {
-                var i,
-                    e = this._marker,
-                    n = e._map,
-                    o = this._marker.options.autoPanSpeed,
-                    s = this._marker.options.autoPanPadding,
-                    r = yi(e._icon),
-                    a = n.getPixelBounds(),
-                    h = n.getPixelOrigin(),
-                    u = O(a.min._subtract(h).add(s), a.max._subtract(h).subtract(s));
-                u.contains(r) ||
-                    ((i = A(
-                        (Math.max(u.max.x, r.x) - u.max.x) / (a.max.x - u.max.x) - (Math.min(u.min.x, r.x) - u.min.x) / (a.min.x - u.min.x),
-                        (Math.max(u.max.y, r.y) - u.max.y) / (a.max.y - u.max.y) - (Math.min(u.min.y, r.y) - u.min.y) / (a.min.y - u.min.y)
-                    ).multiplyBy(o)),
-                    n.panBy(i, { animate: !1 }),
-                    this._draggable._newPos._add(i),
-                    this._draggable._startPos._add(i),
-                    vi(e._icon, this._draggable._newPos),
+                var i = this._marker,
+                    e = i._map,
+                    n = this._marker.options.autoPanSpeed,
+                    o = this._marker.options.autoPanPadding,
+                    s = bi(i._icon),
+                    r = e.getPixelBounds(),
+                    a = e.getPixelOrigin(),
+                    a = f(r.min._subtract(a).add(o), r.max._subtract(a).subtract(o));
+                a.contains(s) ||
+                    ((o = _(
+                        (Math.max(a.max.x, s.x) - a.max.x) / (r.max.x - a.max.x) - (Math.min(a.min.x, s.x) - a.min.x) / (r.min.x - a.min.x),
+                        (Math.max(a.max.y, s.y) - a.max.y) / (r.max.y - a.max.y) - (Math.min(a.min.y, s.y) - a.min.y) / (r.min.y - a.min.y)
+                    ).multiplyBy(n)),
+                    e.panBy(o, { animate: !1 }),
+                    this._draggable._newPos._add(o),
+                    this._draggable._startPos._add(o),
+                    Z(i._icon, this._draggable._newPos),
                     this._onDrag(t),
-                    (this._panRequest = M(this._adjustPan.bind(this, t))));
+                    (this._panRequest = x(this._adjustPan.bind(this, t))));
             },
             _onDragStart: function () {
                 (this._oldLatLng = this._marker.getLatLng()), this._marker.closePopup && this._marker.closePopup(), this._marker.fire("movestart").fire("dragstart");
             },
             _onPreDrag: function (t) {
-                this._marker.options.autoPan && (z(this._panRequest), (this._panRequest = M(this._adjustPan.bind(this, t))));
+                this._marker.options.autoPan && (r(this._panRequest), (this._panRequest = x(this._adjustPan.bind(this, t))));
             },
             _onDrag: function (t) {
                 var i = this._marker,
                     e = i._shadow,
-                    n = yi(i._icon),
+                    n = bi(i._icon),
                     o = i._map.layerPointToLatLng(n);
-                e && vi(e, n), (i._latlng = o), (t.latlng = o), (t.oldLatLng = this._oldLatLng), i.fire("move", t).fire("drag", t);
+                e && Z(e, n), (i._latlng = o), (t.latlng = o), (t.oldLatLng = this._oldLatLng), i.fire("move", t).fire("drag", t);
             },
             _onDragEnd: function (t) {
-                z(this._panRequest), delete this._oldLatLng, this._marker.fire("moveend").fire("dragend", t);
+                r(this._panRequest), delete this._oldLatLng, this._marker.fire("moveend").fire("dragend", t);
             },
         }),
-        ke = Me.extend({
+        de = o.extend({
             options: {
-                icon: new Ze(),
+                icon: new ue(),
                 interactive: !0,
                 keyboard: !0,
                 title: "",
-                alt: "",
+                alt: "Marker",
                 zIndexOffset: 0,
                 opacity: 1,
                 riseOnHover: !1,
@@ -2637,13 +2688,14 @@
                 pane: "markerPane",
                 shadowPane: "shadowPane",
                 bubblingMouseEvents: !1,
+                autoPanOnFocus: !0,
                 draggable: !1,
                 autoPan: !1,
                 autoPanPadding: [50, 50],
                 autoPanSpeed: 10,
             },
             initialize: function (t, i) {
-                c(this, i), (this._latlng = j(t));
+                c(this, i), (this._latlng = w(t));
             },
             onAdd: function (t) {
                 (this._zoomAnimated = this._zoomAnimated && t.options.markerZoomAnimation), this._zoomAnimated && t.on("zoomanim", this._animateZoom, this), this._initIcon(), this.update();
@@ -2663,7 +2715,7 @@
             },
             setLatLng: function (t) {
                 var i = this._latlng;
-                return (this._latlng = j(t)), this.update(), this.fire("move", { oldLatLng: i, latlng: this._latlng });
+                return (this._latlng = w(t)), this.update(), this.fire("move", { oldLatLng: i, latlng: this._latlng });
             },
             setZIndexOffset: function (t) {
                 return (this.options.zIndexOffset = t), this.update();
@@ -2685,57 +2737,69 @@
                 var t = this.options,
                     i = "leaflet-zoom-" + (this._zoomAnimated ? "animated" : "hide"),
                     e = t.icon.createIcon(this._icon),
-                    n = !1;
-                e !== this._icon && (this._icon && this._removeIcon(), (n = !0), t.title && (e.title = t.title), "IMG" === e.tagName && (e.alt = t.alt || "")),
-                    ci(e, i),
-                    t.keyboard && (e.tabIndex = "0"),
-                    (this._icon = e),
-                    t.riseOnHover && this.on({ mouseover: this._bringToFront, mouseout: this._resetZIndex });
-                var o = t.icon.createShadow(this._shadow),
-                    s = !1;
-                o !== this._shadow && (this._removeShadow(), (s = !0)),
-                    o && (ci(o, i), (o.alt = "")),
-                    (this._shadow = o),
+                    n = !1,
+                    e =
+                        (e !== this._icon && (this._icon && this._removeIcon(), (n = !0), t.title && (e.title = t.title), "IMG" === e.tagName && (e.alt = t.alt || "")),
+                        z(e, i),
+                        t.keyboard && ((e.tabIndex = "0"), e.setAttribute("role", "button")),
+                        (this._icon = e),
+                        t.riseOnHover && this.on({ mouseover: this._bringToFront, mouseout: this._resetZIndex }),
+                        this.options.autoPanOnFocus && S(e, "focus", this._panOnFocus, this),
+                        t.icon.createShadow(this._shadow)),
+                    o = !1;
+                e !== this._shadow && (this._removeShadow(), (o = !0)),
+                    e && (z(e, i), (e.alt = "")),
+                    (this._shadow = e),
                     t.opacity < 1 && this._updateOpacity(),
                     n && this.getPane().appendChild(this._icon),
                     this._initInteraction(),
-                    o && s && this.getPane(t.shadowPane).appendChild(this._shadow);
+                    e && o && this.getPane(t.shadowPane).appendChild(this._shadow);
             },
             _removeIcon: function () {
-                this.options.riseOnHover && this.off({ mouseover: this._bringToFront, mouseout: this._resetZIndex }), ri(this._icon), this.removeInteractiveTarget(this._icon), (this._icon = null);
+                this.options.riseOnHover && this.off({ mouseover: this._bringToFront, mouseout: this._resetZIndex }),
+                    this.options.autoPanOnFocus && E(this._icon, "focus", this._panOnFocus, this),
+                    T(this._icon),
+                    this.removeInteractiveTarget(this._icon),
+                    (this._icon = null);
             },
             _removeShadow: function () {
-                this._shadow && ri(this._shadow), (this._shadow = null);
+                this._shadow && T(this._shadow), (this._shadow = null);
             },
             _setPos: function (t) {
-                this._icon && vi(this._icon, t), this._shadow && vi(this._shadow, t), (this._zIndex = t.y + this.options.zIndexOffset), this._resetZIndex();
+                this._icon && Z(this._icon, t), this._shadow && Z(this._shadow, t), (this._zIndex = t.y + this.options.zIndexOffset), this._resetZIndex();
             },
             _updateZIndex: function (t) {
                 this._icon && (this._icon.style.zIndex = this._zIndex + t);
             },
             _animateZoom: function (t) {
-                var i = this._map._latLngToNewLayerPoint(this._latlng, t.zoom, t.center).round();
-                this._setPos(i);
+                t = this._map._latLngToNewLayerPoint(this._latlng, t.zoom, t.center).round();
+                this._setPos(t);
             },
             _initInteraction: function () {
                 var t;
                 this.options.interactive &&
-                    (ci(this._icon, "leaflet-interactive"),
+                    (z(this._icon, "leaflet-interactive"),
                     this.addInteractiveTarget(this._icon),
-                    Ee && ((t = this.options.draggable), this.dragging && ((t = this.dragging.enabled()), this.dragging.disable()), (this.dragging = new Ee(this)), t && this.dragging.enable()));
+                    ce && ((t = this.options.draggable), this.dragging && ((t = this.dragging.enabled()), this.dragging.disable()), (this.dragging = new ce(this)), t && this.dragging.enable()));
             },
             setOpacity: function (t) {
                 return (this.options.opacity = t), this._map && this._updateOpacity(), this;
             },
             _updateOpacity: function () {
                 var t = this.options.opacity;
-                this._icon && mi(this._icon, t), this._shadow && mi(this._shadow, t);
+                this._icon && C(this._icon, t), this._shadow && C(this._shadow, t);
             },
             _bringToFront: function () {
                 this._updateZIndex(this.options.riseOffset);
             },
             _resetZIndex: function () {
                 this._updateZIndex(0);
+            },
+            _panOnFocus: function () {
+                var t,
+                    i,
+                    e = this._map;
+                e && ((t = (i = this.options.icon.options).iconSize ? _(i.iconSize) : _(0, 0)), (i = i.iconAnchor ? _(i.iconAnchor) : _(0, 0)), e.panInside(this._latlng, { paddingTopLeft: i, paddingBottomRight: t.subtract(i) }));
             },
             _getPopupAnchor: function () {
                 return this.options.icon.options.popupAnchor;
@@ -2744,7 +2808,7 @@
                 return this.options.icon.options.tooltipAnchor;
             },
         });
-    var Be = Me.extend({
+    var _e = o.extend({
             options: {
                 stroke: !0,
                 color: "#3388ff",
@@ -2789,17 +2853,17 @@
                 this._project(), this._update();
             },
             _clickTolerance: function () {
-                return (this.options.stroke ? this.options.weight / 2 : 0) + this._renderer.options.tolerance;
+                return (this.options.stroke ? this.options.weight / 2 : 0) + (this._renderer.options.tolerance || 0);
             },
         }),
-        Ae = Be.extend({
+        pe = _e.extend({
             options: { fill: !0, radius: 10 },
             initialize: function (t, i) {
-                c(this, i), (this._latlng = j(t)), (this._radius = this.options.radius);
+                c(this, i), (this._latlng = w(t)), (this._radius = this.options.radius);
             },
             setLatLng: function (t) {
                 var i = this._latlng;
-                return (this._latlng = j(t)), this.redraw(), this.fire("move", { oldLatLng: i, latlng: this._latlng });
+                return (this._latlng = w(t)), this.redraw(), this.fire("move", { oldLatLng: i, latlng: this._latlng });
             },
             getLatLng: function () {
                 return this._latlng;
@@ -2812,7 +2876,7 @@
             },
             setStyle: function (t) {
                 var i = (t && t.radius) || this._radius;
-                return Be.prototype.setStyle.call(this, t), this.setRadius(i), this;
+                return _e.prototype.setStyle.call(this, t), this.setRadius(i), this;
             },
             _project: function () {
                 (this._point = this._map.latLngToLayerPoint(this._latlng)), this._updateBounds();
@@ -2821,8 +2885,8 @@
                 var t = this._radius,
                     i = this._radiusY || t,
                     e = this._clickTolerance(),
-                    n = [t + e, i + e];
-                this._pxBounds = new I(this._point.subtract(n), this._point.add(n));
+                    t = [t + e, i + e];
+                this._pxBounds = new m(this._point.subtract(t), this._point.add(t));
             },
             _update: function () {
                 this._map && this._updatePath();
@@ -2837,9 +2901,9 @@
                 return t.distanceTo(this._point) <= this._radius + this._clickTolerance();
             },
         });
-    var Ie = Ae.extend({
+    var me = pe.extend({
         initialize: function (t, i, e) {
-            if (("number" == typeof i && (i = h({}, e, { radius: i })), c(this, i), (this._latlng = j(t)), isNaN(this.options.radius))) throw new Error("Circle radius cannot be NaN");
+            if ((c(this, (i = "number" == typeof i ? l({}, e, { radius: i }) : i)), (this._latlng = w(t)), isNaN(this.options.radius))) throw new Error("Circle radius cannot be NaN");
             this._mRadius = this.options.radius;
         },
         setRadius: function (t) {
@@ -2850,39 +2914,36 @@
         },
         getBounds: function () {
             var t = [this._radius, this._radiusY || this._radius];
-            return new R(this._map.layerPointToLatLng(this._point.subtract(t)), this._map.layerPointToLatLng(this._point.add(t)));
+            return new s(this._map.layerPointToLatLng(this._point.subtract(t)), this._map.layerPointToLatLng(this._point.add(t)));
         },
-        setStyle: Be.prototype.setStyle,
+        setStyle: _e.prototype.setStyle,
         _project: function () {
             var t,
                 i,
                 e,
                 n,
                 o,
-                s,
-                r,
-                a,
-                h = this._latlng.lng,
-                u = this._latlng.lat,
-                l = this._map,
-                c = l.options.crs;
-            c.distance === F.distance
-                ? ((t = Math.PI / 180),
-                  (i = this._mRadius / F.R / t),
-                  (e = l.project([u + i, h])),
-                  (n = l.project([u - i, h])),
-                  (o = e.add(n).divideBy(2)),
-                  (s = l.unproject(o).lat),
-                  (r = Math.acos((Math.cos(i * t) - Math.sin(u * t) * Math.sin(s * t)) / (Math.cos(u * t) * Math.cos(s * t))) / t),
-                  (!isNaN(r) && 0 !== r) || (r = i / Math.cos((Math.PI / 180) * u)),
-                  (this._point = o.subtract(l.getPixelOrigin())),
-                  (this._radius = isNaN(r) ? 0 : o.x - l.project([s, h - r]).x),
-                  (this._radiusY = o.y - e.y))
-                : ((a = c.unproject(c.project(this._latlng).subtract([this._mRadius, 0]))), (this._point = l.latLngToLayerPoint(this._latlng)), (this._radius = this._point.x - l.latLngToLayerPoint(a).x)),
+                s = this._latlng.lng,
+                r = this._latlng.lat,
+                a = this._map,
+                h = a.options.crs;
+            h.distance === st.distance
+                ? ((n = Math.PI / 180),
+                  (o = this._mRadius / st.R / n),
+                  (t = a.project([r + o, s])),
+                  (i = a.project([r - o, s])),
+                  (i = t.add(i).divideBy(2)),
+                  (e = a.unproject(i).lat),
+                  (n = Math.acos((Math.cos(o * n) - Math.sin(r * n) * Math.sin(e * n)) / (Math.cos(r * n) * Math.cos(e * n))) / n),
+                  (!isNaN(n) && 0 !== n) || (n = o / Math.cos((Math.PI / 180) * r)),
+                  (this._point = i.subtract(a.getPixelOrigin())),
+                  (this._radius = isNaN(n) ? 0 : i.x - a.project([e, s - n]).x),
+                  (this._radiusY = i.y - t.y))
+                : ((o = h.unproject(h.project(this._latlng).subtract([this._mRadius, 0]))), (this._point = a.latLngToLayerPoint(this._latlng)), (this._radius = this._point.x - a.latLngToLayerPoint(o).x)),
                 this._updateBounds();
         },
     });
-    var Oe = Be.extend({
+    var fe = _e.extend({
         options: { smoothFactor: 1, noClip: !1 },
         initialize: function (t, i) {
             c(this, i), this._setLatLngs(t);
@@ -2897,12 +2958,14 @@
             return !this._latlngs.length;
         },
         closestLayerPoint: function (t) {
-            for (var i, e, n = 1 / 0, o = null, s = de, r = 0, a = this._parts.length; r < a; r++)
-                for (var h = this._parts[r], u = 1, l = h.length; u < l; u++) {
-                    var c = s(t, (i = h[u - 1]), (e = h[u]), !0);
-                    c < n && ((n = c), (o = s(t, i, e)));
+            for (var i = 1 / 0, e = null, n = ee, o = 0, s = this._parts.length; o < s; o++)
+                for (var r = this._parts[o], a = 1, h = r.length; a < h; a++) {
+                    var l,
+                        u,
+                        c = n(t, (l = r[a - 1]), (u = r[a]), !0);
+                    c < i && ((i = c), (e = n(t, l, u)));
                 }
-            return o && (o.distance = Math.sqrt(n)), o;
+            return e && (e.distance = Math.sqrt(i)), e;
         },
         getCenter: function () {
             if (!this._map) throw new Error("Must add layer to map before using getCenter()");
@@ -2912,43 +2975,42 @@
                 n,
                 o,
                 s,
-                r,
-                a = this._rings[0],
-                h = a.length;
-            if (!h) return null;
-            for (i = t = 0; t < h - 1; t++) i += a[t].distanceTo(a[t + 1]) / 2;
-            if (0 === i) return this._map.layerPointToLatLng(a[0]);
-            for (n = t = 0; t < h - 1; t++) if (((o = a[t]), (s = a[t + 1]), i < (n += e = o.distanceTo(s)))) return (r = (n - i) / e), this._map.layerPointToLatLng([s.x - r * (s.x - o.x), s.y - r * (s.y - o.y)]);
+                r = this._rings[0],
+                a = r.length;
+            if (!a) return null;
+            for (i = t = 0; t < a - 1; t++) i += r[t].distanceTo(r[t + 1]) / 2;
+            if (0 === i) return this._map.layerPointToLatLng(r[0]);
+            for (e = t = 0; t < a - 1; t++) if (((n = r[t]), (o = r[t + 1]), i < (e += s = n.distanceTo(o)))) return this._map.layerPointToLatLng([o.x - (s = (e - i) / s) * (o.x - n.x), o.y - s * (o.y - n.y)]);
         },
         getBounds: function () {
             return this._bounds;
         },
         addLatLng: function (t, i) {
-            return (i = i || this._defaultShape()), (t = j(t)), i.push(t), this._bounds.extend(t), this.redraw();
+            return (i = i || this._defaultShape()), (t = w(t)), i.push(t), this._bounds.extend(t), this.redraw();
         },
         _setLatLngs: function (t) {
-            (this._bounds = new R()), (this._latlngs = this._convertLatLngs(t));
+            (this._bounds = new s()), (this._latlngs = this._convertLatLngs(t));
         },
         _defaultShape: function () {
-            return pe(this._latlngs) ? this._latlngs : this._latlngs[0];
+            return ne(this._latlngs) ? this._latlngs : this._latlngs[0];
         },
         _convertLatLngs: function (t) {
-            for (var i = [], e = pe(t), n = 0, o = t.length; n < o; n++) e ? ((i[n] = j(t[n])), this._bounds.extend(i[n])) : (i[n] = this._convertLatLngs(t[n]));
+            for (var i = [], e = ne(t), n = 0, o = t.length; n < o; n++) e ? ((i[n] = w(t[n])), this._bounds.extend(i[n])) : (i[n] = this._convertLatLngs(t[n]));
             return i;
         },
         _project: function () {
-            var t = new I();
+            var t = new m();
             (this._rings = []), this._projectLatlngs(this._latlngs, this._rings, t), this._bounds.isValid() && t.isValid() && ((this._rawPxBounds = t), this._updateBounds());
         },
         _updateBounds: function () {
             var t = this._clickTolerance(),
-                i = new k(t, t);
-            this._pxBounds = new I([this._rawPxBounds.min.subtract(i), this._rawPxBounds.max.add(i)]);
+                t = new p(t, t);
+            this._rawPxBounds && (this._pxBounds = new m([this._rawPxBounds.min.subtract(t), this._rawPxBounds.max.add(t)]));
         },
         _projectLatlngs: function (t, i, e) {
             var n,
                 o,
-                s = t[0] instanceof D,
+                s = t[0] instanceof v,
                 r = t.length;
             if (s) {
                 for (o = [], n = 0; n < r; n++) (o[n] = this._map.latLngToLayerPoint(t[n])), e.extend(o[n]);
@@ -2961,10 +3023,10 @@
                 if (this.options.noClip) this._parts = this._rings;
                 else
                     for (var i, e, n, o, s = this._parts, r = 0, a = 0, h = this._rings.length; r < h; r++)
-                        for (i = 0, e = (o = this._rings[r]).length; i < e - 1; i++) (n = le(o[i], o[i + 1], t, i, !0)) && ((s[a] = s[a] || []), s[a].push(n[0]), (n[1] === o[i + 1] && i !== e - 2) || (s[a].push(n[1]), a++));
+                        for (i = 0, e = (o = this._rings[r]).length; i < e - 1; i++) (n = Qi(o[i], o[i + 1], t, i, !0)) && ((s[a] = s[a] || []), s[a].push(n[0]), (n[1] === o[i + 1] && i !== e - 2) || (s[a].push(n[1]), a++));
         },
         _simplifyPoints: function () {
-            for (var t = this._parts, i = this.options.smoothFactor, e = 0, n = t.length; e < n; e++) t[e] = he(t[e], i);
+            for (var t = this._parts, i = this.options.smoothFactor, e = 0, n = t.length; e < n; e++) t[e] = Ji(t[e], i);
         },
         _update: function () {
             this._map && (this._clipPoints(), this._simplifyPoints(), this._updatePath());
@@ -2981,12 +3043,12 @@
                 a,
                 h = this._clickTolerance();
             if (!this._pxBounds || !this._pxBounds.contains(t)) return !1;
-            for (e = 0, s = this._parts.length; e < s; e++) for (n = 0, o = (r = (a = this._parts[e]).length) - 1; n < r; o = n++) if ((i || 0 !== n) && ue(t, a[o], a[n]) <= h) return !0;
+            for (e = 0, s = this._parts.length; e < s; e++) for (n = 0, o = (r = (a = this._parts[e]).length) - 1; n < r; o = n++) if ((i || 0 !== n) && $i(t, a[o], a[n]) <= h) return !0;
             return !1;
         },
     });
-    Oe._flat = me;
-    var Re = Oe.extend({
+    fe._flat = oe;
+    var ge = fe.extend({
         options: { fill: !0 },
         isEmpty: function () {
             return !this._latlngs.length || !this._latlngs[0].length;
@@ -3002,31 +3064,31 @@
                 r,
                 a,
                 h,
-                u = this._rings[0],
-                l = u.length;
-            if (!l) return null;
-            for (t = s = r = a = 0, i = l - 1; t < l; i = t++) (e = u[t]), (n = u[i]), (o = e.y * n.x - n.y * e.x), (r += (e.x + n.x) * o), (a += (e.y + n.y) * o), (s += 3 * o);
-            return (h = 0 === s ? u[0] : [r / s, a / s]), this._map.layerPointToLatLng(h);
+                l = this._rings[0],
+                u = l.length;
+            if (!u) return null;
+            for (t = s = r = a = 0, i = u - 1; t < u; i = t++) (e = l[t]), (n = l[i]), (o = e.y * n.x - n.y * e.x), (r += (e.x + n.x) * o), (a += (e.y + n.y) * o), (s += 3 * o);
+            return (h = 0 === s ? l[0] : [r / s, a / s]), this._map.layerPointToLatLng(h);
         },
         _convertLatLngs: function (t) {
-            var i = Oe.prototype._convertLatLngs.call(this, t),
-                e = i.length;
-            return 2 <= e && i[0] instanceof D && i[0].equals(i[e - 1]) && i.pop(), i;
+            var t = fe.prototype._convertLatLngs.call(this, t),
+                i = t.length;
+            return 2 <= i && t[0] instanceof v && t[0].equals(t[i - 1]) && t.pop(), t;
         },
         _setLatLngs: function (t) {
-            Oe.prototype._setLatLngs.call(this, t), pe(this._latlngs) && (this._latlngs = [this._latlngs]);
+            fe.prototype._setLatLngs.call(this, t), ne(this._latlngs) && (this._latlngs = [this._latlngs]);
         },
         _defaultShape: function () {
-            return pe(this._latlngs[0]) ? this._latlngs[0] : this._latlngs[0][0];
+            return (ne(this._latlngs[0]) ? this._latlngs : this._latlngs[0])[0];
         },
         _clipPoints: function () {
             var t = this._renderer._bounds,
                 i = this.options.weight,
-                e = new k(i, i),
-                t = new I(t.min.subtract(e), t.max.add(e));
+                i = new p(i, i),
+                t = new m(t.min.subtract(i), t.max.add(i));
             if (((this._parts = []), this._pxBounds && this._pxBounds.intersects(t)))
                 if (this.options.noClip) this._parts = this._rings;
-                else for (var n, o = 0, s = this._rings.length; o < s; o++) (n = ge(this._rings[o], t, !0)).length && this._parts.push(n);
+                else for (var e, n = 0, o = this._rings.length; n < o; n++) (e = se(this._rings[n], t, !0)).length && this._parts.push(e);
         },
         _updatePath: function () {
             this._renderer._updatePoly(this, !0);
@@ -3040,14 +3102,14 @@
                 r,
                 a,
                 h,
-                u = !1;
+                l = !1;
             if (!this._pxBounds || !this._pxBounds.contains(t)) return !1;
             for (o = 0, a = this._parts.length; o < a; o++)
-                for (s = 0, r = (h = (i = this._parts[o]).length) - 1; s < h; r = s++) (e = i[s]), (n = i[r]), e.y > t.y != n.y > t.y && t.x < ((n.x - e.x) * (t.y - e.y)) / (n.y - e.y) + e.x && (u = !u);
-            return u || Oe.prototype._containsPoint.call(this, t, !0);
+                for (s = 0, r = (h = (i = this._parts[o]).length) - 1; s < h; r = s++) (e = i[s]), (n = i[r]), e.y > t.y != n.y > t.y && t.x < ((n.x - e.x) * (t.y - e.y)) / (n.y - e.y) + e.x && (l = !l);
+            return l || fe.prototype._containsPoint.call(this, t, !0);
         },
     });
-    var Ne = Ce.extend({
+    var ve = he.extend({
         initialize: function (t, i) {
             c(this, i), (this._layers = {}), t && this.addData(t);
         },
@@ -3055,18 +3117,18 @@
             var i,
                 e,
                 n,
-                o = g(t) ? t : t.features;
+                o = d(t) ? t : t.features;
             if (o) {
                 for (i = 0, e = o.length; i < e; i++) ((n = o[i]).geometries || n.geometry || n.features || n.coordinates) && this.addData(n);
                 return this;
             }
             var s = this.options;
             if (s.filter && !s.filter(t)) return this;
-            var r = De(t, s);
-            return r ? ((r.feature = qe(t)), (r.defaultOptions = r.options), this.resetStyle(r), s.onEachFeature && s.onEachFeature(t, r), this.addLayer(r)) : this;
+            var r = ye(t, s);
+            return r ? ((r.feature = ze(t)), (r.defaultOptions = r.options), this.resetStyle(r), s.onEachFeature && s.onEachFeature(t, r), this.addLayer(r)) : this;
         },
         resetStyle: function (t) {
-            return void 0 === t ? this.eachLayer(this.resetStyle, this) : ((t.options = h({}, t.defaultOptions)), this._setLayerStyle(t, this.options.style), this);
+            return void 0 === t ? this.eachLayer(this.resetStyle, this) : ((t.options = l({}, t.defaultOptions)), this._setLayerStyle(t, this.options.style), this);
         },
         setStyle: function (i) {
             return this.eachLayer(function (t) {
@@ -3077,7 +3139,7 @@
             t.setStyle && ("function" == typeof i && (i = i(t.feature)), t.setStyle(i));
         },
     });
-    function De(t, i) {
+    function ye(t, i) {
         var e,
             n,
             o,
@@ -3085,117 +3147,116 @@
             r = "Feature" === t.type ? t.geometry : t,
             a = r ? r.coordinates : null,
             h = [],
-            u = i && i.pointToLayer,
-            l = (i && i.coordsToLatLng) || We;
+            l = i && i.pointToLayer,
+            u = (i && i.coordsToLatLng) || we;
         if (!a && !r) return null;
         switch (r.type) {
             case "Point":
-                return je(u, t, (e = l(a)), i);
+                return xe(l, t, (e = u(a)), i);
             case "MultiPoint":
-                for (o = 0, s = a.length; o < s; o++) (e = l(a[o])), h.push(je(u, t, e, i));
-                return new Ce(h);
+                for (o = 0, s = a.length; o < s; o++) (e = u(a[o])), h.push(xe(l, t, e, i));
+                return new he(h);
             case "LineString":
             case "MultiLineString":
-                return (n = He(a, "LineString" === r.type ? 0 : 1, l)), new Oe(n, i);
+                return (n = Pe(a, "LineString" === r.type ? 0 : 1, u)), new fe(n, i);
             case "Polygon":
             case "MultiPolygon":
-                return (n = He(a, "Polygon" === r.type ? 1 : 2, l)), new Re(n, i);
+                return (n = Pe(a, "Polygon" === r.type ? 1 : 2, u)), new ge(n, i);
             case "GeometryCollection":
                 for (o = 0, s = r.geometries.length; o < s; o++) {
-                    var c = De({ geometry: r.geometries[o], type: "Feature", properties: t.properties }, i);
+                    var c = ye({ geometry: r.geometries[o], type: "Feature", properties: t.properties }, i);
                     c && h.push(c);
                 }
-                return new Ce(h);
+                return new he(h);
             default:
                 throw new Error("Invalid GeoJSON object.");
         }
     }
-    function je(t, i, e, n) {
-        return t ? t(i, e) : new ke(e, n && n.markersInheritOptions && n);
+    function xe(t, i, e, n) {
+        return t ? t(i, e) : new de(e, n && n.markersInheritOptions && n);
     }
-    function We(t) {
-        return new D(t[1], t[0], t[2]);
+    function we(t) {
+        return new v(t[1], t[0], t[2]);
     }
-    function He(t, i, e) {
-        for (var n, o = [], s = 0, r = t.length; s < r; s++) (n = i ? He(t[s], i - 1, e) : (e || We)(t[s])), o.push(n);
+    function Pe(t, i, e) {
+        for (var n, o = [], s = 0, r = t.length; s < r; s++) (n = i ? Pe(t[s], i - 1, e) : (e || we)(t[s])), o.push(n);
         return o;
     }
-    function Fe(t, i) {
-        return (i = "number" == typeof i ? i : 6), void 0 !== t.alt ? [r(t.lng, i), r(t.lat, i), r(t.alt, i)] : [r(t.lng, i), r(t.lat, i)];
+    function be(t, i) {
+        return void 0 !== (t = w(t)).alt ? [e(t.lng, i), e(t.lat, i), e(t.alt, i)] : [e(t.lng, i), e(t.lat, i)];
     }
-    function Ue(t, i, e, n) {
-        for (var o = [], s = 0, r = t.length; s < r; s++) o.push(i ? Ue(t[s], i - 1, e, n) : Fe(t[s], n));
+    function Le(t, i, e, n) {
+        for (var o = [], s = 0, r = t.length; s < r; s++) o.push(i ? Le(t[s], i - 1, e, n) : be(t[s], n));
         return !i && e && o.push(o[0]), o;
     }
-    function Ve(t, i) {
-        return t.feature ? h({}, t.feature, { geometry: i }) : qe(i);
+    function Te(t, i) {
+        return t.feature ? l({}, t.feature, { geometry: i }) : ze(i);
     }
-    function qe(t) {
+    function ze(t) {
         return "Feature" === t.type || "FeatureCollection" === t.type ? t : { type: "Feature", properties: {}, geometry: t };
     }
-    var Ge = {
+    Tt = {
         toGeoJSON: function (t) {
-            return Ve(this, { type: "Point", coordinates: Fe(this.getLatLng(), t) });
+            return Te(this, { type: "Point", coordinates: be(this.getLatLng(), t) });
         },
     };
-    function Ke(t, i) {
-        return new Ne(t, i);
+    function Me(t, i) {
+        return new ve(t, i);
     }
-    ke.include(Ge),
-        Ie.include(Ge),
-        Ae.include(Ge),
-        Oe.include({
+    de.include(Tt),
+        me.include(Tt),
+        pe.include(Tt),
+        fe.include({
             toGeoJSON: function (t) {
-                var i = !pe(this._latlngs);
-                return Ve(this, { type: (i ? "Multi" : "") + "LineString", coordinates: Ue(this._latlngs, i ? 1 : 0, !1, t) });
+                var i = !ne(this._latlngs);
+                return Te(this, { type: (i ? "Multi" : "") + "LineString", coordinates: Le(this._latlngs, i ? 1 : 0, !1, t) });
             },
         }),
-        Re.include({
+        ge.include({
             toGeoJSON: function (t) {
-                var i = !pe(this._latlngs),
-                    e = i && !pe(this._latlngs[0]),
-                    n = Ue(this._latlngs, e ? 2 : i ? 1 : 0, !0, t);
-                return i || (n = [n]), Ve(this, { type: (e ? "Multi" : "") + "Polygon", coordinates: n });
+                var i = !ne(this._latlngs),
+                    e = i && !ne(this._latlngs[0]),
+                    t = Le(this._latlngs, e ? 2 : i ? 1 : 0, !0, t);
+                return Te(this, { type: (e ? "Multi" : "") + "Polygon", coordinates: (t = i ? t : [t]) });
             },
         }),
-        ze.include({
+        ae.include({
             toMultiPoint: function (i) {
                 var e = [];
                 return (
                     this.eachLayer(function (t) {
                         e.push(t.toGeoJSON(i).geometry.coordinates);
                     }),
-                    Ve(this, { type: "MultiPoint", coordinates: e })
+                    Te(this, { type: "MultiPoint", coordinates: e })
                 );
             },
-            toGeoJSON: function (n) {
+            toGeoJSON: function (i) {
                 var t = this.feature && this.feature.geometry && this.feature.geometry.type;
-                if ("MultiPoint" === t) return this.toMultiPoint(n);
-                var o = "GeometryCollection" === t,
-                    s = [];
+                if ("MultiPoint" === t) return this.toMultiPoint(i);
+                var e = "GeometryCollection" === t,
+                    n = [];
                 return (
                     this.eachLayer(function (t) {
-                        var i, e;
-                        t.toGeoJSON && ((i = t.toGeoJSON(n)), o ? s.push(i.geometry) : "FeatureCollection" === (e = qe(i)).type ? s.push.apply(s, e.features) : s.push(e));
+                        t.toGeoJSON && ((t = t.toGeoJSON(i)), e ? n.push(t.geometry) : "FeatureCollection" === (t = ze(t)).type ? n.push.apply(n, t.features) : n.push(t));
                     }),
-                    o ? Ve(this, { geometries: s, type: "GeometryCollection" }) : { type: "FeatureCollection", features: s }
+                    e ? Te(this, { geometries: n, type: "GeometryCollection" }) : { type: "FeatureCollection", features: n }
                 );
             },
         });
-    var Ye = Ke,
-        Xe = Me.extend({
+    var zt = Me,
+        Ce = o.extend({
             options: { opacity: 1, alt: "", interactive: !1, crossOrigin: !1, errorOverlayUrl: "", zIndex: 1, className: "" },
             initialize: function (t, i, e) {
-                (this._url = t), (this._bounds = N(i)), c(this, e);
+                (this._url = t), (this._bounds = g(i)), c(this, e);
             },
             onAdd: function () {
                 this._image || (this._initImage(), this.options.opacity < 1 && this._updateOpacity()),
-                    this.options.interactive && (ci(this._image, "leaflet-interactive"), this.addInteractiveTarget(this._image)),
+                    this.options.interactive && (z(this._image, "leaflet-interactive"), this.addInteractiveTarget(this._image)),
                     this.getPane().appendChild(this._image),
                     this._reset();
             },
             onRemove: function () {
-                ri(this._image), this.options.interactive && this.removeInteractiveTarget(this._image);
+                T(this._image), this.options.interactive && this.removeInteractiveTarget(this._image);
             },
             setOpacity: function (t) {
                 return (this.options.opacity = t), this._image && this._updateOpacity(), this;
@@ -3204,16 +3265,16 @@
                 return t.opacity && this.setOpacity(t.opacity), this;
             },
             bringToFront: function () {
-                return this._map && hi(this._image), this;
+                return this._map && fi(this._image), this;
             },
             bringToBack: function () {
-                return this._map && ui(this._image), this;
+                return this._map && gi(this._image), this;
             },
             setUrl: function (t) {
                 return (this._url = t), this._image && (this._image.src = t), this;
             },
             setBounds: function (t) {
-                return (this._bounds = N(t)), this._map && this._reset(), this;
+                return (this._bounds = g(t)), this._map && this._reset(), this;
             },
             getEvents: function () {
                 var t = { zoom: this._reset, viewreset: this._reset };
@@ -3230,31 +3291,31 @@
             },
             _initImage: function () {
                 var t = "IMG" === this._url.tagName,
-                    i = (this._image = t ? this._url : si("img"));
-                ci(i, "leaflet-image-layer"),
-                    this._zoomAnimated && ci(i, "leaflet-zoom-animated"),
-                    this.options.className && ci(i, this.options.className),
-                    (i.onselectstart = a),
-                    (i.onmousemove = a),
-                    (i.onload = p(this.fire, this, "load")),
-                    (i.onerror = p(this._overlayOnError, this, "error")),
+                    i = (this._image = t ? this._url : b("img"));
+                z(i, "leaflet-image-layer"),
+                    this._zoomAnimated && z(i, "leaflet-zoom-animated"),
+                    this.options.className && z(i, this.options.className),
+                    (i.onselectstart = u),
+                    (i.onmousemove = u),
+                    (i.onload = a(this.fire, this, "load")),
+                    (i.onerror = a(this._overlayOnError, this, "error")),
                     (!this.options.crossOrigin && "" !== this.options.crossOrigin) || (i.crossOrigin = !0 === this.options.crossOrigin ? "" : this.options.crossOrigin),
                     this.options.zIndex && this._updateZIndex(),
                     t ? (this._url = i.src) : ((i.src = this._url), (i.alt = this.options.alt));
             },
             _animateZoom: function (t) {
                 var i = this._map.getZoomScale(t.zoom),
-                    e = this._map._latLngBoundsToNewLayerBounds(this._bounds, t.zoom, t.center).min;
-                gi(this._image, e, i);
+                    t = this._map._latLngBoundsToNewLayerBounds(this._bounds, t.zoom, t.center).min;
+                Pi(this._image, t, i);
             },
             _reset: function () {
                 var t = this._image,
-                    i = new I(this._map.latLngToLayerPoint(this._bounds.getNorthWest()), this._map.latLngToLayerPoint(this._bounds.getSouthEast())),
+                    i = new m(this._map.latLngToLayerPoint(this._bounds.getNorthWest()), this._map.latLngToLayerPoint(this._bounds.getSouthEast())),
                     e = i.getSize();
-                vi(t, i.min), (t.style.width = e.x + "px"), (t.style.height = e.y + "px");
+                Z(t, i.min), (t.style.width = e.x + "px"), (t.style.height = e.y + "px");
             },
             _updateOpacity: function () {
-                mi(this._image, this.options.opacity);
+                C(this._image, this.options.opacity);
             },
             _updateZIndex: function () {
                 this._image && void 0 !== this.options.zIndex && null !== this.options.zIndex && (this._image.style.zIndex = this.options.zIndex);
@@ -3264,65 +3325,80 @@
                 var t = this.options.errorOverlayUrl;
                 t && this._url !== t && ((this._url = t), (this._image.src = t));
             },
+            getCenter: function () {
+                return this._bounds.getCenter();
+            },
         }),
-        Je = Xe.extend({
-            options: { autoplay: !0, loop: !0, keepAspectRatio: !0, muted: !1 },
+        Ze = Ce.extend({
+            options: { autoplay: !0, loop: !0, keepAspectRatio: !0, muted: !1, playsInline: !0 },
             _initImage: function () {
                 var t = "VIDEO" === this._url.tagName,
-                    i = (this._image = t ? this._url : si("video"));
+                    i = (this._image = t ? this._url : b("video"));
                 if (
-                    (ci(i, "leaflet-image-layer"),
-                    this._zoomAnimated && ci(i, "leaflet-zoom-animated"),
-                    this.options.className && ci(i, this.options.className),
-                    (i.onselectstart = a),
-                    (i.onmousemove = a),
-                    (i.onloadeddata = p(this.fire, this, "load")),
+                    (z(i, "leaflet-image-layer"),
+                    this._zoomAnimated && z(i, "leaflet-zoom-animated"),
+                    this.options.className && z(i, this.options.className),
+                    (i.onselectstart = u),
+                    (i.onmousemove = u),
+                    (i.onloadeddata = a(this.fire, this, "load")),
                     t)
                 ) {
                     for (var e = i.getElementsByTagName("source"), n = [], o = 0; o < e.length; o++) n.push(e[o].src);
                     this._url = 0 < e.length ? n : [i.src];
                 } else {
-                    g(this._url) || (this._url = [this._url]),
+                    d(this._url) || (this._url = [this._url]),
                         !this.options.keepAspectRatio && Object.prototype.hasOwnProperty.call(i.style, "objectFit") && (i.style.objectFit = "fill"),
                         (i.autoplay = !!this.options.autoplay),
                         (i.loop = !!this.options.loop),
-                        (i.muted = !!this.options.muted);
+                        (i.muted = !!this.options.muted),
+                        (i.playsInline = !!this.options.playsInline);
                     for (var s = 0; s < this._url.length; s++) {
-                        var r = si("source");
+                        var r = b("source");
                         (r.src = this._url[s]), i.appendChild(r);
                     }
                 }
             },
         });
-    var $e = Xe.extend({
+    var Se = Ce.extend({
         _initImage: function () {
             var t = (this._image = this._url);
-            ci(t, "leaflet-image-layer"), this._zoomAnimated && ci(t, "leaflet-zoom-animated"), this.options.className && ci(t, this.options.className), (t.onselectstart = a), (t.onmousemove = a);
+            z(t, "leaflet-image-layer"), this._zoomAnimated && z(t, "leaflet-zoom-animated"), this.options.className && z(t, this.options.className), (t.onselectstart = u), (t.onmousemove = u);
         },
     });
-    var Qe = Me.extend({
-            options: { offset: [0, 7], className: "", pane: "popupPane" },
+    var O = o.extend({
+            options: { interactive: !1, offset: [0, 0], className: "", pane: void 0 },
             initialize: function (t, i) {
                 c(this, t), (this._source = i);
+            },
+            openOn: function (t) {
+                return (t = arguments.length ? t : this._source._map).hasLayer(this) || t.addLayer(this), this;
+            },
+            close: function () {
+                return this._map && this._map.removeLayer(this), this;
+            },
+            toggle: function (t) {
+                return this._map ? this.close() : (arguments.length ? (this._source = t) : (t = this._source), this._prepareOpen(), this.openOn(t._map)), this;
             },
             onAdd: function (t) {
                 (this._zoomAnimated = t._zoomAnimated),
                     this._container || this._initLayout(),
-                    t._fadeAnimated && mi(this._container, 0),
+                    t._fadeAnimated && C(this._container, 0),
                     clearTimeout(this._removeTimeout),
                     this.getPane().appendChild(this._container),
                     this.update(),
-                    t._fadeAnimated && mi(this._container, 1),
-                    this.bringToFront();
+                    t._fadeAnimated && C(this._container, 1),
+                    this.bringToFront(),
+                    this.options.interactive && (z(this._container, "leaflet-interactive"), this.addInteractiveTarget(this._container));
             },
             onRemove: function (t) {
-                t._fadeAnimated ? (mi(this._container, 0), (this._removeTimeout = setTimeout(p(ri, void 0, this._container), 200))) : ri(this._container);
+                t._fadeAnimated ? (C(this._container, 0), (this._removeTimeout = setTimeout(a(T, void 0, this._container), 200))) : T(this._container),
+                    this.options.interactive && (M(this._container, "leaflet-interactive"), this.removeInteractiveTarget(this._container));
             },
             getLatLng: function () {
                 return this._latlng;
             },
             setLatLng: function (t) {
-                return (this._latlng = j(t)), this._map && (this._updatePosition(), this._adjustPan()), this;
+                return (this._latlng = w(t)), this._map && (this._updatePosition(), this._adjustPan()), this;
             },
             getContent: function () {
                 return this._content;
@@ -3344,24 +3420,33 @@
                 return !!this._map && this._map.hasLayer(this);
             },
             bringToFront: function () {
-                return this._map && hi(this._container), this;
+                return this._map && fi(this._container), this;
             },
             bringToBack: function () {
-                return this._map && ui(this._container), this;
+                return this._map && gi(this._container), this;
             },
-            _prepareOpen: function (t, i, e) {
-                if ((i instanceof Me || ((e = i), (i = t)), i instanceof Ce))
-                    for (var n in t._layers) {
-                        i = t._layers[n];
-                        break;
-                    }
-                if (!e)
-                    if (i.getCenter) e = i.getCenter();
+            _prepareOpen: function (t) {
+                if (!(e = this._source)._map) return !1;
+                if (e instanceof he) {
+                    var i,
+                        e = null,
+                        n = this._source._layers;
+                    for (i in n)
+                        if (n[i]._map) {
+                            e = n[i];
+                            break;
+                        }
+                    if (!e) return !1;
+                    this._source = e;
+                }
+                if (!t)
+                    if (e.getCenter) t = e.getCenter();
+                    else if (e.getLatLng) t = e.getLatLng();
                     else {
-                        if (!i.getLatLng) throw new Error("Unable to get source layer LatLng.");
-                        e = i.getLatLng();
+                        if (!e.getBounds) throw new Error("Unable to get source layer LatLng.");
+                        t = e.getBounds().getCenter();
                     }
-                return (this._source = i), this.update(), e;
+                return this.setLatLng(t), this._map && this.update(), !0;
             },
             _updateContent: function () {
                 if (this._content) {
@@ -3376,303 +3461,311 @@
                 }
             },
             _updatePosition: function () {
-                var t, i, e, n, o;
+                var t, i, e;
                 this._map &&
-                    ((t = this._map.latLngToLayerPoint(this._latlng)),
-                    (i = A(this.options.offset)),
+                    ((i = this._map.latLngToLayerPoint(this._latlng)),
+                    (t = _(this.options.offset)),
                     (e = this._getAnchor()),
-                    this._zoomAnimated ? vi(this._container, t.add(e)) : (i = i.add(t).add(e)),
-                    (n = this._containerBottom = -i.y),
-                    (o = this._containerLeft = -Math.round(this._containerWidth / 2) + i.x),
-                    (this._container.style.bottom = n + "px"),
-                    (this._container.style.left = o + "px"));
+                    this._zoomAnimated ? Z(this._container, i.add(e)) : (t = t.add(i).add(e)),
+                    (i = this._containerBottom = -t.y),
+                    (e = this._containerLeft = -Math.round(this._containerWidth / 2) + t.x),
+                    (this._container.style.bottom = i + "px"),
+                    (this._container.style.left = e + "px"));
             },
             _getAnchor: function () {
                 return [0, 0];
             },
         }),
-        tn = Qe.extend({
-            options: {
-                maxWidth: 300,
-                minWidth: 50,
-                maxHeight: null,
-                autoPan: !0,
-                autoPanPaddingTopLeft: null,
-                autoPanPaddingBottomRight: null,
-                autoPanPadding: [5, 5],
-                keepInView: !1,
-                closeButton: !0,
-                autoClose: !0,
-                closeOnEscapeKey: !0,
-                className: "",
-            },
-            openOn: function (t) {
-                return t.openPopup(this), this;
-            },
-            onAdd: function (t) {
-                Qe.prototype.onAdd.call(this, t), t.fire("popupopen", { popup: this }), this._source && (this._source.fire("popupopen", { popup: this }, !0), this._source instanceof Be || this._source.on("preclick", Ai));
-            },
-            onRemove: function (t) {
-                Qe.prototype.onRemove.call(this, t), t.fire("popupclose", { popup: this }), this._source && (this._source.fire("popupclose", { popup: this }, !0), this._source instanceof Be || this._source.off("preclick", Ai));
-            },
-            getEvents: function () {
-                var t = Qe.prototype.getEvents.call(this);
-                return (void 0 !== this.options.closeOnClick ? this.options.closeOnClick : this._map.options.closePopupOnClick) && (t.preclick = this._close), this.options.keepInView && (t.moveend = this._adjustPan), t;
-            },
-            _close: function () {
-                this._map && this._map.closePopup(this);
-            },
-            _initLayout: function () {
-                var t,
-                    i = "leaflet-popup",
-                    e = (this._container = si("div", i + " " + (this.options.className || "") + " leaflet-zoom-animated")),
-                    n = (this._wrapper = si("div", i + "-content-wrapper", e));
-                (this._contentNode = si("div", i + "-content", n)),
-                    Oi(e),
-                    Ii(this._contentNode),
-                    zi(e, "contextmenu", Ai),
-                    (this._tipContainer = si("div", i + "-tip-container", e)),
-                    (this._tip = si("div", i + "-tip", this._tipContainer)),
-                    this.options.closeButton && (((t = this._closeButton = si("a", i + "-close-button", e)).href = "#close"), (t.innerHTML = "&#215;"), zi(t, "click", this._onCloseButtonClick, this));
-            },
-            _updateLayout: function () {
-                var t = this._contentNode,
-                    i = t.style;
-                (i.width = ""), (i.whiteSpace = "nowrap");
-                var e = t.offsetWidth,
-                    e = Math.min(e, this.options.maxWidth);
-                (e = Math.max(e, this.options.minWidth)), (i.width = e + 1 + "px"), (i.whiteSpace = ""), (i.height = "");
-                var n = t.offsetHeight,
-                    o = this.options.maxHeight,
-                    s = "leaflet-popup-scrolled";
-                o && o < n ? ((i.height = o + "px"), ci(t, s)) : _i(t, s), (this._containerWidth = this._container.offsetWidth);
-            },
-            _animateZoom: function (t) {
-                var i = this._map._latLngToNewLayerPoint(this._latlng, t.zoom, t.center),
-                    e = this._getAnchor();
-                vi(this._container, i.add(e));
-            },
-            _adjustPan: function () {
-                var t, i, e, n, o, s, r, a, h, u, l, c;
-                this.options.autoPan &&
-                    (this._map._panAnim && this._map._panAnim.stop(),
-                    (t = this._map),
-                    (i = parseInt(oi(this._container, "marginBottom"), 10) || 0),
-                    (e = this._container.offsetHeight + i),
-                    (n = this._containerWidth),
-                    (o = new k(this._containerLeft, -e - this._containerBottom))._add(yi(this._container)),
-                    (s = t.layerPointToContainerPoint(o)),
-                    (r = A(this.options.autoPanPadding)),
-                    (a = A(this.options.autoPanPaddingTopLeft || r)),
-                    (h = A(this.options.autoPanPaddingBottomRight || r)),
-                    (u = t.getSize()),
-                    (c = l = 0),
-                    s.x + n + h.x > u.x && (l = s.x + n - u.x + h.x),
-                    s.x - l - a.x < 0 && (l = s.x - a.x),
-                    s.y + e + h.y > u.y && (c = s.y + e - u.y + h.y),
-                    s.y - c - a.y < 0 && (c = s.y - a.y),
-                    (l || c) && t.fire("autopanstart").panBy([l, c]));
-            },
-            _onCloseButtonClick: function (t) {
-                this._close(), Ni(t);
-            },
-            _getAnchor: function () {
-                return A(this._source && this._source._getPopupAnchor ? this._source._getPopupAnchor() : [0, 0]);
-            },
-        });
-    Ki.mergeOptions({ closePopupOnClick: !0 }),
-        Ki.include({
-            openPopup: function (t, i, e) {
-                return t instanceof tn || (t = new tn(e).setContent(t)), i && t.setLatLng(i), this.hasLayer(t) ? this : (this._popup && this._popup.options.autoClose && this.closePopup(), (this._popup = t), this.addLayer(t));
-            },
-            closePopup: function (t) {
-                return (t && t !== this._popup) || ((t = this._popup), (this._popup = null)), t && this.removeLayer(t), this;
-            },
-        }),
-        Me.include({
-            bindPopup: function (t, i) {
-                return (
-                    t instanceof tn ? (c(t, i), ((this._popup = t)._source = this)) : ((this._popup && !i) || (this._popup = new tn(i, this)), this._popup.setContent(t)),
-                    this._popupHandlersAdded || (this.on({ click: this._openPopup, keypress: this._onKeyPress, remove: this.closePopup, move: this._movePopup }), (this._popupHandlersAdded = !0)),
-                    this
-                );
-            },
-            unbindPopup: function () {
-                return this._popup && (this.off({ click: this._openPopup, keypress: this._onKeyPress, remove: this.closePopup, move: this._movePopup }), (this._popupHandlersAdded = !1), (this._popup = null)), this;
-            },
-            openPopup: function (t, i) {
-                return this._popup && this._map && ((i = this._popup._prepareOpen(this, t, i)), this._map.openPopup(this._popup, i)), this;
-            },
-            closePopup: function () {
-                return this._popup && this._popup._close(), this;
-            },
-            togglePopup: function (t) {
-                return this._popup && (this._popup._map ? this.closePopup() : this.openPopup(t)), this;
-            },
-            isPopupOpen: function () {
-                return !!this._popup && this._popup.isOpen();
-            },
-            setPopupContent: function (t) {
-                return this._popup && this._popup.setContent(t), this;
-            },
-            getPopup: function () {
-                return this._popup;
-            },
-            _openPopup: function (t) {
-                var i = t.layer || t.target;
-                this._popup && this._map && (Ni(t), i instanceof Be ? this.openPopup(t.layer || t.target, t.latlng) : this._map.hasLayer(this._popup) && this._popup._source === i ? this.closePopup() : this.openPopup(i, t.latlng));
-            },
-            _movePopup: function (t) {
-                this._popup.setLatLng(t.latlng);
-            },
-            _onKeyPress: function (t) {
-                13 === t.originalEvent.keyCode && this._openPopup(t);
-            },
-        });
-    var en = Qe.extend({
-        options: { pane: "tooltipPane", offset: [0, 0], direction: "auto", permanent: !1, sticky: !1, interactive: !1, opacity: 0.9 },
-        onAdd: function (t) {
-            Qe.prototype.onAdd.call(this, t), this.setOpacity(this.options.opacity), t.fire("tooltipopen", { tooltip: this }), this._source && this._source.fire("tooltipopen", { tooltip: this }, !0);
-        },
-        onRemove: function (t) {
-            Qe.prototype.onRemove.call(this, t), t.fire("tooltipclose", { tooltip: this }), this._source && this._source.fire("tooltipclose", { tooltip: this }, !0);
-        },
-        getEvents: function () {
-            var t = Qe.prototype.getEvents.call(this);
-            return bt && !this.options.permanent && (t.preclick = this._close), t;
-        },
-        _close: function () {
-            this._map && this._map.closeTooltip(this);
-        },
-        _initLayout: function () {
-            var t = "leaflet-tooltip " + (this.options.className || "") + " leaflet-zoom-" + (this._zoomAnimated ? "animated" : "hide");
-            this._contentNode = this._container = si("div", t);
-        },
-        _updateLayout: function () {},
-        _adjustPan: function () {},
-        _setPosition: function (t) {
-            var i,
-                e = this._map,
-                n = this._container,
-                o = e.latLngToContainerPoint(e.getCenter()),
-                s = e.layerPointToContainerPoint(t),
-                r = this.options.direction,
-                a = n.offsetWidth,
-                h = n.offsetHeight,
-                u = A(this.options.offset),
-                l = this._getAnchor(),
-                c = "top" === r ? ((i = a / 2), h) : "bottom" === r ? ((i = a / 2), 0) : ((i = "center" === r ? a / 2 : "right" === r ? 0 : "left" === r ? a : s.x < o.x ? ((r = "right"), 0) : ((r = "left"), a + 2 * (u.x + l.x))), h / 2);
-            (t = t.subtract(A(i, c, !0)).add(u).add(l)), _i(n, "leaflet-tooltip-right"), _i(n, "leaflet-tooltip-left"), _i(n, "leaflet-tooltip-top"), _i(n, "leaflet-tooltip-bottom"), ci(n, "leaflet-tooltip-" + r), vi(n, t);
-        },
-        _updatePosition: function () {
-            var t = this._map.latLngToLayerPoint(this._latlng);
-            this._setPosition(t);
-        },
-        setOpacity: function (t) {
-            (this.options.opacity = t), this._container && mi(this._container, t);
-        },
-        _animateZoom: function (t) {
-            var i = this._map._latLngToNewLayerPoint(this._latlng, t.zoom, t.center);
-            this._setPosition(i);
-        },
-        _getAnchor: function () {
-            return A(this._source && this._source._getTooltipAnchor && !this.options.sticky ? this._source._getTooltipAnchor() : [0, 0]);
-        },
-    });
-    Ki.include({
-        openTooltip: function (t, i, e) {
-            return t instanceof en || (t = new en(e).setContent(t)), i && t.setLatLng(i), this.hasLayer(t) ? this : this.addLayer(t);
-        },
-        closeTooltip: function (t) {
-            return t && this.removeLayer(t), this;
-        },
-    }),
-        Me.include({
-            bindTooltip: function (t, i) {
-                return (
-                    t instanceof en ? (c(t, i), ((this._tooltip = t)._source = this)) : ((this._tooltip && !i) || (this._tooltip = new en(i, this)), this._tooltip.setContent(t)),
-                    this._initTooltipInteractions(),
-                    this._tooltip.options.permanent && this._map && this._map.hasLayer(this) && this.openTooltip(),
-                    this
-                );
-            },
-            unbindTooltip: function () {
-                return this._tooltip && (this._initTooltipInteractions(!0), this.closeTooltip(), (this._tooltip = null)), this;
-            },
-            _initTooltipInteractions: function (t) {
-                var i, e;
-                (!t && this._tooltipHandlersAdded) ||
-                    ((i = t ? "off" : "on"),
-                    (e = { remove: this.closeTooltip, move: this._moveTooltip }),
-                    this._tooltip.options.permanent
-                        ? (e.add = this._openTooltip)
-                        : ((e.mouseover = this._openTooltip), (e.mouseout = this.closeTooltip), this._tooltip.options.sticky && (e.mousemove = this._moveTooltip), bt && (e.click = this._openTooltip)),
-                    this[i](e),
-                    (this._tooltipHandlersAdded = !t));
-            },
-            openTooltip: function (t, i) {
-                return (
-                    this._tooltip &&
+        ke =
+            (A.include({
+                _initOverlay: function (t, i, e, n) {
+                    var o = i;
+                    return o instanceof t || (o = new t(n).setContent(i)), e && o.setLatLng(e), o;
+                },
+            }),
+            o.include({
+                _initOverlay: function (t, i, e, n) {
+                    var o = e;
+                    return o instanceof t ? (c(o, n), (o._source = this)) : (o = i && !n ? i : new t(n, this)).setContent(e), o;
+                },
+            }),
+            O.extend({
+                options: {
+                    pane: "popupPane",
+                    offset: [0, 7],
+                    maxWidth: 300,
+                    minWidth: 50,
+                    maxHeight: null,
+                    autoPan: !0,
+                    autoPanPaddingTopLeft: null,
+                    autoPanPaddingBottomRight: null,
+                    autoPanPadding: [5, 5],
+                    keepInView: !1,
+                    closeButton: !0,
+                    autoClose: !0,
+                    closeOnEscapeKey: !0,
+                    className: "",
+                },
+                openOn: function (t) {
+                    return !(t = arguments.length ? t : this._source._map).hasLayer(this) && t._popup && t._popup.options.autoClose && t.removeLayer(t._popup), (t._popup = this), O.prototype.openOn.call(this, t);
+                },
+                onAdd: function (t) {
+                    O.prototype.onAdd.call(this, t), t.fire("popupopen", { popup: this }), this._source && (this._source.fire("popupopen", { popup: this }, !0), this._source instanceof _e || this._source.on("preclick", Ai));
+                },
+                onRemove: function (t) {
+                    O.prototype.onRemove.call(this, t), t.fire("popupclose", { popup: this }), this._source && (this._source.fire("popupclose", { popup: this }, !0), this._source instanceof _e || this._source.off("preclick", Ai));
+                },
+                getEvents: function () {
+                    var t = O.prototype.getEvents.call(this);
+                    return (void 0 !== this.options.closeOnClick ? this.options.closeOnClick : this._map.options.closePopupOnClick) && (t.preclick = this.close), this.options.keepInView && (t.moveend = this._adjustPan), t;
+                },
+                _initLayout: function () {
+                    var t = "leaflet-popup",
+                        i = (this._container = b("div", t + " " + (this.options.className || "") + " leaflet-zoom-animated")),
+                        e = (this._wrapper = b("div", t + "-content-wrapper", i));
+                    (this._contentNode = b("div", t + "-content", e)),
+                        Oi(i),
+                        Ii(this._contentNode),
+                        S(i, "contextmenu", Ai),
+                        (this._tipContainer = b("div", t + "-tip-container", i)),
+                        (this._tip = b("div", t + "-tip", this._tipContainer)),
+                        this.options.closeButton &&
+                            ((e = this._closeButton = b("a", t + "-close-button", i)).setAttribute("role", "button"),
+                            e.setAttribute("aria-label", "Close popup"),
+                            (e.href = "#close"),
+                            (e.innerHTML = '<span aria-hidden="true">&#215;</span>'),
+                            S(e, "click", this.close, this));
+                },
+                _updateLayout: function () {
+                    var t = this._contentNode,
+                        i = t.style,
+                        e = ((i.width = ""), (i.whiteSpace = "nowrap"), t.offsetWidth),
+                        e = Math.min(e, this.options.maxWidth),
+                        e = ((e = Math.max(e, this.options.minWidth)), (i.width = e + 1 + "px"), (i.whiteSpace = ""), (i.height = ""), t.offsetHeight),
+                        n = this.options.maxHeight,
+                        o = "leaflet-popup-scrolled";
+                    n && n < e ? ((i.height = n + "px"), z(t, o)) : M(t, o), (this._containerWidth = this._container.offsetWidth);
+                },
+                _animateZoom: function (t) {
+                    var t = this._map._latLngToNewLayerPoint(this._latlng, t.zoom, t.center),
+                        i = this._getAnchor();
+                    Z(this._container, t.add(i));
+                },
+                _adjustPan: function (t) {
+                    var i, e, n, o, s, r, a, h;
+                    this.options.autoPan &&
+                        (this._map._panAnim && this._map._panAnim.stop(),
+                        (i = this._map),
+                        (e = parseInt(pi(this._container, "marginBottom"), 10) || 0),
+                        (e = this._container.offsetHeight + e),
+                        (h = this._containerWidth),
+                        (n = new p(this._containerLeft, -e - this._containerBottom))._add(bi(this._container)),
+                        (n = i.layerPointToContainerPoint(n)),
+                        (s = _(this.options.autoPanPadding)),
+                        (o = _(this.options.autoPanPaddingTopLeft || s)),
+                        (s = _(this.options.autoPanPaddingBottomRight || s)),
+                        (r = i.getSize()),
+                        (a = 0),
+                        n.x + h + s.x > r.x && (a = n.x + h - r.x + s.x),
+                        n.x - a - o.x < (h = 0) && (a = n.x - o.x),
+                        n.y + e + s.y > r.y && (h = n.y + e - r.y + s.y),
+                        n.y - h - o.y < 0 && (h = n.y - o.y),
+                        (a || h) && i.fire("autopanstart").panBy([a, h], { animate: t && "moveend" === t.type }));
+                },
+                _getAnchor: function () {
+                    return _(this._source && this._source._getPopupAnchor ? this._source._getPopupAnchor() : [0, 0]);
+                },
+            })),
+        Ee =
+            (A.mergeOptions({ closePopupOnClick: !0 }),
+            A.include({
+                openPopup: function (t, i, e) {
+                    return this._initOverlay(ke, t, i, e).openOn(this), this;
+                },
+                closePopup: function (t) {
+                    return (t = arguments.length ? t : this._popup) && t.close(), this;
+                },
+            }),
+            o.include({
+                bindPopup: function (t, i) {
+                    return (
+                        (this._popup = this._initOverlay(ke, this._popup, t, i)),
+                        this._popupHandlersAdded || (this.on({ click: this._openPopup, keypress: this._onKeyPress, remove: this.closePopup, move: this._movePopup }), (this._popupHandlersAdded = !0)),
+                        this
+                    );
+                },
+                unbindPopup: function () {
+                    return this._popup && (this.off({ click: this._openPopup, keypress: this._onKeyPress, remove: this.closePopup, move: this._movePopup }), (this._popupHandlersAdded = !1), (this._popup = null)), this;
+                },
+                openPopup: function (t) {
+                    return this._popup && this._popup._prepareOpen(t) && this._popup.openOn(this._map), this;
+                },
+                closePopup: function () {
+                    return this._popup && this._popup.close(), this;
+                },
+                togglePopup: function () {
+                    return this._popup && this._popup.toggle(this), this;
+                },
+                isPopupOpen: function () {
+                    return !!this._popup && this._popup.isOpen();
+                },
+                setPopupContent: function (t) {
+                    return this._popup && this._popup.setContent(t), this;
+                },
+                getPopup: function () {
+                    return this._popup;
+                },
+                _openPopup: function (t) {
+                    var i;
+                    this._popup &&
                         this._map &&
-                        ((i = this._tooltip._prepareOpen(this, t, i)),
-                        this._map.openTooltip(this._tooltip, i),
-                        this._tooltip.options.interactive && this._tooltip._container && (ci(this._tooltip._container, "leaflet-clickable"), this.addInteractiveTarget(this._tooltip._container))),
-                    this
-                );
-            },
-            closeTooltip: function () {
-                return (
-                    this._tooltip && (this._tooltip._close(), this._tooltip.options.interactive && this._tooltip._container && (_i(this._tooltip._container, "leaflet-clickable"), this.removeInteractiveTarget(this._tooltip._container))),
-                    this
-                );
-            },
-            toggleTooltip: function (t) {
-                return this._tooltip && (this._tooltip._map ? this.closeTooltip() : this.openTooltip(t)), this;
-            },
-            isTooltipOpen: function () {
-                return this._tooltip.isOpen();
-            },
-            setTooltipContent: function (t) {
-                return this._tooltip && this._tooltip.setContent(t), this;
-            },
-            getTooltip: function () {
-                return this._tooltip;
-            },
-            _openTooltip: function (t) {
-                var i = t.layer || t.target;
-                this._tooltip && this._map && this.openTooltip(i, this._tooltip.options.sticky ? t.latlng : void 0);
-            },
-            _moveTooltip: function (t) {
-                var i,
-                    e,
-                    n = t.latlng;
-                this._tooltip.options.sticky && t.originalEvent && ((i = this._map.mouseEventToContainerPoint(t.originalEvent)), (e = this._map.containerPointToLayerPoint(i)), (n = this._map.layerPointToLatLng(e))),
-                    this._tooltip.setLatLng(n);
-            },
-        });
-    var nn = Se.extend({
-        options: { iconSize: [12, 12], html: !1, bgPos: null, className: "leaflet-div-icon" },
-        createIcon: function (t) {
-            var i,
-                e = t && "DIV" === t.tagName ? t : document.createElement("div"),
-                n = this.options;
-            return (
-                n.html instanceof Element ? (ai(e), e.appendChild(n.html)) : (e.innerHTML = !1 !== n.html ? n.html : ""),
-                n.bgPos && ((i = A(n.bgPos)), (e.style.backgroundPosition = -i.x + "px " + -i.y + "px")),
-                this._setIconStyles(e, "icon"),
-                e
-            );
-        },
-        createShadow: function () {
-            return null;
-        },
-    });
-    Se.Default = Ze;
-    var on = Me.extend({
+                        (Ri(t),
+                        (i = t.layer || t.target),
+                        this._popup._source !== i || i instanceof _e ? ((this._popup._source = i), this.openPopup(t.latlng)) : this._map.hasLayer(this._popup) ? this.closePopup() : this.openPopup(t.latlng));
+                },
+                _movePopup: function (t) {
+                    this._popup.setLatLng(t.latlng);
+                },
+                _onKeyPress: function (t) {
+                    13 === t.originalEvent.keyCode && this._openPopup(t);
+                },
+            }),
+            O.extend({
+                options: { pane: "tooltipPane", offset: [0, 0], direction: "auto", permanent: !1, sticky: !1, opacity: 0.9 },
+                onAdd: function (t) {
+                    O.prototype.onAdd.call(this, t),
+                        this.setOpacity(this.options.opacity),
+                        t.fire("tooltipopen", { tooltip: this }),
+                        this._source && (this.addEventParent(this._source), this._source.fire("tooltipopen", { tooltip: this }, !0));
+                },
+                onRemove: function (t) {
+                    O.prototype.onRemove.call(this, t), t.fire("tooltipclose", { tooltip: this }), this._source && (this.removeEventParent(this._source), this._source.fire("tooltipclose", { tooltip: this }, !0));
+                },
+                getEvents: function () {
+                    var t = O.prototype.getEvents.call(this);
+                    return this.options.permanent || (t.preclick = this.close), t;
+                },
+                _initLayout: function () {
+                    var t = "leaflet-tooltip " + (this.options.className || "") + " leaflet-zoom-" + (this._zoomAnimated ? "animated" : "hide");
+                    this._contentNode = this._container = b("div", t);
+                },
+                _updateLayout: function () {},
+                _adjustPan: function () {},
+                _setPosition: function (t) {
+                    var i,
+                        e = this._map,
+                        n = this._container,
+                        o = e.latLngToContainerPoint(e.getCenter()),
+                        e = e.layerPointToContainerPoint(t),
+                        s = this.options.direction,
+                        r = n.offsetWidth,
+                        a = n.offsetHeight,
+                        h = _(this.options.offset),
+                        l = this._getAnchor(),
+                        e =
+                            "top" === s
+                                ? ((i = r / 2), a)
+                                : "bottom" === s
+                                ? ((i = r / 2), 0)
+                                : ((i = "center" === s ? r / 2 : "right" === s ? 0 : "left" === s ? r : e.x < o.x ? ((s = "right"), 0) : ((s = "left"), r + 2 * (h.x + l.x))), a / 2);
+                    (t = t.subtract(_(i, e, !0)).add(h).add(l)), M(n, "leaflet-tooltip-right"), M(n, "leaflet-tooltip-left"), M(n, "leaflet-tooltip-top"), M(n, "leaflet-tooltip-bottom"), z(n, "leaflet-tooltip-" + s), Z(n, t);
+                },
+                _updatePosition: function () {
+                    var t = this._map.latLngToLayerPoint(this._latlng);
+                    this._setPosition(t);
+                },
+                setOpacity: function (t) {
+                    (this.options.opacity = t), this._container && C(this._container, t);
+                },
+                _animateZoom: function (t) {
+                    t = this._map._latLngToNewLayerPoint(this._latlng, t.zoom, t.center);
+                    this._setPosition(t);
+                },
+                _getAnchor: function () {
+                    return _(this._source && this._source._getTooltipAnchor && !this.options.sticky ? this._source._getTooltipAnchor() : [0, 0]);
+                },
+            })),
+        Be =
+            (A.include({
+                openTooltip: function (t, i, e) {
+                    return this._initOverlay(Ee, t, i, e).openOn(this), this;
+                },
+                closeTooltip: function (t) {
+                    return t.close(), this;
+                },
+            }),
+            o.include({
+                bindTooltip: function (t, i) {
+                    return (
+                        this._tooltip && this.isTooltipOpen() && this.unbindTooltip(),
+                        (this._tooltip = this._initOverlay(Ee, this._tooltip, t, i)),
+                        this._initTooltipInteractions(),
+                        this._tooltip.options.permanent && this._map && this._map.hasLayer(this) && this.openTooltip(),
+                        this
+                    );
+                },
+                unbindTooltip: function () {
+                    return this._tooltip && (this._initTooltipInteractions(!0), this.closeTooltip(), (this._tooltip = null)), this;
+                },
+                _initTooltipInteractions: function (t) {
+                    var i, e;
+                    (!t && this._tooltipHandlersAdded) ||
+                        ((i = t ? "off" : "on"),
+                        (e = { remove: this.closeTooltip, move: this._moveTooltip }),
+                        this._tooltip.options.permanent ? (e.add = this._openTooltip) : ((e.mouseover = this._openTooltip), (e.mouseout = this.closeTooltip), (e.click = this._openTooltip)),
+                        this._tooltip.options.sticky && (e.mousemove = this._moveTooltip),
+                        this[i](e),
+                        (this._tooltipHandlersAdded = !t));
+                },
+                openTooltip: function (t) {
+                    return this._tooltip && this._tooltip._prepareOpen(t) && this._tooltip.openOn(this._map), this;
+                },
+                closeTooltip: function () {
+                    if (this._tooltip) return this._tooltip.close();
+                },
+                toggleTooltip: function () {
+                    return this._tooltip && this._tooltip.toggle(this), this;
+                },
+                isTooltipOpen: function () {
+                    return this._tooltip.isOpen();
+                },
+                setTooltipContent: function (t) {
+                    return this._tooltip && this._tooltip.setContent(t), this;
+                },
+                getTooltip: function () {
+                    return this._tooltip;
+                },
+                _openTooltip: function (t) {
+                    !this._tooltip || !this._map || (this._map.dragging && this._map.dragging.moving()) || ((this._tooltip._source = t.layer || t.target), this.openTooltip(this._tooltip.options.sticky ? t.latlng : void 0));
+                },
+                _moveTooltip: function (t) {
+                    var i = t.latlng;
+                    this._tooltip.options.sticky && t.originalEvent && ((t = this._map.mouseEventToContainerPoint(t.originalEvent)), (t = this._map.containerPointToLayerPoint(t)), (i = this._map.layerPointToLatLng(t))),
+                        this._tooltip.setLatLng(i);
+                },
+            }),
+            le.extend({
+                options: { iconSize: [12, 12], html: !1, bgPos: null, className: "leaflet-div-icon" },
+                createIcon: function (t) {
+                    var t = t && "DIV" === t.tagName ? t : document.createElement("div"),
+                        i = this.options;
+                    return (
+                        i.html instanceof Element ? (mi(t), t.appendChild(i.html)) : (t.innerHTML = !1 !== i.html ? i.html : ""),
+                        i.bgPos && ((i = _(i.bgPos)), (t.style.backgroundPosition = -i.x + "px " + -i.y + "px")),
+                        this._setIconStyles(t, "icon"),
+                        t
+                    );
+                },
+                createShadow: function () {
+                    return null;
+                },
+            }));
+    le.Default = ue;
+    var Ae = o.extend({
         options: {
             tileSize: 256,
             opacity: 1,
-            updateWhenIdle: yt,
+            updateWhenIdle: P.mobile,
             updateWhenZooming: !0,
             updateInterval: 200,
             zIndex: 1,
@@ -3690,19 +3783,19 @@
             c(this, t);
         },
         onAdd: function () {
-            this._initContainer(), (this._levels = {}), (this._tiles = {}), this._resetView(), this._update();
+            this._initContainer(), (this._levels = {}), (this._tiles = {}), this._resetView();
         },
         beforeAdd: function (t) {
             t._addZoomLimit(this);
         },
         onRemove: function (t) {
-            this._removeAllTiles(), ri(this._container), t._removeZoomLimit(this), (this._container = null), (this._tileZoom = void 0);
+            this._removeAllTiles(), T(this._container), t._removeZoomLimit(this), (this._container = null), (this._tileZoom = void 0);
         },
         bringToFront: function () {
-            return this._map && (hi(this._container), this._setAutoZIndex(Math.max)), this;
+            return this._map && (fi(this._container), this._setAutoZIndex(Math.max)), this;
         },
         bringToBack: function () {
-            return this._map && (ui(this._container), this._setAutoZIndex(Math.min)), this;
+            return this._map && (gi(this._container), this._setAutoZIndex(Math.min)), this;
         },
         getContainer: function () {
             return this._container;
@@ -3717,18 +3810,19 @@
             return this._loading;
         },
         redraw: function () {
-            return this._map && (this._removeAllTiles(), this._update()), this;
+            var t;
+            return this._map && (this._removeAllTiles(), (t = this._clampZoom(this._map.getZoom())) !== this._tileZoom && ((this._tileZoom = t), this._updateLevels()), this._update()), this;
         },
         getEvents: function () {
             var t = { viewprereset: this._invalidateAll, viewreset: this._resetView, zoom: this._resetView, moveend: this._onMoveEnd };
-            return this.options.updateWhenIdle || (this._onMove || (this._onMove = n(this._onMoveEnd, this.options.updateInterval, this)), (t.move = this._onMove)), this._zoomAnimated && (t.zoomanim = this._animateZoom), t;
+            return this.options.updateWhenIdle || (this._onMove || (this._onMove = j(this._onMoveEnd, this.options.updateInterval, this)), (t.move = this._onMove)), this._zoomAnimated && (t.zoomanim = this._animateZoom), t;
         },
         createTile: function () {
             return document.createElement("div");
         },
         getTileSize: function () {
             var t = this.options.tileSize;
-            return t instanceof k ? t : new k(t, t);
+            return t instanceof p ? t : new p(t, t);
         },
         _updateZIndex: function () {
             this._container && void 0 !== this.options.zIndex && null !== this.options.zIndex && (this._container.style.zIndex = this.options.zIndex);
@@ -3738,22 +3832,23 @@
             isFinite(n) && ((this.options.zIndex = n + t(-1, 1)), this._updateZIndex());
         },
         _updateOpacity: function () {
-            if (this._map && !it) {
-                mi(this._container, this.options.opacity);
-                var t = +new Date(),
-                    i = !1,
-                    e = !1;
-                for (var n in this._tiles) {
+            if (this._map && !P.ielt9) {
+                C(this._container, this.options.opacity);
+                var t,
+                    i = +new Date(),
+                    e = !1,
+                    n = !1;
+                for (t in this._tiles) {
                     var o,
-                        s = this._tiles[n];
-                    s.current && s.loaded && ((o = Math.min(1, (t - s.loaded) / 200)), mi(s.el, o), o < 1 ? (i = !0) : (s.active ? (e = !0) : this._onOpaqueTile(s), (s.active = !0)));
+                        s = this._tiles[t];
+                    s.current && s.loaded && ((o = Math.min(1, (i - s.loaded) / 200)), C(s.el, o), o < 1 ? (e = !0) : (s.active ? (n = !0) : this._onOpaqueTile(s), (s.active = !0)));
                 }
-                e && !this._noPrune && this._pruneTiles(), i && (z(this._fadeFrame), (this._fadeFrame = M(this._updateOpacity, this)));
+                n && !this._noPrune && this._pruneTiles(), e && (r(this._fadeFrame), (this._fadeFrame = x(this._updateOpacity, this)));
             }
         },
-        _onOpaqueTile: a,
+        _onOpaqueTile: u,
         _initContainer: function () {
-            this._container || ((this._container = si("div", "leaflet-layer " + (this.options.className || ""))), this._updateZIndex(), this.options.opacity < 1 && this._updateOpacity(), this.getPane().appendChild(this._container));
+            this._container || ((this._container = b("div", "leaflet-layer " + (this.options.className || ""))), this._updateZIndex(), this.options.opacity < 1 && this._updateOpacity(), this.getPane().appendChild(this._container));
         },
         _updateLevels: function () {
             var t = this._tileZoom,
@@ -3763,25 +3858,25 @@
                     (e = Number(e)),
                         this._levels[e].el.children.length || e === t
                             ? ((this._levels[e].el.style.zIndex = i - Math.abs(t - e)), this._onUpdateLevel(e))
-                            : (ri(this._levels[e].el), this._removeTilesAtZoom(e), this._onRemoveLevel(e), delete this._levels[e]);
+                            : (T(this._levels[e].el), this._removeTilesAtZoom(e), this._onRemoveLevel(e), delete this._levels[e]);
                 var n = this._levels[t],
                     o = this._map;
                 return (
                     n ||
-                        (((n = this._levels[t] = {}).el = si("div", "leaflet-tile-container leaflet-zoom-animated", this._container)),
+                        (((n = this._levels[t] = {}).el = b("div", "leaflet-tile-container leaflet-zoom-animated", this._container)),
                         (n.el.style.zIndex = i),
                         (n.origin = o.project(o.unproject(o.getPixelOrigin()), t).round()),
                         (n.zoom = t),
                         this._setZoomTransform(n, o.getCenter(), o.getZoom()),
-                        a(n.el.offsetWidth),
+                        u(n.el.offsetWidth),
                         this._onCreateLevel(n)),
                     (this._level = n)
                 );
             }
         },
-        _onUpdateLevel: a,
-        _onRemoveLevel: a,
-        _onCreateLevel: a,
+        _onUpdateLevel: u,
+        _onRemoveLevel: u,
+        _onCreateLevel: u,
         _pruneTiles: function () {
             if (this._map) {
                 var t,
@@ -3791,9 +3886,7 @@
                 if (n > this.options.maxZoom || n < this.options.minZoom) this._removeAllTiles();
                 else {
                     for (t in this._tiles) (e = this._tiles[t]).retain = e.current;
-                    for (t in this._tiles) {
-                        (e = this._tiles[t]).current && !e.active && ((i = e.coords), this._retainParent(i.x, i.y, i.z, i.z - 5) || this._retainChildren(i.x, i.y, i.z, i.z + 2));
-                    }
+                    for (t in this._tiles) (e = this._tiles[t]).current && !e.active && ((i = e.coords), this._retainParent(i.x, i.y, i.z, i.z - 5) || this._retainChildren(i.x, i.y, i.z, i.z + 2));
                     for (t in this._tiles) this._tiles[t].retain || this._removeTile(t);
                 }
             }
@@ -3805,32 +3898,30 @@
             for (var t in this._tiles) this._removeTile(t);
         },
         _invalidateAll: function () {
-            for (var t in this._levels) ri(this._levels[t].el), this._onRemoveLevel(Number(t)), delete this._levels[t];
+            for (var t in this._levels) T(this._levels[t].el), this._onRemoveLevel(Number(t)), delete this._levels[t];
             this._removeAllTiles(), (this._tileZoom = void 0);
         },
         _retainParent: function (t, i, e, n) {
-            var o = Math.floor(t / 2),
-                s = Math.floor(i / 2),
-                r = e - 1,
-                a = new k(+o, +s);
-            a.z = +r;
-            var h = this._tileCoordsToKey(a),
-                u = this._tiles[h];
-            return u && u.active ? (u.retain = !0) : (u && u.loaded && (u.retain = !0), n < r && this._retainParent(o, s, r, n));
+            var t = Math.floor(t / 2),
+                i = Math.floor(i / 2),
+                e = e - 1,
+                o = new p(+t, +i),
+                o = ((o.z = e), this._tileCoordsToKey(o)),
+                o = this._tiles[o];
+            return o && o.active ? (o.retain = !0) : (o && o.loaded && (o.retain = !0), n < e && this._retainParent(t, i, e, n));
         },
         _retainChildren: function (t, i, e, n) {
             for (var o = 2 * t; o < 2 * t + 2; o++)
                 for (var s = 2 * i; s < 2 * i + 2; s++) {
-                    var r = new k(o, s);
-                    r.z = e + 1;
-                    var a = this._tileCoordsToKey(r),
-                        h = this._tiles[a];
-                    h && h.active ? (h.retain = !0) : (h && h.loaded && (h.retain = !0), e + 1 < n && this._retainChildren(o, s, e + 1, n));
+                    var r = new p(o, s),
+                        r = ((r.z = e + 1), this._tileCoordsToKey(r)),
+                        r = this._tiles[r];
+                    r && r.active ? (r.retain = !0) : (r && r.loaded && (r.retain = !0), e + 1 < n && this._retainChildren(o, s, e + 1, n));
                 }
         },
         _resetView: function (t) {
-            var i = t && (t.pinch || t.flyTo);
-            this._setView(this._map.getCenter(), this._map.getZoom(), i, i);
+            t = t && (t.pinch || t.flyTo);
+            this._setView(this._map.getCenter(), this._map.getZoom(), t, t);
         },
         _animateZoom: function (t) {
             this._setView(t.center, t.zoom, !0, t.noUpdate);
@@ -3851,8 +3942,8 @@
         },
         _setZoomTransform: function (t, i, e) {
             var n = this._map.getZoomScale(e, t.zoom),
-                o = t.origin.multiplyBy(n).subtract(this._map._getNewPixelOrigin(i, e)).round();
-            vt ? gi(t.el, o, n) : vi(t.el, o);
+                i = t.origin.multiplyBy(n).subtract(this._map._getNewPixelOrigin(i, e)).round();
+            P.any3d ? Pi(t.el, i, n) : Z(t.el, i);
         },
         _resetGrid: function () {
             var t = this._map,
@@ -3870,34 +3961,35 @@
         _getTiledPixelBounds: function (t) {
             var i = this._map,
                 e = i._animatingZoom ? Math.max(i._animateToZoom, i.getZoom()) : i.getZoom(),
-                n = i.getZoomScale(e, this._tileZoom),
-                o = i.project(t, this._tileZoom).floor(),
-                s = i.getSize().divideBy(2 * n);
-            return new I(o.subtract(s), o.add(s));
+                e = i.getZoomScale(e, this._tileZoom),
+                t = i.project(t, this._tileZoom).floor(),
+                i = i.getSize().divideBy(2 * e);
+            return new m(t.subtract(i), t.add(i));
         },
         _update: function (t) {
             var i = this._map;
             if (i) {
                 var e = this._clampZoom(i.getZoom());
                 if ((void 0 === t && (t = i.getCenter()), void 0 !== this._tileZoom)) {
-                    var n = this._getTiledPixelBounds(t),
-                        o = this._pxBoundsToTileRange(n),
+                    var n,
+                        i = this._getTiledPixelBounds(t),
+                        o = this._pxBoundsToTileRange(i),
                         s = o.getCenter(),
                         r = [],
-                        a = this.options.keepBuffer,
-                        h = new I(o.getBottomLeft().subtract([a, -a]), o.getTopRight().add([a, -a]));
+                        i = this.options.keepBuffer,
+                        a = new m(o.getBottomLeft().subtract([i, -i]), o.getTopRight().add([i, -i]));
                     if (!(isFinite(o.min.x) && isFinite(o.min.y) && isFinite(o.max.x) && isFinite(o.max.y))) throw new Error("Attempted to load an infinite number of tiles");
-                    for (var u in this._tiles) {
-                        var l = this._tiles[u].coords;
-                        (l.z === this._tileZoom && h.contains(new k(l.x, l.y))) || (this._tiles[u].current = !1);
+                    for (n in this._tiles) {
+                        var h = this._tiles[n].coords;
+                        (h.z === this._tileZoom && a.contains(new p(h.x, h.y))) || (this._tiles[n].current = !1);
                     }
                     if (1 < Math.abs(e - this._tileZoom)) this._setView(t, e);
                     else {
-                        for (var c = o.min.y; c <= o.max.y; c++)
-                            for (var _ = o.min.x; _ <= o.max.x; _++) {
-                                var d,
-                                    p = new k(_, c);
-                                (p.z = this._tileZoom), this._isValidTile(p) && ((d = this._tiles[this._tileCoordsToKey(p)]) ? (d.current = !0) : r.push(p));
+                        for (var l = o.min.y; l <= o.max.y; l++)
+                            for (var u = o.min.x; u <= o.max.x; u++) {
+                                var c,
+                                    d = new p(u, l);
+                                (d.z = this._tileZoom), this._isValidTile(d) && ((c = this._tiles[this._tileCoordsToKey(d)]) ? (c.current = !0) : r.push(d));
                             }
                         if (
                             (r.sort(function (t, i) {
@@ -3906,8 +3998,8 @@
                             0 !== r.length)
                         ) {
                             this._loading || ((this._loading = !0), this.fire("loading"));
-                            for (var m = document.createDocumentFragment(), _ = 0; _ < r.length; _++) this._addTile(r[_], m);
-                            this._level.el.appendChild(m);
+                            for (var _ = document.createDocumentFragment(), u = 0; u < r.length; u++) this._addTile(r[u], _);
+                            this._level.el.appendChild(_);
                         }
                     }
                 }
@@ -3920,8 +4012,8 @@
                 if ((!i.wrapLng && (t.x < e.min.x || t.x > e.max.x)) || (!i.wrapLat && (t.y < e.min.y || t.y > e.max.y))) return !1;
             }
             if (!this.options.bounds) return !0;
-            var n = this._tileCoordsToBounds(t);
-            return N(this.options.bounds).overlaps(n);
+            i = this._tileCoordsToBounds(t);
+            return g(this.options.bounds).overlaps(i);
         },
         _keyToBounds: function (t) {
             return this._tileCoordsToBounds(this._keyToTileCoords(t));
@@ -3930,69 +4022,68 @@
             var i = this._map,
                 e = this.getTileSize(),
                 n = t.scaleBy(e),
-                o = n.add(e);
-            return [i.unproject(n, t.z), i.unproject(o, t.z)];
+                e = n.add(e);
+            return [i.unproject(n, t.z), i.unproject(e, t.z)];
         },
         _tileCoordsToBounds: function (t) {
-            var i = this._tileCoordsToNwSe(t),
-                e = new R(i[0], i[1]);
-            return this.options.noWrap || (e = this._map.wrapLatLngBounds(e)), e;
+            (t = this._tileCoordsToNwSe(t)), (t = new s(t[0], t[1]));
+            return (t = this.options.noWrap ? t : this._map.wrapLatLngBounds(t));
         },
         _tileCoordsToKey: function (t) {
             return t.x + ":" + t.y + ":" + t.z;
         },
         _keyToTileCoords: function (t) {
-            var i = t.split(":"),
-                e = new k(+i[0], +i[1]);
-            return (e.z = +i[2]), e;
+            var t = t.split(":"),
+                i = new p(+t[0], +t[1]);
+            return (i.z = +t[2]), i;
         },
         _removeTile: function (t) {
             var i = this._tiles[t];
-            i && (ri(i.el), delete this._tiles[t], this.fire("tileunload", { tile: i.el, coords: this._keyToTileCoords(t) }));
+            i && (T(i.el), delete this._tiles[t], this.fire("tileunload", { tile: i.el, coords: this._keyToTileCoords(t) }));
         },
         _initTile: function (t) {
-            ci(t, "leaflet-tile");
+            z(t, "leaflet-tile");
             var i = this.getTileSize();
-            (t.style.width = i.x + "px"), (t.style.height = i.y + "px"), (t.onselectstart = a), (t.onmousemove = a), it && this.options.opacity < 1 && mi(t, this.options.opacity), ot && !st && (t.style.WebkitBackfaceVisibility = "hidden");
+            (t.style.width = i.x + "px"), (t.style.height = i.y + "px"), (t.onselectstart = u), (t.onmousemove = u), P.ielt9 && this.options.opacity < 1 && C(t, this.options.opacity);
         },
         _addTile: function (t, i) {
             var e = this._getTilePos(t),
                 n = this._tileCoordsToKey(t),
-                o = this.createTile(this._wrapCoords(t), p(this._tileReady, this, t));
-            this._initTile(o), this.createTile.length < 2 && M(p(this._tileReady, this, t, null, o)), vi(o, e), (this._tiles[n] = { el: o, coords: t, current: !0 }), i.appendChild(o), this.fire("tileloadstart", { tile: o, coords: t });
+                o = this.createTile(this._wrapCoords(t), a(this._tileReady, this, t));
+            this._initTile(o), this.createTile.length < 2 && x(a(this._tileReady, this, t, null, o)), Z(o, e), (this._tiles[n] = { el: o, coords: t, current: !0 }), i.appendChild(o), this.fire("tileloadstart", { tile: o, coords: t });
         },
         _tileReady: function (t, i, e) {
             i && this.fire("tileerror", { error: i, tile: e, coords: t });
             var n = this._tileCoordsToKey(t);
             (e = this._tiles[n]) &&
                 ((e.loaded = +new Date()),
-                this._map._fadeAnimated ? (mi(e.el, 0), z(this._fadeFrame), (this._fadeFrame = M(this._updateOpacity, this))) : ((e.active = !0), this._pruneTiles()),
-                i || (ci(e.el, "leaflet-tile-loaded"), this.fire("tileload", { tile: e.el, coords: t })),
-                this._noTilesToLoad() && ((this._loading = !1), this.fire("load"), it || !this._map._fadeAnimated ? M(this._pruneTiles, this) : setTimeout(p(this._pruneTiles, this), 250)));
+                this._map._fadeAnimated ? (C(e.el, 0), r(this._fadeFrame), (this._fadeFrame = x(this._updateOpacity, this))) : ((e.active = !0), this._pruneTiles()),
+                i || (z(e.el, "leaflet-tile-loaded"), this.fire("tileload", { tile: e.el, coords: t })),
+                this._noTilesToLoad() && ((this._loading = !1), this.fire("load"), P.ielt9 || !this._map._fadeAnimated ? x(this._pruneTiles, this) : setTimeout(a(this._pruneTiles, this), 250)));
         },
         _getTilePos: function (t) {
             return t.scaleBy(this.getTileSize()).subtract(this._level.origin);
         },
         _wrapCoords: function (t) {
-            var i = new k(this._wrapX ? o(t.x, this._wrapX) : t.x, this._wrapY ? o(t.y, this._wrapY) : t.y);
+            var i = new p(this._wrapX ? H(t.x, this._wrapX) : t.x, this._wrapY ? H(t.y, this._wrapY) : t.y);
             return (i.z = t.z), i;
         },
         _pxBoundsToTileRange: function (t) {
             var i = this.getTileSize();
-            return new I(t.min.unscaleBy(i).floor(), t.max.unscaleBy(i).ceil().subtract([1, 1]));
+            return new m(t.min.unscaleBy(i).floor(), t.max.unscaleBy(i).ceil().subtract([1, 1]));
         },
         _noTilesToLoad: function () {
             for (var t in this._tiles) if (!this._tiles[t].loaded) return !1;
             return !0;
         },
     });
-    var sn = on.extend({
-        options: { minZoom: 0, maxZoom: 18, subdomains: "abc", errorTileUrl: "", zoomOffset: 0, tms: !1, zoomReverse: !1, detectRetina: !1, crossOrigin: !1 },
+    var Ie = Ae.extend({
+        options: { minZoom: 0, maxZoom: 18, subdomains: "abc", errorTileUrl: "", zoomOffset: 0, tms: !1, zoomReverse: !1, detectRetina: !1, crossOrigin: !1, referrerPolicy: !1 },
         initialize: function (t, i) {
             (this._url = t),
-                (i = c(this, i)).detectRetina && zt && 0 < i.maxZoom && ((i.tileSize = Math.floor(i.tileSize / 2)), i.zoomReverse ? (i.zoomOffset--, i.minZoom++) : (i.zoomOffset++, i.maxZoom--), (i.minZoom = Math.max(0, i.minZoom))),
+                (i = c(this, i)).detectRetina && P.retina && 0 < i.maxZoom && ((i.tileSize = Math.floor(i.tileSize / 2)), i.zoomReverse ? (i.zoomOffset--, i.minZoom++) : (i.zoomOffset++, i.maxZoom--), (i.minZoom = Math.max(0, i.minZoom))),
                 "string" == typeof i.subdomains && (i.subdomains = i.subdomains.split("")),
-                ot || this.on("tileunload", this._onTileRemove);
+                this.on("tileunload", this._onTileRemove);
         },
         setUrl: function (t, i) {
             return this._url === t && void 0 === i && (i = !0), (this._url = t), i || this.redraw(), this;
@@ -4000,9 +4091,10 @@
         createTile: function (t, i) {
             var e = document.createElement("img");
             return (
-                zi(e, "load", p(this._tileOnLoad, this, i, e)),
-                zi(e, "error", p(this._tileOnError, this, i, e)),
+                S(e, "load", a(this._tileOnLoad, this, i, e)),
+                S(e, "error", a(this._tileOnError, this, i, e)),
                 (!this.options.crossOrigin && "" !== this.options.crossOrigin) || (e.crossOrigin = !0 === this.options.crossOrigin ? "" : this.options.crossOrigin),
+                "string" == typeof this.options.referrerPolicy && (e.referrerPolicy = this.options.referrerPolicy),
                 (e.alt = ""),
                 e.setAttribute("role", "presentation"),
                 (e.src = this.getTileUrl(t)),
@@ -4010,12 +4102,11 @@
             );
         },
         getTileUrl: function (t) {
-            var i,
-                e = { r: zt ? "@2x" : "", s: this._getSubdomain(t), x: t.x, y: t.y, z: this._getZoomForUrl() };
-            return this._map && !this._map.options.crs.infinite && ((i = this._globalTileRange.max.y - t.y), this.options.tms && (e.y = i), (e["-y"] = i)), f(this._url, h(e, this.options));
+            var i = { r: P.retina ? "@2x" : "", s: this._getSubdomain(t), x: t.x, y: t.y, z: this._getZoomForUrl() };
+            return this._map && !this._map.options.crs.infinite && ((t = this._globalTileRange.max.y - t.y), this.options.tms && (i.y = t), (i["-y"] = t)), q(this._url, l(i, this.options));
         },
         _tileOnLoad: function (t, i) {
-            it ? setTimeout(p(t, this, null, i), 0) : t(null, i);
+            P.ielt9 ? setTimeout(a(t, this, null, i), 0) : t(null, i);
         },
         _tileOnError: function (t, i, e) {
             var n = this.options.errorTileUrl;
@@ -4027,68 +4118,71 @@
         _getZoomForUrl: function () {
             var t = this._tileZoom,
                 i = this.options.maxZoom;
-            return this.options.zoomReverse && (t = i - t), t + this.options.zoomOffset;
+            return (t = this.options.zoomReverse ? i - t : t) + this.options.zoomOffset;
         },
         _getSubdomain: function (t) {
-            var i = Math.abs(t.x + t.y) % this.options.subdomains.length;
-            return this.options.subdomains[i];
+            t = Math.abs(t.x + t.y) % this.options.subdomains.length;
+            return this.options.subdomains[t];
         },
         _abortLoading: function () {
-            var t, i;
-            for (t in this._tiles) this._tiles[t].coords.z !== this._tileZoom && (((i = this._tiles[t].el).onload = a), (i.onerror = a), i.complete || ((i.src = y), ri(i), delete this._tiles[t]));
+            var t, i, e;
+            for (t in this._tiles)
+                this._tiles[t].coords.z !== this._tileZoom &&
+                    (((e = this._tiles[t].el).onload = u), (e.onerror = u), e.complete || ((e.src = K), (i = this._tiles[t].coords), T(e), delete this._tiles[t], this.fire("tileabort", { tile: e, coords: i })));
         },
         _removeTile: function (t) {
             var i = this._tiles[t];
-            if (i) return at || i.el.setAttribute("src", y), on.prototype._removeTile.call(this, t);
+            if (i) return i.el.setAttribute("src", K), Ae.prototype._removeTile.call(this, t);
         },
         _tileReady: function (t, i, e) {
-            if (this._map && (!e || e.getAttribute("src") !== y)) return on.prototype._tileReady.call(this, t, i, e);
+            if (this._map && (!e || e.getAttribute("src") !== K)) return Ae.prototype._tileReady.call(this, t, i, e);
         },
     });
-    function rn(t, i) {
-        return new sn(t, i);
+    function Oe(t, i) {
+        return new Ie(t, i);
     }
-    var an = sn.extend({
+    var Re = Ie.extend({
         defaultWmsParams: { service: "WMS", request: "GetMap", layers: "", styles: "", format: "image/jpeg", transparent: !1, version: "1.1.1" },
         options: { crs: null, uppercase: !1 },
         initialize: function (t, i) {
             this._url = t;
-            var e = h({}, this.defaultWmsParams);
-            for (var n in i) n in this.options || (e[n] = i[n]);
-            var o = (i = c(this, i)).detectRetina && zt ? 2 : 1,
-                s = this.getTileSize();
-            (e.width = s.x * o), (e.height = s.y * o), (this.wmsParams = e);
+            var e,
+                n = l({}, this.defaultWmsParams);
+            for (e in i) e in this.options || (n[e] = i[e]);
+            var t = (i = c(this, i)).detectRetina && P.retina ? 2 : 1,
+                o = this.getTileSize();
+            (n.width = o.x * t), (n.height = o.y * t), (this.wmsParams = n);
         },
         onAdd: function (t) {
             (this._crs = this.options.crs || t.options.crs), (this._wmsVersion = parseFloat(this.wmsParams.version));
             var i = 1.3 <= this._wmsVersion ? "crs" : "srs";
-            (this.wmsParams[i] = this._crs.code), sn.prototype.onAdd.call(this, t);
+            (this.wmsParams[i] = this._crs.code), Ie.prototype.onAdd.call(this, t);
         },
         getTileUrl: function (t) {
             var i = this._tileCoordsToNwSe(t),
                 e = this._crs,
-                n = O(e.project(i[0]), e.project(i[1])),
-                o = n.min,
-                s = n.max,
-                r = (1.3 <= this._wmsVersion && this._crs === be ? [o.y, o.x, s.y, s.x] : [o.x, o.y, s.x, s.y]).join(","),
-                a = sn.prototype.getTileUrl.call(this, t);
-            return a + _(this.wmsParams, a, this.options.uppercase) + (this.options.uppercase ? "&BBOX=" : "&bbox=") + r;
+                e = f(e.project(i[0]), e.project(i[1])),
+                i = e.min,
+                e = e.max,
+                i = (1.3 <= this._wmsVersion && this._crs === re ? [i.y, i.x, e.y, e.x] : [i.x, i.y, e.x, e.y]).join(","),
+                e = Ie.prototype.getTileUrl.call(this, t);
+            return e + U(this.wmsParams, e, this.options.uppercase) + (this.options.uppercase ? "&BBOX=" : "&bbox=") + i;
         },
         setParams: function (t, i) {
-            return h(this.wmsParams, t), i || this.redraw(), this;
+            return l(this.wmsParams, t), i || this.redraw(), this;
         },
     });
-    (sn.WMS = an),
-        (rn.wms = function (t, i) {
-            return new an(t, i);
+    (Ie.WMS = Re),
+        (Oe.wms = function (t, i) {
+            return new Re(t, i);
         });
-    var hn = Me.extend({
-            options: { padding: 0.1, tolerance: 0 },
+    var Ne = o.extend({
+            options: { padding: 0.1 },
             initialize: function (t) {
-                c(this, t), m(this), (this._layers = this._layers || {});
+                c(this, t), h(this), (this._layers = this._layers || {});
             },
             onAdd: function () {
-                this._container || (this._initContainer(), this._zoomAnimated && ci(this._container, "leaflet-zoom-animated")), this.getPane().appendChild(this._container), this._update(), this.on("update", this._updatePaths, this);
+                this._container || (this._initContainer(), this._zoomAnimated && z(this._container, "leaflet-zoom-animated")), this.getPane().appendChild(this._container), this._update(), this.on("update", this._updatePaths, this);
             },
             onRemove: function () {
                 this.off("update", this._updatePaths, this), this._destroyContainer();
@@ -4105,12 +4199,10 @@
             },
             _updateTransform: function (t, i) {
                 var e = this._map.getZoomScale(i, this._zoom),
-                    n = yi(this._container),
-                    o = this._map.getSize().multiplyBy(0.5 + this.options.padding),
-                    s = this._map.project(this._center, i),
-                    r = this._map.project(t, i).subtract(s),
-                    a = o.multiplyBy(-e).add(n).add(o).subtract(r);
-                vt ? gi(this._container, a, e) : vi(this._container, a);
+                    n = this._map.getSize().multiplyBy(0.5 + this.options.padding),
+                    o = this._map.project(this._center, i),
+                    n = n.multiplyBy(-e).add(o).subtract(this._map._getNewPixelOrigin(t, i));
+                P.any3d ? Pi(this._container, n, e) : Z(this._container, n);
             },
             _reset: function () {
                 for (var t in (this._update(), this._updateTransform(this._center, this._zoom), this._layers)) this._layers[t]._reset();
@@ -4125,26 +4217,31 @@
                 var t = this.options.padding,
                     i = this._map.getSize(),
                     e = this._map.containerPointToLayerPoint(i.multiplyBy(-t)).round();
-                (this._bounds = new I(e, e.add(i.multiplyBy(1 + 2 * t)).round())), (this._center = this._map.getCenter()), (this._zoom = this._map.getZoom());
+                (this._bounds = new m(e, e.add(i.multiplyBy(1 + 2 * t)).round())), (this._center = this._map.getCenter()), (this._zoom = this._map.getZoom());
             },
         }),
-        un = hn.extend({
+        De = Ne.extend({
+            options: { tolerance: 0 },
             getEvents: function () {
-                var t = hn.prototype.getEvents.call(this);
+                var t = Ne.prototype.getEvents.call(this);
                 return (t.viewprereset = this._onViewPreReset), t;
             },
             _onViewPreReset: function () {
                 this._postponeUpdatePaths = !0;
             },
             onAdd: function () {
-                hn.prototype.onAdd.call(this), this._draw();
+                Ne.prototype.onAdd.call(this), this._draw();
             },
             _initContainer: function () {
                 var t = (this._container = document.createElement("canvas"));
-                zi(t, "mousemove", this._onMouseMove, this), zi(t, "click dblclick mousedown mouseup contextmenu", this._onClick, this), zi(t, "mouseout", this._handleMouseOut, this), (this._ctx = t.getContext("2d"));
+                S(t, "mousemove", this._onMouseMove, this),
+                    S(t, "click dblclick mousedown mouseup contextmenu", this._onClick, this),
+                    S(t, "mouseout", this._handleMouseOut, this),
+                    (t._leaflet_disable_events = !0),
+                    (this._ctx = t.getContext("2d"));
             },
             _destroyContainer: function () {
-                z(this._redrawRequest), delete this._ctx, ri(this._container), Si(this._container), delete this._container;
+                r(this._redrawRequest), delete this._ctx, T(this._container), E(this._container), delete this._container;
             },
             _updatePaths: function () {
                 if (!this._postponeUpdatePaths) {
@@ -4155,27 +4252,27 @@
             _update: function () {
                 var t, i, e, n;
                 (this._map._animatingZoom && this._bounds) ||
-                    (hn.prototype._update.call(this),
+                    (Ne.prototype._update.call(this),
                     (t = this._bounds),
                     (i = this._container),
                     (e = t.getSize()),
-                    (n = zt ? 2 : 1),
-                    vi(i, t.min),
+                    (n = P.retina ? 2 : 1),
+                    Z(i, t.min),
                     (i.width = n * e.x),
                     (i.height = n * e.y),
                     (i.style.width = e.x + "px"),
                     (i.style.height = e.y + "px"),
-                    zt && this._ctx.scale(2, 2),
+                    P.retina && this._ctx.scale(2, 2),
                     this._ctx.translate(-t.min.x, -t.min.y),
                     this.fire("update"));
             },
             _reset: function () {
-                hn.prototype._reset.call(this), this._postponeUpdatePaths && ((this._postponeUpdatePaths = !1), this._updatePaths());
+                Ne.prototype._reset.call(this), this._postponeUpdatePaths && ((this._postponeUpdatePaths = !1), this._updatePaths());
             },
             _initPath: function (t) {
                 this._updateDashArray(t);
-                var i = ((this._layers[m(t)] = t)._order = { layer: t, prev: this._drawLast, next: null });
-                this._drawLast && (this._drawLast.next = i), (this._drawLast = i), (this._drawFirst = this._drawFirst || this._drawLast);
+                t = (this._layers[h(t)] = t)._order = { layer: t, prev: this._drawLast, next: null };
+                this._drawLast && (this._drawLast.next = t), (this._drawLast = t), (this._drawFirst = this._drawFirst || this._drawLast);
             },
             _addPath: function (t) {
                 this._requestRedraw(t);
@@ -4183,8 +4280,8 @@
             _removePath: function (t) {
                 var i = t._order,
                     e = i.next,
-                    n = i.prev;
-                e ? (e.prev = n) : (this._drawLast = n), n ? (n.next = e) : (this._drawFirst = e), delete t._order, delete this._layers[m(t)], this._requestRedraw(t);
+                    i = i.prev;
+                e ? (e.prev = i) : (this._drawLast = i), i ? (i.next = e) : (this._drawFirst = e), delete t._order, delete this._layers[h(t)], this._requestRedraw(t);
             },
             _updatePath: function (t) {
                 this._extendRedrawBounds(t), t._project(), t._update(), this._requestRedraw(t);
@@ -4202,11 +4299,11 @@
                 } else t.options._dashArray = t.options.dashArray;
             },
             _requestRedraw: function (t) {
-                this._map && (this._extendRedrawBounds(t), (this._redrawRequest = this._redrawRequest || M(this._redraw, this)));
+                this._map && (this._extendRedrawBounds(t), (this._redrawRequest = this._redrawRequest || x(this._redraw, this)));
             },
             _extendRedrawBounds: function (t) {
                 var i;
-                t._pxBounds && ((i = (t.options.weight || 0) + 1), (this._redrawBounds = this._redrawBounds || new I()), this._redrawBounds.extend(t._pxBounds.min.subtract([i, i])), this._redrawBounds.extend(t._pxBounds.max.add([i, i])));
+                t._pxBounds && ((i = (t.options.weight || 0) + 1), (this._redrawBounds = this._redrawBounds || new m()), this._redrawBounds.extend(t._pxBounds.min.subtract([i, i])), this._redrawBounds.extend(t._pxBounds.max.add([i, i])));
             },
             _redraw: function () {
                 (this._redrawRequest = null), this._redrawBounds && (this._redrawBounds.min._floor(), this._redrawBounds.max._ceil()), this._clear(), this._draw(), (this._redrawBounds = null);
@@ -4272,8 +4369,8 @@
             },
             _onClick: function (t) {
                 for (var i, e, n = this._map.mouseEventToLayerPoint(t), o = this._drawFirst; o; o = o.next)
-                    (i = o.layer).options.interactive && i._containsPoint(n) && ((("click" === t.type || "preclick" !== t.type) && this._map._draggableMoved(i)) || (e = i));
-                e && (Fi(t), this._fireEvent([e], t));
+                    (i = o.layer).options.interactive && i._containsPoint(n) && ((("click" === t.type || "preclick" === t.type) && this._map._draggableMoved(i)) || (e = i));
+                this._fireEvent(!!e && [e], t);
             },
             _onMouseMove: function (t) {
                 var i;
@@ -4281,16 +4378,16 @@
             },
             _handleMouseOut: function (t) {
                 var i = this._hoveredLayer;
-                i && (_i(this._container, "leaflet-interactive"), this._fireEvent([i], t, "mouseout"), (this._hoveredLayer = null), (this._mouseHoverThrottled = !1));
+                i && (M(this._container, "leaflet-interactive"), this._fireEvent([i], t, "mouseout"), (this._hoveredLayer = null), (this._mouseHoverThrottled = !1));
             },
             _handleMouseHover: function (t, i) {
                 if (!this._mouseHoverThrottled) {
                     for (var e, n, o = this._drawFirst; o; o = o.next) (e = o.layer).options.interactive && e._containsPoint(i) && (n = e);
-                    n !== this._hoveredLayer && (this._handleMouseOut(t), n && (ci(this._container, "leaflet-interactive"), this._fireEvent([n], t, "mouseover"), (this._hoveredLayer = n))),
-                        this._hoveredLayer && this._fireEvent([this._hoveredLayer], t),
+                    n !== this._hoveredLayer && (this._handleMouseOut(t), n && (z(this._container, "leaflet-interactive"), this._fireEvent([n], t, "mouseover"), (this._hoveredLayer = n))),
+                        this._fireEvent(!!this._hoveredLayer && [this._hoveredLayer], t),
                         (this._mouseHoverThrottled = !0),
                         setTimeout(
-                            p(function () {
+                            a(function () {
                                 this._mouseHoverThrottled = !1;
                             }, this),
                             32
@@ -4313,10 +4410,10 @@
                 n && ((i = n.next), (e = n.prev) && ((e.next = i) ? (i.prev = e) : e && (this._drawLast = e), (n.prev = null), (n.next = this._drawFirst), (this._drawFirst.prev = n), (this._drawFirst = n), this._requestRedraw(t)));
             },
         });
-    function ln(t) {
-        return St ? new un(t) : null;
+    function je(t) {
+        return P.canvas ? new De(t) : null;
     }
-    var cn = (function () {
+    var He = (function () {
             try {
                 return (
                     document.namespaces.add("lvml", "urn:schemas-microsoft-com:vml"),
@@ -4324,22 +4421,21 @@
                         return document.createElement("<lvml:" + t + ' class="lvml">');
                     }
                 );
-            } catch (t) {
-                return function (t) {
-                    return document.createElement("<" + t + ' xmlns="urn:schemas-microsoft.com:vml" class="lvml">');
-                };
-            }
+            } catch (t) {}
+            return function (t) {
+                return document.createElement("<" + t + ' xmlns="urn:schemas-microsoft.com:vml" class="lvml">');
+            };
         })(),
-        _n = {
+        Mt = {
             _initContainer: function () {
-                this._container = si("div", "leaflet-vml-container");
+                this._container = b("div", "leaflet-vml-container");
             },
             _update: function () {
-                this._map._animatingZoom || (hn.prototype._update.call(this), this.fire("update"));
+                this._map._animatingZoom || (Ne.prototype._update.call(this), this.fire("update"));
             },
             _initPath: function (t) {
-                var i = (t._container = cn("shape"));
-                ci(i, "leaflet-vml-shape " + (this.options.className || "")), (i.coordsize = "1 1"), (t._path = cn("path")), i.appendChild(t._path), this._updateStyle(t), (this._layers[m(t)] = t);
+                var i = (t._container = He("shape"));
+                z(i, "leaflet-vml-shape " + (this.options.className || "")), (i.coordsize = "1 1"), (t._path = He("path")), i.appendChild(t._path), this._updateStyle(t), (this._layers[h(t)] = t);
             },
             _addPath: function (t) {
                 var i = t._container;
@@ -4347,7 +4443,7 @@
             },
             _removePath: function (t) {
                 var i = t._container;
-                ri(i), t.removeInteractiveTarget(i), delete this._layers[m(t)];
+                T(i), t.removeInteractiveTarget(i), delete this._layers[h(t)];
             },
             _updateStyle: function (t) {
                 var i = t._stroke,
@@ -4357,16 +4453,16 @@
                 (o.stroked = !!n.stroke),
                     (o.filled = !!n.fill),
                     n.stroke
-                        ? ((i = i || (t._stroke = cn("stroke"))),
+                        ? ((i = i || (t._stroke = He("stroke"))),
                           o.appendChild(i),
                           (i.weight = n.weight + "px"),
                           (i.color = n.color),
                           (i.opacity = n.opacity),
-                          n.dashArray ? (i.dashStyle = g(n.dashArray) ? n.dashArray.join(" ") : n.dashArray.replace(/( *, *)/g, " ")) : (i.dashStyle = ""),
+                          n.dashArray ? (i.dashStyle = d(n.dashArray) ? n.dashArray.join(" ") : n.dashArray.replace(/( *, *)/g, " ")) : (i.dashStyle = ""),
                           (i.endcap = n.lineCap.replace("butt", "flat")),
                           (i.joinstyle = n.lineJoin))
                         : i && (o.removeChild(i), (t._stroke = null)),
-                    n.fill ? ((e = e || (t._fill = cn("fill"))), o.appendChild(e), (e.color = n.fillColor || n.color), (e.opacity = n.fillOpacity)) : e && (o.removeChild(e), (t._fill = null));
+                    n.fill ? ((e = e || (t._fill = He("fill"))), o.appendChild(e), (e.color = n.fillColor || n.color), (e.opacity = n.fillOpacity)) : e && (o.removeChild(e), (t._fill = null));
             },
             _updateCircle: function (t) {
                 var i = t._point.round(),
@@ -4378,94 +4474,87 @@
                 t._path.v = i;
             },
             _bringToFront: function (t) {
-                hi(t._container);
+                fi(t._container);
             },
             _bringToBack: function (t) {
-                ui(t._container);
+                gi(t._container);
             },
         },
-        dn = Et ? cn : J,
-        pn = hn.extend({
-            getEvents: function () {
-                var t = hn.prototype.getEvents.call(this);
-                return (t.zoomstart = this._onZoomStart), t;
-            },
+        We = P.vml ? He : ct,
+        Fe = Ne.extend({
             _initContainer: function () {
-                (this._container = dn("svg")), this._container.setAttribute("pointer-events", "none"), (this._rootGroup = dn("g")), this._container.appendChild(this._rootGroup);
+                (this._container = We("svg")), this._container.setAttribute("pointer-events", "none"), (this._rootGroup = We("g")), this._container.appendChild(this._rootGroup);
             },
             _destroyContainer: function () {
-                ri(this._container), Si(this._container), delete this._container, delete this._rootGroup, delete this._svgSize;
-            },
-            _onZoomStart: function () {
-                this._update();
+                T(this._container), E(this._container), delete this._container, delete this._rootGroup, delete this._svgSize;
             },
             _update: function () {
                 var t, i, e;
                 (this._map._animatingZoom && this._bounds) ||
-                    (hn.prototype._update.call(this),
+                    (Ne.prototype._update.call(this),
                     (i = (t = this._bounds).getSize()),
                     (e = this._container),
                     (this._svgSize && this._svgSize.equals(i)) || ((this._svgSize = i), e.setAttribute("width", i.x), e.setAttribute("height", i.y)),
-                    vi(e, t.min),
+                    Z(e, t.min),
                     e.setAttribute("viewBox", [t.min.x, t.min.y, i.x, i.y].join(" ")),
                     this.fire("update"));
             },
             _initPath: function (t) {
-                var i = (t._path = dn("path"));
-                t.options.className && ci(i, t.options.className), t.options.interactive && ci(i, "leaflet-interactive"), this._updateStyle(t), (this._layers[m(t)] = t);
+                var i = (t._path = We("path"));
+                t.options.className && z(i, t.options.className), t.options.interactive && z(i, "leaflet-interactive"), this._updateStyle(t), (this._layers[h(t)] = t);
             },
             _addPath: function (t) {
                 this._rootGroup || this._initContainer(), this._rootGroup.appendChild(t._path), t.addInteractiveTarget(t._path);
             },
             _removePath: function (t) {
-                ri(t._path), t.removeInteractiveTarget(t._path), delete this._layers[m(t)];
+                T(t._path), t.removeInteractiveTarget(t._path), delete this._layers[h(t)];
             },
             _updatePath: function (t) {
                 t._project(), t._update();
             },
             _updateStyle: function (t) {
                 var i = t._path,
-                    e = t.options;
+                    t = t.options;
                 i &&
-                    (e.stroke
-                        ? (i.setAttribute("stroke", e.color),
-                          i.setAttribute("stroke-opacity", e.opacity),
-                          i.setAttribute("stroke-width", e.weight),
-                          i.setAttribute("stroke-linecap", e.lineCap),
-                          i.setAttribute("stroke-linejoin", e.lineJoin),
-                          e.dashArray ? i.setAttribute("stroke-dasharray", e.dashArray) : i.removeAttribute("stroke-dasharray"),
-                          e.dashOffset ? i.setAttribute("stroke-dashoffset", e.dashOffset) : i.removeAttribute("stroke-dashoffset"))
+                    (t.stroke
+                        ? (i.setAttribute("stroke", t.color),
+                          i.setAttribute("stroke-opacity", t.opacity),
+                          i.setAttribute("stroke-width", t.weight),
+                          i.setAttribute("stroke-linecap", t.lineCap),
+                          i.setAttribute("stroke-linejoin", t.lineJoin),
+                          t.dashArray ? i.setAttribute("stroke-dasharray", t.dashArray) : i.removeAttribute("stroke-dasharray"),
+                          t.dashOffset ? i.setAttribute("stroke-dashoffset", t.dashOffset) : i.removeAttribute("stroke-dashoffset"))
                         : i.setAttribute("stroke", "none"),
-                    e.fill ? (i.setAttribute("fill", e.fillColor || e.color), i.setAttribute("fill-opacity", e.fillOpacity), i.setAttribute("fill-rule", e.fillRule || "evenodd")) : i.setAttribute("fill", "none"));
+                    t.fill ? (i.setAttribute("fill", t.fillColor || t.color), i.setAttribute("fill-opacity", t.fillOpacity), i.setAttribute("fill-rule", t.fillRule || "evenodd")) : i.setAttribute("fill", "none"));
             },
             _updatePoly: function (t, i) {
-                this._setPath(t, $(t._parts, i));
+                this._setPath(t, dt(t._parts, i));
             },
             _updateCircle: function (t) {
                 var i = t._point,
                     e = Math.max(Math.round(t._radius), 1),
                     n = "a" + e + "," + (Math.max(Math.round(t._radiusY), 1) || e) + " 0 1,0 ",
-                    o = t._empty() ? "M0 0" : "M" + (i.x - e) + "," + i.y + n + 2 * e + ",0 " + n + 2 * -e + ",0 ";
-                this._setPath(t, o);
+                    i = t._empty() ? "M0 0" : "M" + (i.x - e) + "," + i.y + n + 2 * e + ",0 " + n + 2 * -e + ",0 ";
+                this._setPath(t, i);
             },
             _setPath: function (t, i) {
                 t._path.setAttribute("d", i);
             },
             _bringToFront: function (t) {
-                hi(t._path);
+                fi(t._path);
             },
             _bringToBack: function (t) {
-                ui(t._path);
+                gi(t._path);
             },
         });
-    function mn(t) {
-        return Zt || Et ? new pn(t) : null;
+    function Ue(t) {
+        return P.svg || P.vml ? new Fe(t) : null;
     }
-    Et && pn.include(_n),
-        Ki.include({
+    P.vml && Fe.include(Mt),
+        A.include({
             getRenderer: function (t) {
-                var i = (i = t.options.renderer || this._getPaneRenderer(t.options.pane) || this.options.renderer || this._renderer) || (this._renderer = this._createRenderer());
-                return this.hasLayer(i) || this.addLayer(i), i;
+                t = (t = t.options.renderer || this._getPaneRenderer(t.options.pane) || this.options.renderer || this._renderer) || (this._renderer = this._createRenderer());
+                return this.hasLayer(t) || this.addLayer(t), t;
             },
             _getPaneRenderer: function (t) {
                 if ("overlayPane" === t || void 0 === t) return !1;
@@ -4473,519 +4562,519 @@
                 return void 0 === i && ((i = this._createRenderer({ pane: t })), (this._paneRenderers[t] = i)), i;
             },
             _createRenderer: function (t) {
-                return (this.options.preferCanvas && ln(t)) || mn(t);
+                return (this.options.preferCanvas && je(t)) || Ue(t);
             },
         });
-    var fn = Re.extend({
+    var Ve = ge.extend({
         initialize: function (t, i) {
-            Re.prototype.initialize.call(this, this._boundsToLatLngs(t), i);
+            ge.prototype.initialize.call(this, this._boundsToLatLngs(t), i);
         },
         setBounds: function (t) {
             return this.setLatLngs(this._boundsToLatLngs(t));
         },
         _boundsToLatLngs: function (t) {
-            return [(t = N(t)).getSouthWest(), t.getNorthWest(), t.getNorthEast(), t.getSouthEast()];
+            return [(t = g(t)).getSouthWest(), t.getNorthWest(), t.getNorthEast(), t.getSouthEast()];
         },
     });
-    (pn.create = dn),
-        (pn.pointsToPath = $),
-        (Ne.geometryToLayer = De),
-        (Ne.coordsToLatLng = We),
-        (Ne.coordsToLatLngs = He),
-        (Ne.latLngToCoords = Fe),
-        (Ne.latLngsToCoords = Ue),
-        (Ne.getFeature = Ve),
-        (Ne.asFeature = qe),
-        Ki.mergeOptions({ boxZoom: !0 });
-    var gn = ie.extend({
-        initialize: function (t) {
-            (this._map = t), (this._container = t._container), (this._pane = t._panes.overlayPane), (this._resetStateTimeout = 0), t.on("unload", this._destroy, this);
-        },
-        addHooks: function () {
-            zi(this._container, "mousedown", this._onMouseDown, this);
-        },
-        removeHooks: function () {
-            Si(this._container, "mousedown", this._onMouseDown, this);
-        },
-        moved: function () {
-            return this._moved;
-        },
-        _destroy: function () {
-            ri(this._pane), delete this._pane;
-        },
-        _resetState: function () {
-            (this._resetStateTimeout = 0), (this._moved = !1);
-        },
-        _clearDeferredResetState: function () {
-            0 !== this._resetStateTimeout && (clearTimeout(this._resetStateTimeout), (this._resetStateTimeout = 0));
-        },
-        _onMouseDown: function (t) {
-            if (!t.shiftKey || (1 !== t.which && 1 !== t.button)) return !1;
-            this._clearDeferredResetState(),
-                this._resetState(),
-                Xt(),
-                xi(),
-                (this._startPoint = this._map.mouseEventToContainerPoint(t)),
-                zi(document, { contextmenu: Ni, mousemove: this._onMouseMove, mouseup: this._onMouseUp, keydown: this._onKeyDown }, this);
-        },
-        _onMouseMove: function (t) {
-            this._moved || ((this._moved = !0), (this._box = si("div", "leaflet-zoom-box", this._container)), ci(this._container, "leaflet-crosshair"), this._map.fire("boxzoomstart")),
-                (this._point = this._map.mouseEventToContainerPoint(t));
-            var i = new I(this._point, this._startPoint),
-                e = i.getSize();
-            vi(this._box, i.min), (this._box.style.width = e.x + "px"), (this._box.style.height = e.y + "px");
-        },
-        _finish: function () {
-            this._moved && (ri(this._box), _i(this._container, "leaflet-crosshair")), Jt(), wi(), Si(document, { contextmenu: Ni, mousemove: this._onMouseMove, mouseup: this._onMouseUp, keydown: this._onKeyDown }, this);
-        },
-        _onMouseUp: function (t) {
-            var i;
-            (1 !== t.which && 1 !== t.button) ||
-                (this._finish(),
-                this._moved &&
-                    (this._clearDeferredResetState(),
-                    (this._resetStateTimeout = setTimeout(p(this._resetState, this), 0)),
-                    (i = new R(this._map.containerPointToLatLng(this._startPoint), this._map.containerPointToLatLng(this._point))),
-                    this._map.fitBounds(i).fire("boxzoomend", { boxZoomBounds: i })));
-        },
-        _onKeyDown: function (t) {
-            27 === t.keyCode && this._finish();
-        },
-    });
-    Ki.addInitHook("addHandler", "boxZoom", gn), Ki.mergeOptions({ doubleClickZoom: !0 });
-    var vn = ie.extend({
-        addHooks: function () {
-            this._map.on("dblclick", this._onDoubleClick, this);
-        },
-        removeHooks: function () {
-            this._map.off("dblclick", this._onDoubleClick, this);
-        },
-        _onDoubleClick: function (t) {
-            var i = this._map,
-                e = i.getZoom(),
-                n = i.options.zoomDelta,
-                o = t.originalEvent.shiftKey ? e - n : e + n;
-            "center" === i.options.doubleClickZoom ? i.setZoom(o) : i.setZoomAround(t.containerPoint, o);
-        },
-    });
-    Ki.addInitHook("addHandler", "doubleClickZoom", vn), Ki.mergeOptions({ dragging: !0, inertia: !st, inertiaDeceleration: 3400, inertiaMaxSpeed: 1 / 0, easeLinearity: 0.2, worldCopyJump: !1, maxBoundsViscosity: 0 });
-    var yn = ie.extend({
-        addHooks: function () {
-            var t;
-            this._draggable ||
-                ((t = this._map),
-                (this._draggable = new ae(t._mapPane, t._container)),
-                this._draggable.on({ dragstart: this._onDragStart, drag: this._onDrag, dragend: this._onDragEnd }, this),
-                this._draggable.on("predrag", this._onPreDragLimit, this),
-                t.options.worldCopyJump && (this._draggable.on("predrag", this._onPreDragWrap, this), t.on("zoomend", this._onZoomEnd, this), t.whenReady(this._onZoomEnd, this))),
-                ci(this._map._container, "leaflet-grab leaflet-touch-drag"),
-                this._draggable.enable(),
-                (this._positions = []),
-                (this._times = []);
-        },
-        removeHooks: function () {
-            _i(this._map._container, "leaflet-grab"), _i(this._map._container, "leaflet-touch-drag"), this._draggable.disable();
-        },
-        moved: function () {
-            return this._draggable && this._draggable._moved;
-        },
-        moving: function () {
-            return this._draggable && this._draggable._moving;
-        },
-        _onDragStart: function () {
-            var t,
-                i = this._map;
-            i._stop(),
-                this._map.options.maxBounds && this._map.options.maxBoundsViscosity
-                    ? ((t = N(this._map.options.maxBounds)),
-                      (this._offsetLimit = O(this._map.latLngToContainerPoint(t.getNorthWest()).multiplyBy(-1), this._map.latLngToContainerPoint(t.getSouthEast()).multiplyBy(-1).add(this._map.getSize()))),
-                      (this._viscosity = Math.min(1, Math.max(0, this._map.options.maxBoundsViscosity))))
-                    : (this._offsetLimit = null),
-                i.fire("movestart").fire("dragstart"),
-                i.options.inertia && ((this._positions = []), (this._times = []));
-        },
-        _onDrag: function (t) {
-            var i, e;
-            this._map.options.inertia && ((i = this._lastTime = +new Date()), (e = this._lastPos = this._draggable._absPos || this._draggable._newPos), this._positions.push(e), this._times.push(i), this._prunePositions(i)),
-                this._map.fire("move", t).fire("drag", t);
-        },
-        _prunePositions: function (t) {
-            for (; 1 < this._positions.length && 50 < t - this._times[0]; ) this._positions.shift(), this._times.shift();
-        },
-        _onZoomEnd: function () {
-            var t = this._map.getSize().divideBy(2),
-                i = this._map.latLngToLayerPoint([0, 0]);
-            (this._initialWorldOffset = i.subtract(t).x), (this._worldWidth = this._map.getPixelWorldBounds().getSize().x);
-        },
-        _viscousLimit: function (t, i) {
-            return t - (t - i) * this._viscosity;
-        },
-        _onPreDragLimit: function () {
-            var t, i;
-            this._viscosity &&
-                this._offsetLimit &&
-                ((t = this._draggable._newPos.subtract(this._draggable._startPos)),
-                (i = this._offsetLimit),
-                t.x < i.min.x && (t.x = this._viscousLimit(t.x, i.min.x)),
-                t.y < i.min.y && (t.y = this._viscousLimit(t.y, i.min.y)),
-                t.x > i.max.x && (t.x = this._viscousLimit(t.x, i.max.x)),
-                t.y > i.max.y && (t.y = this._viscousLimit(t.y, i.max.y)),
-                (this._draggable._newPos = this._draggable._startPos.add(t)));
-        },
-        _onPreDragWrap: function () {
-            var t = this._worldWidth,
-                i = Math.round(t / 2),
-                e = this._initialWorldOffset,
-                n = this._draggable._newPos.x,
-                o = ((n - i + e) % t) + i - e,
-                s = ((n + i + e) % t) - i - e,
-                r = Math.abs(o + e) < Math.abs(s + e) ? o : s;
-            (this._draggable._absPos = this._draggable._newPos.clone()), (this._draggable._newPos.x = r);
-        },
-        _onDragEnd: function (t) {
-            var i,
-                e,
-                n,
-                o,
-                s,
-                r,
-                a,
-                h,
-                u,
-                l = this._map,
-                c = l.options,
-                _ = !c.inertia || this._times.length < 2;
-            l.fire("dragend", t),
-                _
-                    ? l.fire("moveend")
-                    : (this._prunePositions(+new Date()),
-                      (i = this._lastPos.subtract(this._positions[0])),
-                      (e = (this._lastTime - this._times[0]) / 1e3),
-                      (n = c.easeLinearity),
-                      (s = (o = i.multiplyBy(n / e)).distanceTo([0, 0])),
-                      (r = Math.min(c.inertiaMaxSpeed, s)),
-                      (a = o.multiplyBy(r / s)),
-                      (h = r / (c.inertiaDeceleration * n)),
-                      (u = a.multiplyBy(-h / 2).round()).x || u.y
-                          ? ((u = l._limitOffset(u, l.options.maxBounds)),
-                            M(function () {
-                                l.panBy(u, { duration: h, easeLinearity: n, noMoveStart: !0, animate: !0 });
-                            }))
-                          : l.fire("moveend"));
-        },
-    });
-    Ki.addInitHook("addHandler", "dragging", yn), Ki.mergeOptions({ keyboard: !0, keyboardPanDelta: 80 });
-    var xn = ie.extend({
-        keyCodes: { left: [37], right: [39], down: [40], up: [38], zoomIn: [187, 107, 61, 171], zoomOut: [189, 109, 54, 173] },
-        initialize: function (t) {
-            (this._map = t), this._setPanDelta(t.options.keyboardPanDelta), this._setZoomDelta(t.options.zoomDelta);
-        },
-        addHooks: function () {
-            var t = this._map._container;
-            t.tabIndex <= 0 && (t.tabIndex = "0"), zi(t, { focus: this._onFocus, blur: this._onBlur, mousedown: this._onMouseDown }, this), this._map.on({ focus: this._addHooks, blur: this._removeHooks }, this);
-        },
-        removeHooks: function () {
-            this._removeHooks(), Si(this._map._container, { focus: this._onFocus, blur: this._onBlur, mousedown: this._onMouseDown }, this), this._map.off({ focus: this._addHooks, blur: this._removeHooks }, this);
-        },
-        _onMouseDown: function () {
-            var t, i, e, n;
-            this._focused || ((t = document.body), (i = document.documentElement), (e = t.scrollTop || i.scrollTop), (n = t.scrollLeft || i.scrollLeft), this._map._container.focus(), window.scrollTo(n, e));
-        },
-        _onFocus: function () {
-            (this._focused = !0), this._map.fire("focus");
-        },
-        _onBlur: function () {
-            (this._focused = !1), this._map.fire("blur");
-        },
-        _setPanDelta: function (t) {
-            for (var i = (this._panKeys = {}), e = this.keyCodes, n = 0, o = e.left.length; n < o; n++) i[e.left[n]] = [-1 * t, 0];
-            for (n = 0, o = e.right.length; n < o; n++) i[e.right[n]] = [t, 0];
-            for (n = 0, o = e.down.length; n < o; n++) i[e.down[n]] = [0, t];
-            for (n = 0, o = e.up.length; n < o; n++) i[e.up[n]] = [0, -1 * t];
-        },
-        _setZoomDelta: function (t) {
-            for (var i = (this._zoomKeys = {}), e = this.keyCodes, n = 0, o = e.zoomIn.length; n < o; n++) i[e.zoomIn[n]] = t;
-            for (n = 0, o = e.zoomOut.length; n < o; n++) i[e.zoomOut[n]] = -t;
-        },
-        _addHooks: function () {
-            zi(document, "keydown", this._onKeyDown, this);
-        },
-        _removeHooks: function () {
-            Si(document, "keydown", this._onKeyDown, this);
-        },
-        _onKeyDown: function (t) {
-            if (!(t.altKey || t.ctrlKey || t.metaKey)) {
-                var i,
-                    e = t.keyCode,
-                    n = this._map;
-                if (e in this._panKeys) (n._panAnim && n._panAnim._inProgress) || ((i = this._panKeys[e]), t.shiftKey && (i = A(i).multiplyBy(3)), n.panBy(i), n.options.maxBounds && n.panInsideBounds(n.options.maxBounds));
-                else if (e in this._zoomKeys) n.setZoom(n.getZoom() + (t.shiftKey ? 3 : 1) * this._zoomKeys[e]);
-                else {
-                    if (27 !== e || !n._popup || !n._popup.options.closeOnEscapeKey) return;
-                    n.closePopup();
-                }
-                Ni(t);
-            }
-        },
-    });
-    Ki.addInitHook("addHandler", "keyboard", xn), Ki.mergeOptions({ scrollWheelZoom: !0, wheelDebounceTime: 40, wheelPxPerZoomLevel: 60 });
-    var wn = ie.extend({
-        addHooks: function () {
-            zi(this._map._container, "wheel", this._onWheelScroll, this), (this._delta = 0);
-        },
-        removeHooks: function () {
-            Si(this._map._container, "wheel", this._onWheelScroll, this);
-        },
-        _onWheelScroll: function (t) {
-            var i = Wi(t),
-                e = this._map.options.wheelDebounceTime;
-            (this._delta += i), (this._lastMousePos = this._map.mouseEventToContainerPoint(t)), this._startTime || (this._startTime = +new Date());
-            var n = Math.max(e - (new Date() - this._startTime), 0);
-            clearTimeout(this._timer), (this._timer = setTimeout(p(this._performZoom, this), n)), Ni(t);
-        },
-        _performZoom: function () {
-            var t = this._map,
-                i = t.getZoom(),
-                e = this._map.options.zoomSnap || 0;
-            t._stop();
-            var n = this._delta / (4 * this._map.options.wheelPxPerZoomLevel),
-                o = (4 * Math.log(2 / (1 + Math.exp(-Math.abs(n))))) / Math.LN2,
-                s = e ? Math.ceil(o / e) * e : o,
-                r = t._limitZoom(i + (0 < this._delta ? s : -s)) - i;
-            (this._delta = 0), (this._startTime = null), r && ("center" === t.options.scrollWheelZoom ? t.setZoom(i + r) : t.setZoomAround(this._lastMousePos, i + r));
-        },
-    });
-    Ki.addInitHook("addHandler", "scrollWheelZoom", wn), Ki.mergeOptions({ tap: !0, tapTolerance: 15 });
-    var Pn = ie.extend({
-        addHooks: function () {
-            zi(this._map._container, "touchstart", this._onDown, this);
-        },
-        removeHooks: function () {
-            Si(this._map._container, "touchstart", this._onDown, this);
-        },
-        _onDown: function (t) {
-            if (t.touches) {
-                if ((Ri(t), (this._fireClick = !0), 1 < t.touches.length)) return (this._fireClick = !1), void clearTimeout(this._holdTimeout);
-                var i = t.touches[0],
-                    e = i.target;
-                (this._startPos = this._newPos = new k(i.clientX, i.clientY)),
-                    e.tagName && "a" === e.tagName.toLowerCase() && ci(e, "leaflet-active"),
-                    (this._holdTimeout = setTimeout(
-                        p(function () {
-                            this._isTapValid() && ((this._fireClick = !1), this._onUp(), this._simulateEvent("contextmenu", i));
-                        }, this),
-                        1e3
-                    )),
-                    this._simulateEvent("mousedown", i),
-                    zi(document, { touchmove: this._onMove, touchend: this._onUp }, this);
-            }
-        },
-        _onUp: function (t) {
-            var i, e;
-            clearTimeout(this._holdTimeout),
-                Si(document, { touchmove: this._onMove, touchend: this._onUp }, this),
-                this._fireClick &&
-                    t &&
-                    t.changedTouches &&
-                    ((e = (i = t.changedTouches[0]).target) && e.tagName && "a" === e.tagName.toLowerCase() && _i(e, "leaflet-active"), this._simulateEvent("mouseup", i), this._isTapValid() && this._simulateEvent("click", i));
-        },
-        _isTapValid: function () {
-            return this._newPos.distanceTo(this._startPos) <= this._map.options.tapTolerance;
-        },
-        _onMove: function (t) {
-            var i = t.touches[0];
-            (this._newPos = new k(i.clientX, i.clientY)), this._simulateEvent("mousemove", i);
-        },
-        _simulateEvent: function (t, i) {
-            var e = document.createEvent("MouseEvents");
-            (e._simulated = !0), (i.target._simulatedClick = !0), e.initMouseEvent(t, !0, !0, window, 1, i.screenX, i.screenY, i.clientX, i.clientY, !1, !1, !1, !1, 0, null), i.target.dispatchEvent(e);
-        },
-    });
-    !bt || (Lt && !ct) || Ki.addInitHook("addHandler", "tap", Pn), Ki.mergeOptions({ touchZoom: bt && !st, bounceAtZoomLimits: !0 });
-    var Ln = ie.extend({
-        addHooks: function () {
-            ci(this._map._container, "leaflet-touch-zoom"), zi(this._map._container, "touchstart", this._onTouchStart, this);
-        },
-        removeHooks: function () {
-            _i(this._map._container, "leaflet-touch-zoom"), Si(this._map._container, "touchstart", this._onTouchStart, this);
-        },
-        _onTouchStart: function (t) {
-            var i,
-                e,
-                n = this._map;
-            !t.touches ||
-                2 !== t.touches.length ||
-                n._animatingZoom ||
-                this._zooming ||
-                ((i = n.mouseEventToContainerPoint(t.touches[0])),
-                (e = n.mouseEventToContainerPoint(t.touches[1])),
-                (this._centerPoint = n.getSize()._divideBy(2)),
-                (this._startLatLng = n.containerPointToLatLng(this._centerPoint)),
-                "center" !== n.options.touchZoom && (this._pinchStartLatLng = n.containerPointToLatLng(i.add(e)._divideBy(2))),
-                (this._startDist = i.distanceTo(e)),
-                (this._startZoom = n.getZoom()),
-                (this._moved = !1),
-                (this._zooming = !0),
-                n._stop(),
-                zi(document, "touchmove", this._onTouchMove, this),
-                zi(document, "touchend", this._onTouchEnd, this),
-                Ri(t));
-        },
-        _onTouchMove: function (t) {
-            if (t.touches && 2 === t.touches.length && this._zooming) {
-                var i = this._map,
-                    e = i.mouseEventToContainerPoint(t.touches[0]),
-                    n = i.mouseEventToContainerPoint(t.touches[1]),
-                    o = e.distanceTo(n) / this._startDist;
-                if (
-                    ((this._zoom = i.getScaleZoom(o, this._startZoom)),
-                    !i.options.bounceAtZoomLimits && ((this._zoom < i.getMinZoom() && o < 1) || (this._zoom > i.getMaxZoom() && 1 < o)) && (this._zoom = i._limitZoom(this._zoom)),
-                    "center" === i.options.touchZoom)
-                ) {
-                    if (((this._center = this._startLatLng), 1 == o)) return;
-                } else {
-                    var s = e._add(n)._divideBy(2)._subtract(this._centerPoint);
-                    if (1 == o && 0 === s.x && 0 === s.y) return;
-                    this._center = i.unproject(i.project(this._pinchStartLatLng, this._zoom).subtract(s), this._zoom);
-                }
-                this._moved || (i._moveStart(!0, !1), (this._moved = !0)), z(this._animRequest);
-                var r = p(i._move, i, this._center, this._zoom, { pinch: !0, round: !1 });
-                (this._animRequest = M(r, this, !0)), Ri(t);
-            }
-        },
-        _onTouchEnd: function () {
-            this._moved && this._zooming
-                ? ((this._zooming = !1),
-                  z(this._animRequest),
-                  Si(document, "touchmove", this._onTouchMove, this),
-                  Si(document, "touchend", this._onTouchEnd, this),
-                  this._map.options.zoomAnimation ? this._map._animateZoom(this._center, this._map._limitZoom(this._zoom), !0, this._map.options.zoomSnap) : this._map._resetView(this._center, this._map._limitZoom(this._zoom)))
-                : (this._zooming = !1);
-        },
-    });
-    Ki.addInitHook("addHandler", "touchZoom", Ln),
-        (Ki.BoxZoom = gn),
-        (Ki.DoubleClickZoom = vn),
-        (Ki.Drag = yn),
-        (Ki.Keyboard = xn),
-        (Ki.ScrollWheelZoom = wn),
-        (Ki.Tap = Pn),
-        (Ki.TouchZoom = Ln),
-        (t.version = "1.7.1"),
-        (t.Control = Xi),
-        (t.control = Yi),
-        (t.Browser = Bt),
-        (t.Evented = E),
-        (t.Mixin = ne),
-        (t.Util = C),
-        (t.Class = S),
-        (t.Handler = ie),
-        (t.extend = h),
-        (t.bind = p),
-        (t.stamp = m),
-        (t.setOptions = c),
-        (t.DomEvent = qi),
-        (t.DomUtil = Mi),
-        (t.PosAnimation = Gi),
-        (t.Draggable = ae),
-        (t.LineUtil = fe),
-        (t.PolyUtil = ye),
-        (t.Point = k),
-        (t.point = A),
-        (t.Bounds = I),
-        (t.bounds = O),
-        (t.Transformation = q),
-        (t.transformation = G),
-        (t.Projection = Pe),
-        (t.LatLng = D),
-        (t.latLng = j),
-        (t.LatLngBounds = R),
-        (t.latLngBounds = N),
-        (t.CRS = H),
-        (t.GeoJSON = Ne),
-        (t.geoJSON = Ke),
-        (t.geoJson = Ye),
-        (t.Layer = Me),
-        (t.LayerGroup = ze),
-        (t.layerGroup = function (t, i) {
-            return new ze(t, i);
+    (Fe.create = We),
+        (Fe.pointsToPath = dt),
+        (ve.geometryToLayer = ye),
+        (ve.coordsToLatLng = we),
+        (ve.coordsToLatLngs = Pe),
+        (ve.latLngToCoords = be),
+        (ve.latLngsToCoords = Le),
+        (ve.getFeature = Te),
+        (ve.asFeature = ze),
+        A.mergeOptions({ boxZoom: !0 });
+    var _t = n.extend({
+            initialize: function (t) {
+                (this._map = t), (this._container = t._container), (this._pane = t._panes.overlayPane), (this._resetStateTimeout = 0), t.on("unload", this._destroy, this);
+            },
+            addHooks: function () {
+                S(this._container, "mousedown", this._onMouseDown, this);
+            },
+            removeHooks: function () {
+                E(this._container, "mousedown", this._onMouseDown, this);
+            },
+            moved: function () {
+                return this._moved;
+            },
+            _destroy: function () {
+                T(this._pane), delete this._pane;
+            },
+            _resetState: function () {
+                (this._resetStateTimeout = 0), (this._moved = !1);
+            },
+            _clearDeferredResetState: function () {
+                0 !== this._resetStateTimeout && (clearTimeout(this._resetStateTimeout), (this._resetStateTimeout = 0));
+            },
+            _onMouseDown: function (t) {
+                if (!t.shiftKey || (1 !== t.which && 1 !== t.button)) return !1;
+                this._clearDeferredResetState(),
+                    this._resetState(),
+                    ri(),
+                    Li(),
+                    (this._startPoint = this._map.mouseEventToContainerPoint(t)),
+                    S(document, { contextmenu: Ri, mousemove: this._onMouseMove, mouseup: this._onMouseUp, keydown: this._onKeyDown }, this);
+            },
+            _onMouseMove: function (t) {
+                this._moved || ((this._moved = !0), (this._box = b("div", "leaflet-zoom-box", this._container)), z(this._container, "leaflet-crosshair"), this._map.fire("boxzoomstart")),
+                    (this._point = this._map.mouseEventToContainerPoint(t));
+                var t = new m(this._point, this._startPoint),
+                    i = t.getSize();
+                Z(this._box, t.min), (this._box.style.width = i.x + "px"), (this._box.style.height = i.y + "px");
+            },
+            _finish: function () {
+                this._moved && (T(this._box), M(this._container, "leaflet-crosshair")), ai(), Ti(), E(document, { contextmenu: Ri, mousemove: this._onMouseMove, mouseup: this._onMouseUp, keydown: this._onKeyDown }, this);
+            },
+            _onMouseUp: function (t) {
+                (1 !== t.which && 1 !== t.button) ||
+                    (this._finish(),
+                    this._moved &&
+                        (this._clearDeferredResetState(),
+                        (this._resetStateTimeout = setTimeout(a(this._resetState, this), 0)),
+                        (t = new s(this._map.containerPointToLatLng(this._startPoint), this._map.containerPointToLatLng(this._point))),
+                        this._map.fitBounds(t).fire("boxzoomend", { boxZoomBounds: t })));
+            },
+            _onKeyDown: function (t) {
+                27 === t.keyCode && (this._finish(), this._clearDeferredResetState(), this._resetState());
+            },
         }),
-        (t.FeatureGroup = Ce),
-        (t.featureGroup = function (t, i) {
-            return new Ce(t, i);
-        }),
-        (t.ImageOverlay = Xe),
-        (t.imageOverlay = function (t, i, e) {
-            return new Xe(t, i, e);
-        }),
-        (t.VideoOverlay = Je),
-        (t.videoOverlay = function (t, i, e) {
-            return new Je(t, i, e);
-        }),
-        (t.SVGOverlay = $e),
-        (t.svgOverlay = function (t, i, e) {
-            return new $e(t, i, e);
-        }),
-        (t.DivOverlay = Qe),
-        (t.Popup = tn),
-        (t.popup = function (t, i) {
-            return new tn(t, i);
-        }),
-        (t.Tooltip = en),
-        (t.tooltip = function (t, i) {
-            return new en(t, i);
-        }),
-        (t.Icon = Se),
-        (t.icon = function (t) {
-            return new Se(t);
-        }),
-        (t.DivIcon = nn),
-        (t.divIcon = function (t) {
-            return new nn(t);
-        }),
-        (t.Marker = ke),
-        (t.marker = function (t, i) {
-            return new ke(t, i);
-        }),
-        (t.TileLayer = sn),
-        (t.tileLayer = rn),
-        (t.GridLayer = on),
-        (t.gridLayer = function (t) {
-            return new on(t);
-        }),
-        (t.SVG = pn),
-        (t.svg = mn),
-        (t.Renderer = hn),
-        (t.Canvas = un),
-        (t.canvas = ln),
-        (t.Path = Be),
-        (t.CircleMarker = Ae),
-        (t.circleMarker = function (t, i) {
-            return new Ae(t, i);
-        }),
-        (t.Circle = Ie),
-        (t.circle = function (t, i, e) {
-            return new Ie(t, i, e);
-        }),
-        (t.Polyline = Oe),
-        (t.polyline = function (t, i) {
-            return new Oe(t, i);
-        }),
-        (t.Polygon = Re),
-        (t.polygon = function (t, i) {
-            return new Re(t, i);
-        }),
-        (t.Rectangle = fn),
-        (t.rectangle = function (t, i) {
-            return new fn(t, i);
-        }),
-        (t.Map = Ki),
-        (t.map = function (t, i) {
-            return new Ki(t, i);
-        });
-    var bn = window.L;
+        Ct =
+            (A.addInitHook("addHandler", "boxZoom", _t),
+            A.mergeOptions({ doubleClickZoom: !0 }),
+            n.extend({
+                addHooks: function () {
+                    this._map.on("dblclick", this._onDoubleClick, this);
+                },
+                removeHooks: function () {
+                    this._map.off("dblclick", this._onDoubleClick, this);
+                },
+                _onDoubleClick: function (t) {
+                    var i = this._map,
+                        e = i.getZoom(),
+                        n = i.options.zoomDelta,
+                        e = t.originalEvent.shiftKey ? e - n : e + n;
+                    "center" === i.options.doubleClickZoom ? i.setZoom(e) : i.setZoomAround(t.containerPoint, e);
+                },
+            })),
+        Zt =
+            (A.addInitHook("addHandler", "doubleClickZoom", Ct),
+            A.mergeOptions({ dragging: !0, inertia: !0, inertiaDeceleration: 3400, inertiaMaxSpeed: 1 / 0, easeLinearity: 0.2, worldCopyJump: !1, maxBoundsViscosity: 0 }),
+            n.extend({
+                addHooks: function () {
+                    var t;
+                    this._draggable ||
+                        ((t = this._map),
+                        (this._draggable = new Xi(t._mapPane, t._container)),
+                        this._draggable.on({ dragstart: this._onDragStart, drag: this._onDrag, dragend: this._onDragEnd }, this),
+                        this._draggable.on("predrag", this._onPreDragLimit, this),
+                        t.options.worldCopyJump && (this._draggable.on("predrag", this._onPreDragWrap, this), t.on("zoomend", this._onZoomEnd, this), t.whenReady(this._onZoomEnd, this))),
+                        z(this._map._container, "leaflet-grab leaflet-touch-drag"),
+                        this._draggable.enable(),
+                        (this._positions = []),
+                        (this._times = []);
+                },
+                removeHooks: function () {
+                    M(this._map._container, "leaflet-grab"), M(this._map._container, "leaflet-touch-drag"), this._draggable.disable();
+                },
+                moved: function () {
+                    return this._draggable && this._draggable._moved;
+                },
+                moving: function () {
+                    return this._draggable && this._draggable._moving;
+                },
+                _onDragStart: function () {
+                    var t,
+                        i = this._map;
+                    i._stop(),
+                        this._map.options.maxBounds && this._map.options.maxBoundsViscosity
+                            ? ((t = g(this._map.options.maxBounds)),
+                              (this._offsetLimit = f(this._map.latLngToContainerPoint(t.getNorthWest()).multiplyBy(-1), this._map.latLngToContainerPoint(t.getSouthEast()).multiplyBy(-1).add(this._map.getSize()))),
+                              (this._viscosity = Math.min(1, Math.max(0, this._map.options.maxBoundsViscosity))))
+                            : (this._offsetLimit = null),
+                        i.fire("movestart").fire("dragstart"),
+                        i.options.inertia && ((this._positions = []), (this._times = []));
+                },
+                _onDrag: function (t) {
+                    var i, e;
+                    this._map.options.inertia && ((i = this._lastTime = +new Date()), (e = this._lastPos = this._draggable._absPos || this._draggable._newPos), this._positions.push(e), this._times.push(i), this._prunePositions(i)),
+                        this._map.fire("move", t).fire("drag", t);
+                },
+                _prunePositions: function (t) {
+                    for (; 1 < this._positions.length && 50 < t - this._times[0]; ) this._positions.shift(), this._times.shift();
+                },
+                _onZoomEnd: function () {
+                    var t = this._map.getSize().divideBy(2),
+                        i = this._map.latLngToLayerPoint([0, 0]);
+                    (this._initialWorldOffset = i.subtract(t).x), (this._worldWidth = this._map.getPixelWorldBounds().getSize().x);
+                },
+                _viscousLimit: function (t, i) {
+                    return t - (t - i) * this._viscosity;
+                },
+                _onPreDragLimit: function () {
+                    var t, i;
+                    this._viscosity &&
+                        this._offsetLimit &&
+                        ((t = this._draggable._newPos.subtract(this._draggable._startPos)),
+                        (i = this._offsetLimit),
+                        t.x < i.min.x && (t.x = this._viscousLimit(t.x, i.min.x)),
+                        t.y < i.min.y && (t.y = this._viscousLimit(t.y, i.min.y)),
+                        t.x > i.max.x && (t.x = this._viscousLimit(t.x, i.max.x)),
+                        t.y > i.max.y && (t.y = this._viscousLimit(t.y, i.max.y)),
+                        (this._draggable._newPos = this._draggable._startPos.add(t)));
+                },
+                _onPreDragWrap: function () {
+                    var t = this._worldWidth,
+                        i = Math.round(t / 2),
+                        e = this._initialWorldOffset,
+                        n = this._draggable._newPos.x,
+                        o = ((n - i + e) % t) + i - e,
+                        n = ((n + i + e) % t) - i - e,
+                        t = Math.abs(o + e) < Math.abs(n + e) ? o : n;
+                    (this._draggable._absPos = this._draggable._newPos.clone()), (this._draggable._newPos.x = t);
+                },
+                _onDragEnd: function (t) {
+                    var i,
+                        e,
+                        n,
+                        o,
+                        s = this._map,
+                        r = s.options,
+                        a = !r.inertia || t.noInertia || this._times.length < 2;
+                    s.fire("dragend", t),
+                        a
+                            ? s.fire("moveend")
+                            : (this._prunePositions(+new Date()),
+                              (t = this._lastPos.subtract(this._positions[0])),
+                              (a = (this._lastTime - this._times[0]) / 1e3),
+                              (i = r.easeLinearity),
+                              (a = (t = t.multiplyBy(i / a)).distanceTo([0, 0])),
+                              (e = Math.min(r.inertiaMaxSpeed, a)),
+                              (t = t.multiplyBy(e / a)),
+                              (n = e / (r.inertiaDeceleration * i)),
+                              (o = t.multiplyBy(-n / 2).round()).x || o.y
+                                  ? ((o = s._limitOffset(o, s.options.maxBounds)),
+                                    x(function () {
+                                        s.panBy(o, { duration: n, easeLinearity: i, noMoveStart: !0, animate: !0 });
+                                    }))
+                                  : s.fire("moveend"));
+                },
+            })),
+        St =
+            (A.addInitHook("addHandler", "dragging", Zt),
+            A.mergeOptions({ keyboard: !0, keyboardPanDelta: 80 }),
+            n.extend({
+                keyCodes: { left: [37], right: [39], down: [40], up: [38], zoomIn: [187, 107, 61, 171], zoomOut: [189, 109, 54, 173] },
+                initialize: function (t) {
+                    (this._map = t), this._setPanDelta(t.options.keyboardPanDelta), this._setZoomDelta(t.options.zoomDelta);
+                },
+                addHooks: function () {
+                    var t = this._map._container;
+                    t.tabIndex <= 0 && (t.tabIndex = "0"), S(t, { focus: this._onFocus, blur: this._onBlur, mousedown: this._onMouseDown }, this), this._map.on({ focus: this._addHooks, blur: this._removeHooks }, this);
+                },
+                removeHooks: function () {
+                    this._removeHooks(), E(this._map._container, { focus: this._onFocus, blur: this._onBlur, mousedown: this._onMouseDown }, this), this._map.off({ focus: this._addHooks, blur: this._removeHooks }, this);
+                },
+                _onMouseDown: function () {
+                    var t, i, e;
+                    this._focused || ((e = document.body), (t = document.documentElement), (i = e.scrollTop || t.scrollTop), (e = e.scrollLeft || t.scrollLeft), this._map._container.focus(), window.scrollTo(e, i));
+                },
+                _onFocus: function () {
+                    (this._focused = !0), this._map.fire("focus");
+                },
+                _onBlur: function () {
+                    (this._focused = !1), this._map.fire("blur");
+                },
+                _setPanDelta: function (t) {
+                    for (var i = (this._panKeys = {}), e = this.keyCodes, n = 0, o = e.left.length; n < o; n++) i[e.left[n]] = [-1 * t, 0];
+                    for (n = 0, o = e.right.length; n < o; n++) i[e.right[n]] = [t, 0];
+                    for (n = 0, o = e.down.length; n < o; n++) i[e.down[n]] = [0, t];
+                    for (n = 0, o = e.up.length; n < o; n++) i[e.up[n]] = [0, -1 * t];
+                },
+                _setZoomDelta: function (t) {
+                    for (var i = (this._zoomKeys = {}), e = this.keyCodes, n = 0, o = e.zoomIn.length; n < o; n++) i[e.zoomIn[n]] = t;
+                    for (n = 0, o = e.zoomOut.length; n < o; n++) i[e.zoomOut[n]] = -t;
+                },
+                _addHooks: function () {
+                    S(document, "keydown", this._onKeyDown, this);
+                },
+                _removeHooks: function () {
+                    E(document, "keydown", this._onKeyDown, this);
+                },
+                _onKeyDown: function (t) {
+                    if (!(t.altKey || t.ctrlKey || t.metaKey)) {
+                        var i,
+                            e = t.keyCode,
+                            n = this._map;
+                        if (e in this._panKeys) (n._panAnim && n._panAnim._inProgress) || ((i = this._panKeys[e]), t.shiftKey && (i = _(i).multiplyBy(3)), n.panBy(i), n.options.maxBounds && n.panInsideBounds(n.options.maxBounds));
+                        else if (e in this._zoomKeys) n.setZoom(n.getZoom() + (t.shiftKey ? 3 : 1) * this._zoomKeys[e]);
+                        else {
+                            if (27 !== e || !n._popup || !n._popup.options.closeOnEscapeKey) return;
+                            n.closePopup();
+                        }
+                        Ri(t);
+                    }
+                },
+            })),
+        kt =
+            (A.addInitHook("addHandler", "keyboard", St),
+            A.mergeOptions({ scrollWheelZoom: !0, wheelDebounceTime: 40, wheelPxPerZoomLevel: 60 }),
+            n.extend({
+                addHooks: function () {
+                    S(this._map._container, "wheel", this._onWheelScroll, this), (this._delta = 0);
+                },
+                removeHooks: function () {
+                    E(this._map._container, "wheel", this._onWheelScroll, this);
+                },
+                _onWheelScroll: function (t) {
+                    var i = ji(t),
+                        e = this._map.options.wheelDebounceTime,
+                        i = ((this._delta += i), (this._lastMousePos = this._map.mouseEventToContainerPoint(t)), this._startTime || (this._startTime = +new Date()), Math.max(e - (+new Date() - this._startTime), 0));
+                    clearTimeout(this._timer), (this._timer = setTimeout(a(this._performZoom, this), i)), Ri(t);
+                },
+                _performZoom: function () {
+                    var t = this._map,
+                        i = t.getZoom(),
+                        e = this._map.options.zoomSnap || 0,
+                        n = (t._stop(), this._delta / (4 * this._map.options.wheelPxPerZoomLevel)),
+                        n = (4 * Math.log(2 / (1 + Math.exp(-Math.abs(n))))) / Math.LN2,
+                        e = e ? Math.ceil(n / e) * e : n,
+                        n = t._limitZoom(i + (0 < this._delta ? e : -e)) - i;
+                    (this._delta = 0), (this._startTime = null), n && ("center" === t.options.scrollWheelZoom ? t.setZoom(i + n) : t.setZoomAround(this._lastMousePos, i + n));
+                },
+            })),
+        Et =
+            (A.addInitHook("addHandler", "scrollWheelZoom", kt),
+            A.mergeOptions({ tapHold: P.touchNative && P.safari && P.mobile, tapTolerance: 15 }),
+            n.extend({
+                addHooks: function () {
+                    S(this._map._container, "touchstart", this._onDown, this);
+                },
+                removeHooks: function () {
+                    E(this._map._container, "touchstart", this._onDown, this);
+                },
+                _onDown: function (t) {
+                    var i;
+                    clearTimeout(this._holdTimeout),
+                        1 === t.touches.length &&
+                            ((i = t.touches[0]),
+                            (this._startPos = this._newPos = new p(i.clientX, i.clientY)),
+                            (this._holdTimeout = setTimeout(
+                                a(function () {
+                                    this._cancel(), this._isTapValid() && (S(document, "touchend", B), S(document, "touchend touchcancel", this._cancelClickPrevent), this._simulateEvent("contextmenu", i));
+                                }, this),
+                                600
+                            )),
+                            S(document, "touchend touchcancel contextmenu", this._cancel, this),
+                            S(document, "touchmove", this._onMove, this));
+                },
+                _cancelClickPrevent: function t() {
+                    E(document, "touchend", B), E(document, "touchend touchcancel", t);
+                },
+                _cancel: function () {
+                    clearTimeout(this._holdTimeout), E(document, "touchend touchcancel contextmenu", this._cancel, this), E(document, "touchmove", this._onMove, this);
+                },
+                _onMove: function (t) {
+                    t = t.touches[0];
+                    this._newPos = new p(t.clientX, t.clientY);
+                },
+                _isTapValid: function () {
+                    return this._newPos.distanceTo(this._startPos) <= this._map.options.tapTolerance;
+                },
+                _simulateEvent: function (t, i) {
+                    t = new MouseEvent(t, { bubbles: !0, cancelable: !0, view: window, screenX: i.screenX, screenY: i.screenY, clientX: i.clientX, clientY: i.clientY });
+                    (t._simulated = !0), i.target.dispatchEvent(t);
+                },
+            })),
+        Bt =
+            (A.addInitHook("addHandler", "tapHold", Et),
+            A.mergeOptions({ touchZoom: P.touch, bounceAtZoomLimits: !0 }),
+            n.extend({
+                addHooks: function () {
+                    z(this._map._container, "leaflet-touch-zoom"), S(this._map._container, "touchstart", this._onTouchStart, this);
+                },
+                removeHooks: function () {
+                    M(this._map._container, "leaflet-touch-zoom"), E(this._map._container, "touchstart", this._onTouchStart, this);
+                },
+                _onTouchStart: function (t) {
+                    var i,
+                        e,
+                        n = this._map;
+                    !t.touches ||
+                        2 !== t.touches.length ||
+                        n._animatingZoom ||
+                        this._zooming ||
+                        ((i = n.mouseEventToContainerPoint(t.touches[0])),
+                        (e = n.mouseEventToContainerPoint(t.touches[1])),
+                        (this._centerPoint = n.getSize()._divideBy(2)),
+                        (this._startLatLng = n.containerPointToLatLng(this._centerPoint)),
+                        "center" !== n.options.touchZoom && (this._pinchStartLatLng = n.containerPointToLatLng(i.add(e)._divideBy(2))),
+                        (this._startDist = i.distanceTo(e)),
+                        (this._startZoom = n.getZoom()),
+                        (this._moved = !1),
+                        (this._zooming = !0),
+                        n._stop(),
+                        S(document, "touchmove", this._onTouchMove, this),
+                        S(document, "touchend touchcancel", this._onTouchEnd, this),
+                        B(t));
+                },
+                _onTouchMove: function (t) {
+                    if (t.touches && 2 === t.touches.length && this._zooming) {
+                        var i = this._map,
+                            e = i.mouseEventToContainerPoint(t.touches[0]),
+                            n = i.mouseEventToContainerPoint(t.touches[1]),
+                            o = e.distanceTo(n) / this._startDist;
+                        if (
+                            ((this._zoom = i.getScaleZoom(o, this._startZoom)),
+                            !i.options.bounceAtZoomLimits && ((this._zoom < i.getMinZoom() && o < 1) || (this._zoom > i.getMaxZoom() && 1 < o)) && (this._zoom = i._limitZoom(this._zoom)),
+                            "center" === i.options.touchZoom)
+                        ) {
+                            if (((this._center = this._startLatLng), 1 == o)) return;
+                        } else {
+                            e = e._add(n)._divideBy(2)._subtract(this._centerPoint);
+                            if (1 == o && 0 === e.x && 0 === e.y) return;
+                            this._center = i.unproject(i.project(this._pinchStartLatLng, this._zoom).subtract(e), this._zoom);
+                        }
+                        this._moved || (i._moveStart(!0, !1), (this._moved = !0)), r(this._animRequest);
+                        n = a(i._move, i, this._center, this._zoom, { pinch: !0, round: !1 });
+                        (this._animRequest = x(n, this, !0)), B(t);
+                    }
+                },
+                _onTouchEnd: function () {
+                    this._moved && this._zooming
+                        ? ((this._zooming = !1),
+                          r(this._animRequest),
+                          E(document, "touchmove", this._onTouchMove, this),
+                          E(document, "touchend touchcancel", this._onTouchEnd, this),
+                          this._map.options.zoomAnimation ? this._map._animateZoom(this._center, this._map._limitZoom(this._zoom), !0, this._map.options.zoomSnap) : this._map._resetView(this._center, this._map._limitZoom(this._zoom)))
+                        : (this._zooming = !1);
+                },
+            })),
+        qe =
+            (A.addInitHook("addHandler", "touchZoom", Bt),
+            (A.BoxZoom = _t),
+            (A.DoubleClickZoom = Ct),
+            (A.Drag = Zt),
+            (A.Keyboard = St),
+            (A.ScrollWheelZoom = kt),
+            (A.TapHold = Et),
+            (A.TouchZoom = Bt),
+            (t.Bounds = m),
+            (t.Browser = P),
+            (t.CRS = ot),
+            (t.Canvas = De),
+            (t.Circle = me),
+            (t.CircleMarker = pe),
+            (t.Class = it),
+            (t.Control = I),
+            (t.DivIcon = Be),
+            (t.DivOverlay = O),
+            (t.DomEvent = mt),
+            (t.DomUtil = pt),
+            (t.Draggable = Xi),
+            (t.Evented = et),
+            (t.FeatureGroup = he),
+            (t.GeoJSON = ve),
+            (t.GridLayer = Ae),
+            (t.Handler = n),
+            (t.Icon = le),
+            (t.ImageOverlay = Ce),
+            (t.LatLng = v),
+            (t.LatLngBounds = s),
+            (t.Layer = o),
+            (t.LayerGroup = ae),
+            (t.LineUtil = gt),
+            (t.Map = A),
+            (t.Marker = de),
+            (t.Mixin = ft),
+            (t.Path = _e),
+            (t.Point = p),
+            (t.PolyUtil = vt),
+            (t.Polygon = ge),
+            (t.Polyline = fe),
+            (t.Popup = ke),
+            (t.PosAnimation = Wi),
+            (t.Projection = wt),
+            (t.Rectangle = Ve),
+            (t.Renderer = Ne),
+            (t.SVG = Fe),
+            (t.SVGOverlay = Se),
+            (t.TileLayer = Ie),
+            (t.Tooltip = Ee),
+            (t.Transformation = at),
+            (t.Util = tt),
+            (t.VideoOverlay = Ze),
+            (t.bind = a),
+            (t.bounds = f),
+            (t.canvas = je),
+            (t.circle = function (t, i, e) {
+                return new me(t, i, e);
+            }),
+            (t.circleMarker = function (t, i) {
+                return new pe(t, i);
+            }),
+            (t.control = Fi),
+            (t.divIcon = function (t) {
+                return new Be(t);
+            }),
+            (t.extend = l),
+            (t.featureGroup = function (t, i) {
+                return new he(t, i);
+            }),
+            (t.geoJSON = Me),
+            (t.geoJson = zt),
+            (t.gridLayer = function (t) {
+                return new Ae(t);
+            }),
+            (t.icon = function (t) {
+                return new le(t);
+            }),
+            (t.imageOverlay = function (t, i, e) {
+                return new Ce(t, i, e);
+            }),
+            (t.latLng = w),
+            (t.latLngBounds = g),
+            (t.layerGroup = function (t, i) {
+                return new ae(t, i);
+            }),
+            (t.map = function (t, i) {
+                return new A(t, i);
+            }),
+            (t.marker = function (t, i) {
+                return new de(t, i);
+            }),
+            (t.point = _),
+            (t.polygon = function (t, i) {
+                return new ge(t, i);
+            }),
+            (t.polyline = function (t, i) {
+                return new fe(t, i);
+            }),
+            (t.popup = function (t, i) {
+                return new ke(t, i);
+            }),
+            (t.rectangle = function (t, i) {
+                return new Ve(t, i);
+            }),
+            (t.setOptions = c),
+            (t.stamp = h),
+            (t.svg = Ue),
+            (t.svgOverlay = function (t, i, e) {
+                return new Se(t, i, e);
+            }),
+            (t.tileLayer = Oe),
+            (t.tooltip = function (t, i) {
+                return new Ee(t, i);
+            }),
+            (t.transformation = ht),
+            (t.version = "1.8.0"),
+            (t.videoOverlay = function (t, i, e) {
+                return new Ze(t, i, e);
+            }),
+            window.L);
     (t.noConflict = function () {
-        return (window.L = bn), this;
+        return (window.L = qe), this;
     }),
         (window.L = t);
 });
@@ -5048,6 +5137,80 @@
         (i.tileLayer.fallback = function (e, r) {
             return new i.TileLayer.Fallback(e, r);
         });
+});
+("use strict");
+
+(function (root, factory) {
+    if (typeof define === "function" && define.amd) {
+        define(["leaflet"], factory);
+    } else if (typeof exports === "object") {
+        module.exports = factory(require("leaflet"));
+    } else {
+        factory(window.L);
+    }
+})(this, function (L) {
+    L.Canvas.include({
+        _updateImg(layer) {
+            const { img } = layer.options;
+            const p = layer._point.round();
+            p.x += img.offset.x;
+            p.y += img.offset.y;
+            if (img.rotate) {
+                this._ctx.save();
+                this._ctx.translate(p.x, p.y);
+                this._ctx.rotate((img.rotate * Math.PI) / 180);
+                this._ctx.drawImage(img.el, -img.size[0] / 2, -img.size[1] / 2, img.size[0], img.size[1]);
+                this._ctx.restore();
+            } else {
+                this._ctx.drawImage(img.el, p.x - img.size[0] / 2, p.y - img.size[1] / 2, img.size[0], img.size[1]);
+            }
+        },
+    });
+
+    const angleCrds = (map, prevLatlng, latlng) => {
+        if (!latlng || !prevLatlng) return 0;
+        const pxStart = map.project(prevLatlng);
+        const pxEnd = map.project(latlng);
+        return (Math.atan2(pxStart.y - pxEnd.y, pxStart.x - pxEnd.x) / Math.PI) * 180 - 90;
+    };
+
+    const defaultImgOptions = {
+        rotate: 0,
+        size: [40, 40],
+        offset: { x: 0, y: 0 },
+    };
+
+    const CanvasMarker = L.CircleMarker.extend({
+        _updatePath() {
+            if (!this.options.img || !this.options.img.url) return;
+            if (!this.options.img.el) {
+                this.options.img = { ...defaultImgOptions, ...this.options.img };
+                this.options.img.rotate += angleCrds(this._map, this.options.prevLatlng, this._latlng);
+                const img = document.createElement("img");
+                img.src = this.options.img.url;
+                this.options.img.el = img;
+                img.onload = () => {
+                    this.redraw();
+                };
+                img.onerror = () => {
+                    this.options.img = null;
+                };
+            } else {
+                this._renderer._updateImg(this);
+            }
+        },
+    });
+
+    L.canvasMarker = function (...opt) {
+        try {
+            const i = opt.findIndex((o) => typeof o === "object" && o.img);
+            if (i + 1) {
+                if (!opt[i].radius && opt[i].img && opt[i].img.size) opt[i].radius = Math.ceil(Math.max(...opt[i].img.size) / 2);
+                if (opt[i].pane) delete opt[i].pane;
+            }
+        } catch (e) {}
+        return new CanvasMarker(...opt);
+    };
 });
 /*! Hammer.JS - v2.0.8 - 2016-04-23
  * http://hammerjs.github.io/
@@ -6671,6 +6834,7 @@ geofs["atmosphereCommon.glsl"] =
     "\n" +
     "uniform float planetRadius;\n" +
     "#ifdef VOLUMETRIC_CLOUDS\n" +
+    "const float windSpeedRatio = 0.0002;\n" +
     "uniform float cloudCover;\n" +
     "uniform float cloudBase;\n" +
     "uniform float cloudTop;\n" +
@@ -7055,7 +7219,6 @@ geofs["atmosphereOnlyFS.glsl"] =
     "uniform sampler2D depthTexture;\n" +
     "#ifdef VOLUMETRIC_CLOUDS\n" +
     "uniform sampler2D volumetricCloudsTexture;\n" +
-    "uniform float geofsTime;\n" +
     "#endif\n" +
     "uniform float backgroundFogDensity;\n" +
     "uniform vec4 backgroundFogColor;\n" +
@@ -7136,7 +7299,7 @@ geofs["atmosphereOnlyFS.glsl"] =
     "\n" +
     "// if this is ground and sun is up and ground is below cloud base\n" +
     "if (depth < 1.0 && czm_lightColor.z > 0.15 && length(vWorldPosition) < cloudBase_radius + baseThickness) {\n" +
-    "vec3 wind = windVector * geofsTime * 0.0003;\n" +
+    "vec3 wind = windVector * czm_frameNumber * windSpeedRatio;\n" +
     "float mask = 1.0;\n" +
     "vec2 toClouds = raySphereIntersect(vWorldPosition, -lightDirection, cloudBase_radius + baseThickness);\n" +
     "vec3 position = vWorldPosition + (-lightDirection * toClouds.x);\n" +
@@ -7186,7 +7349,6 @@ geofs["volumetricCloudsFS.glsl"] =
     "" +
     "precision highp float;\n" +
     "\n" +
-    "uniform float geofsTime;\n" +
     "uniform sampler2D noiseTexture;\n" +
     "varying vec2 v_textureCoordinates;\n" +
     "\n" +
@@ -7412,7 +7574,7 @@ geofs["volumetricCloudsFS.glsl"] =
     "distance = CLOUDS_MAX_VIEWING_DISTANCE;\n" +
     "}\n" +
     "\n" +
-    "vec3 wind = windVector * geofsTime * 0.0003;\n" +
+    "vec3 wind = windVector * czm_frameNumber * windSpeedRatio;\n" +
     "\n" +
     "// compute a generic atmosphere color to blend in along distance\n" +
     "vec4 atmosphereAtDistance = calculate_scattering(\n" +
@@ -7451,14 +7613,22 @@ geofs["volumetricCloudsFS.glsl"] =
 geofs = geofs || {};
 geofs["oceanFS.glsl"] =
     "" +
+    "/*\n" +
+    "windSpeed: weather.currentWindSpeedMs,\n" +
+    "horizonColor: Cesium.Color.fromCssColorString('#f1f9fbff'), //e4f9f955\n" +
+    "azimutColor: Cesium.Color.fromCssColorString('#38618aff'), //1e315bff\n" +
+    "sunColor: Cesium.Color.fromCssColorString('#f1f0eaff'),\n" +
+    "normalMap: '/shaders/oceannormal3.jpg',\n" +
+    "foamTexture: '/shaders/seafoam.jpg',\n" +
+    "lightsTexture: '/shaders/noise/citylights.png'\n" +
+    "*/\n" +
+    "\n" +
     "precision highp float;\n" +
     "\n" +
     "const float shininess = 200.0;\n" +
-    "\n" +
+    "const float animationSpeed = 0.00005;\n" +
     "float waveAmplitude;\n" +
-    "float animationSpeed = 0.001;\n" +
-    "\n" +
-    "vec4 czm_lightColorV4 = vec4(czm_lightColor, 1.0);\n" +
+    "vec3 positionMC;\n" +
     "\n" +
     "czm_material czm_getMaterial(czm_materialInput materialInput) {\n" +
     "\n" +
@@ -7466,19 +7636,24 @@ geofs["oceanFS.glsl"] =
     "\n" +
     "vec4 layerColor = materialInput.layerColor;\n" +
     "\n" +
-    "vec3 positionMC = (czm_inverseModelView * vec4(-materialInput.positionToEyeEC, 1.0)).xyz;\n" +
-    "\n" +
     "// city lights\n" +
+    "/*\n" +
     "if (layerColor.r > 0.46 && layerColor.r < 0.54 && czm_lightColor.z < 0.09) {\n" +
+    "\n" +
+    "positionMC = (czm_inverseModelView * vec4(-materialInput.positionToEyeEC, 1.0)).xyz;\n" +
     "\n" +
     "vec3 sphericalNormal = normalize(positionMC);\n" +
     "vec2 positionSurfaceC = czm_ellipsoidWgs84TextureCoordinates(sphericalNormal) * 3000.0;\n" +
     "\n" +
-    "material.diffuse = texture2D(lightsTexture_7, fract(positionSurfaceC)).rgb * 1.5;\n" +
+    "material.diffuse = texture2D(lightsTexture, fract(positionSurfaceC)).rgb * 1.5;\n" +
     "material.alpha = material.diffuse.r * layerColor.r;\n" +
     "}\n" +
+    "*/\n" +
     "\n" +
     "if (layerColor.b > 0.0) {\n" +
+    "\n" +
+    "vec4 czm_lightColorV4 = vec4(czm_lightColor, 1.0);\n" +
+    "positionMC = (czm_inverseModelView * vec4(-materialInput.positionToEyeEC, 1.0)).xyz;\n" +
     "\n" +
     "//vec3 positionEC = -materialInput.positionToEyeEC;\n" +
     "\n" +
@@ -7508,9 +7683,8 @@ geofs["oceanFS.glsl"] =
     "//waveAmplitude = 1.0;\n" +
     "}\n" +
     "\n" +
-    "float windFactor = length(windVector_0);\n" +
+    "float windFactor = windSpeed * 0.05;\n" +
     "waveAmplitude *= windFactor + 0.88;\n" +
-    "animationSpeed *= windFactor + 0.9;\n" +
     "\n" +
     "vec3 normalTangentSpace = vec3(1.0, 1.0, 1.0 / waveAmplitude);\n" +
     "\n" +
@@ -7526,8 +7700,8 @@ geofs["oceanFS.glsl"] =
     "\n" +
     "//positionSurfaceC = materialInput.st * 128.0;\n" +
     "\n" +
-    "float time = geofsTime * animationSpeed * 0.05;\n" +
-    "vec4 noise = czm_getWaterNoise(normalMap_5, positionSurfaceC * 500000.0, time, 0.0);\n" +
+    "float time = geofsTime * animationSpeed * (windFactor + 0.9);\n" +
+    "vec4 noise = czm_getWaterNoise(normalMap, positionSurfaceC * 500000.0, time, 0.0);\n" +
     "\n" +
     "//noise = vec4(0.0, 0.0, 1.0, 1.0);\n" +
     "\n" +
@@ -7545,9 +7719,9 @@ geofs["oceanFS.glsl"] =
     "float waveHeight = clamp((0.99 + shoreRatio - dot(normalEC, up)) * 500.0, 0.0, 1.0);\n" +
     "\n" +
     "vec2 positionSurfaceC2 = vec2(fract(positionSurfaceC * 50000.0));\n" +
-    "vec4 foam = texture2D(foamTexture_6, positionSurfaceC2) * waveHeight * czm_lightColorV4; // uv from geo coords (noisy)\n" +
+    "vec4 foam = texture2D(foamTexture, positionSurfaceC2) * waveHeight * czm_lightColorV4; // uv from geo coords (noisy)\n" +
     "\n" +
-    "//vec4 foam = texture2D(foamTexture_6, materialInput.st) * waveHeight * czm_lightColorV4; // uv from tiles (jumpy)\n" +
+    "//vec4 foam = texture2D(foamTexture, materialInput.st) * waveHeight * czm_lightColorV4; // uv from tiles (jumpy)\n" +
     "\n" +
     "//float reflectionCoefficient = pow(max(dot(surfaceToCamera, normalEC), 1.0), 1.0);\n" +
     "float reflectionCoefficient = max(dot(surfaceToCamera, normalEC), 1.0);\n" +
@@ -8221,21 +8395,21 @@ M33 = {
             g = a[1][1],
             k = a[1][2],
             m = a[2][0],
-            r = a[2][1];
+            q = a[2][1];
         a = a[2][2];
         var u = b[0][0],
-            n = b[0][1],
-            z = b[0][2],
-            q = b[1][0],
+            v = b[0][1],
+            t = b[0][2],
+            n = b[1][0],
             p = b[1][1],
             A = b[1][2],
             H = b[2][0],
             C = b[2][1];
         b = b[2][2];
         return [
-            [c * u + f * n + m * z, d * u + g * n + r * z, e * u + k * n + a * z],
-            [c * q + f * p + m * A, d * q + g * p + r * A, e * q + k * p + a * A],
-            [c * H + f * C + m * b, d * H + g * C + r * b, e * H + k * C + a * b],
+            [c * u + f * v + m * t, d * u + g * v + q * t, e * u + k * v + a * t],
+            [c * n + f * p + m * A, d * n + g * p + q * A, e * n + k * p + a * A],
+            [c * H + f * C + m * b, d * H + g * C + q * b, e * H + k * C + a * b],
         ];
     },
     scaled: function (a, b) {
@@ -8468,17 +8642,21 @@ var GRAVITY = 9.81,
     RAD_TO_DEGREES = 180 / Math.PI,
     KMH_TO_MS = 1 / 3.6,
     METERS_TO_FEET = 3.2808399,
+    METERS_TO_NM = 5.39957e-4,
     FEET_TO_METERS = 0.3048,
     LONGITUDE_TO_HOURS = 0.0666,
     EPSILON = 1e-7,
     MERIDIONAL_RADIUS = 6378137,
     EARTH_CIRCUMFERENCE = 2 * MERIDIONAL_RADIUS * Math.PI,
     METERS_TO_LOCAL_LAT = 1 / (EARTH_CIRCUMFERENCE / 360),
+    STANDARD_GLIDE_ANGLE = 3,
+    GLIDE_SLOPE = 0.052359,
     PI = Math.PI,
     HALF_PI = PI / 2,
     TWO_PI = 2 * PI,
     ONE_OVER_TWO_PI = 1 / TWO_PI,
     ONE_OVER_PI = 1 / PI,
+    MS_TO_FEETMINUTE = 196.85,
     MS_TO_KNOTS = 1.94384449,
     KNOTS_TO_MS = 0.514444444,
     KMH_TO_KNOTS = 0.539956803,
@@ -8799,8 +8977,8 @@ geofs.runways = {
             for (var m = -c; m <= c; m++) g[d + m] && (f = f.concat(g[d + m]));
         }
         geofs.runways.setRunwayDistance(a, f);
-        f.sort(function (r, u) {
-            return r.distance - u.distance;
+        f.sort(function (q, u) {
+            return q.distance - u.distance;
         });
         return f.slice(0, b);
     },
@@ -9230,7 +9408,6 @@ geofs.api.toggleVr = function () {
 geofs.api.enhanceColors = function (a) {
     a = a || 0;
     geofs.api.setImageryColorModifier("enhancement", { contrast: 1 + 0.4 * a, saturation: 1 + 0.4 * a });
-    geofs.api.setAtmosphereColorModifier("enhancement", { brightnessShift: 0.4, saturationShift: 0, groundBrightnessShift: 0.2, groundHueShift: 0, fogBrightness: 1, groundSaturationShift: -1 });
 };
 geofs.api.defaultImageryColorModifier = { brightness: 1, contrast: 1, saturation: 1, gamma: 1, hue: 0 };
 geofs.api.imageryColorModifiers = {};
@@ -9387,7 +9564,7 @@ geofs.api.renderingQualityLevels = {
         vegetationQuality: 2,
         advancedAtmosphere: !0,
         viewingDistance: 0.3,
-        degradedCollisions: !1,
+        degradedCollisions: !0,
         lowResRunways: !0,
     },
     4: {
@@ -9405,7 +9582,7 @@ geofs.api.renderingQualityLevels = {
         vegetationQuality: 2,
         advancedAtmosphere: !0,
         viewingDistance: 0.5,
-        degradedCollisions: !1,
+        degradedCollisions: !0,
         lowResRunways: !1,
     },
     5: {
@@ -9423,7 +9600,7 @@ geofs.api.renderingQualityLevels = {
         vegetationQuality: 3,
         advancedAtmosphere: !0,
         viewingDistance: 0.7,
-        degradedCollisions: !1,
+        degradedCollisions: !0,
         lowResRunways: !1,
     },
     6: {
@@ -9441,7 +9618,7 @@ geofs.api.renderingQualityLevels = {
         vegetationQuality: 4,
         advancedAtmosphere: !0,
         viewingDistance: 0.9,
-        degradedCollisions: !1,
+        degradedCollisions: !0,
         lowResRunways: !1,
     },
 };
@@ -9752,6 +9929,9 @@ geofs.api.destroyModel = function (a) {
 geofs.api.getModelFromScreenCoords = function (a, b) {
     return geofs.api.viewer.scene.pick(new Cesium.Cartesian2(a, b));
 };
+geofs.api.getNodeNameFromScreenCoords = function (a, b) {
+    return (a = geofs.api.getModelFromScreenCoords(a, b)) ? a.node.name : null;
+};
 geofs.fromHeadingPitchRoll = function (a, b, c) {
     b = Cesium.Quaternion.fromAxisAngle(Cesium.Cartesian3.UNIT_X, -b);
     c = Cesium.Quaternion.fromAxisAngle(Cesium.Cartesian3.UNIT_Y, -c);
@@ -9875,8 +10055,9 @@ geofs.api.xyz2lla = function (a, b) {
     c = Cesium.Matrix4.multiplyByPoint(c, a, new Cesium.Cartesian3());
     return (d = Cesium.Cartographic.fromCartesian(c, d, new Cesium.Cartographic())) ? [d.latitude * RAD_TO_DEGREES - b[0], d.longitude * RAD_TO_DEGREES - b[1], d.height - b[2]] : [0, 0, 0];
 };
-geofs.api.cssTransform = function () {
-    this._$element = $('<div class="geofs-overlay"></div>').appendTo(".geofs-overlay-container");
+geofs.api.cssTransform = function (a) {
+    this.container = a || ".geofs-overlay-container";
+    this._$element = $('<div class="geofs-overlay"></div>').appendTo(this.container);
     this.positionY = this.positionX = this.rotation = 0;
     this.offset = { x: 0, y: 0 };
 };
@@ -9884,7 +10065,7 @@ geofs.api.cssTransform.rotationThreshold = 0;
 geofs.api.cssTransform.translationThreshold = 0;
 geofs.api.cssTransform.prototype = {
     setDrawOrder: function (a) {
-        this._$element.css("z-index", a + geofs.api.overlayBaseZIndex);
+        (this._$mask || this._$element).css("z-index", a + geofs.api.overlayBaseZIndex);
     },
     setUrl: function (a) {
         var b = this;
@@ -9895,6 +10076,9 @@ geofs.api.cssTransform.prototype = {
                 b.loaded();
             }),
             this._$element.css("background-image", 'url("' + a + '")'));
+    },
+    setMask: function (a) {
+        a && ((this._$mask = $('<div class="geofs-overlay geofs-overlay-mask"></div>').appendTo(this.container)), this._$mask.css("mask-image", 'url("' + a + '")'), this._$element.appendTo(this._$mask));
     },
     setText: function (a) {
         this._$element.html(a);
@@ -9914,15 +10098,17 @@ geofs.api.cssTransform.prototype = {
         $(this).trigger("load");
     },
     setFrameSize: function (a) {
+        this._$mask && (this._$mask.css("mask-size", a.x + "px " + a.y + "px"), this._$mask.css("width", a.x + "px"), this._$mask.css("height", a.y + "px"));
         this._$element.css("width", a.x + "px");
         this._$element.css("height", a.y + "px");
     },
     setVisibility: function (a) {
-        a ? this._$element.css("display", "block") : this._$element.css("display", "none");
+        a ? (this._$mask || this._$element).css("display", "block") : (this._$mask || this._$element).css("display", "none");
     },
     setAnchor: function (a) {
-        this._$element.css("margin-left", -a.x + "px ");
-        this._$element.css("margin-bottom", -a.y + "px ");
+        var b = this._$mask || this._$element;
+        b.css("margin-left", -a.x + "px ");
+        b.css("margin-bottom", -a.y + "px ");
     },
     setRotationCenter: function (a) {
         this._$element.css("transform-origin", a.x + "px " + a.y + "px");
@@ -9932,21 +10118,22 @@ geofs.api.cssTransform.prototype = {
         this._$element.css("background-size", a.x + "px " + a.y + "px");
     },
     setPosition: function (a) {
-        this._$element.css("left", a.x + "px");
-        this._$element.css("bottom", a.y + "px");
+        var b = this._$mask || this._$element;
+        b.css("left", a.x + "px");
+        b.css("bottom", a.y + "px");
     },
     setPositionX: function (a) {
-        Math.abs(a - this.positionX) < geofs.api.cssTransform.translationThreshold || (this._$element.css("left", a + "px"), (this.positionX = a));
+        Math.abs(a - this.positionX) < geofs.api.cssTransform.translationThreshold || ((this._$mask || this._$element).css("left", a + "px"), (this.positionX = a));
     },
     setPositionY: function (a) {
-        Math.abs(a - this.positionY) < geofs.api.cssTransform.translationThreshold || (this._$element.css("bottom", a + "px"), (this.positionY = a));
+        Math.abs(a - this.positionY) < geofs.api.cssTransform.translationThreshold || ((this._$mask || this._$element).css("bottom", a + "px"), (this.positionY = a));
     },
-    setPositionOffset: function (a) {
+    setTranslation: function (a) {
         (Math.abs(a.x - this.offset.x) < geofs.api.cssTransform.translationThreshold && Math.abs(a.y - this.offset.y) < geofs.api.cssTransform.translationThreshold) ||
             (this._$element.css("background-position", a.x + "px " + a.y + "px"), (this.offset.x = a.x), (this.offset.y = a.y));
     },
     setOpacity: function (a) {
-        this._$element.css("opacity", a);
+        (this._$mask || this._$element).css("opacity", a);
     },
     setRotation: function (a) {
         if (!(Math.abs(a - this.rotation) < geofs.api.cssTransform.rotationThreshold)) {
@@ -9956,6 +10143,7 @@ geofs.api.cssTransform.prototype = {
         }
     },
     destroy: function () {
+        this._$mask && (this._$mask.remove(), (this._$mask = null));
         this._$element.remove();
         this._$element = null;
     },
@@ -10220,15 +10408,13 @@ window.Cesium &&
                 k || (c[g] = k = []);
                 k.push(f);
             }
-            return Cesium.when
-                .all(
-                    c.map(function (m, r) {
-                        if (m) return Cesium.sampleTerrain(a, r, m);
-                    })
-                )
-                .then(function () {
-                    return b;
-                });
+            return Promise.all(
+                c.map(function (m, q) {
+                    if (m) return Cesium.sampleTerrain(a, q, m);
+                })
+            ).then(function () {
+                return b;
+            });
         });
     });
 geofs.api.FlatRunwayTerrainProvider = function (a) {
@@ -10325,19 +10511,19 @@ geofs.api.FlatRunwayTerrainProvider.prototype = {
                           k[0] && k[0].height ? ((c.referenceElevation = k[0].height), f(c.referenceElevation)) : g("no value");
                       }));
             });
-            return Cesium.when.all([e, a]).then(function (f) {
+            return Promise.all([e, a]).then(function (f) {
                 try {
                     var g = f[0],
                         k = f[1];
                     for (f = 0; f < c.runways.length; f++) {
                         var m = c.runways[f],
-                            r = !1;
+                            q = !1;
                         k._oldMinimumHeight = k._minimumHeight;
                         k._oldMaximumHeight = k._maximumHeight;
                         var u = 32767 / (k._oldMaximumHeight - k._oldMinimumHeight);
-                        g > k._maximumHeight && ((k._maximumHeight = g), (r = !0));
-                        g < k._minimumHeight && ((k._minimumHeight = g), (r = !0));
-                        for (var n = k._oldMinimumHeight - k._minimumHeight, z = 32767 / (k._maximumHeight - k._minimumHeight), q = (g - k._minimumHeight) * z, p = 0; p < k._heightValues.length; p++) {
+                        g > k._maximumHeight && ((k._maximumHeight = g), (q = !0));
+                        g < k._minimumHeight && ((k._minimumHeight = g), (q = !0));
+                        for (var v = k._oldMinimumHeight - k._minimumHeight, t = 32767 / (k._maximumHeight - k._minimumHeight), n = (g - k._minimumHeight) * t, p = 0; p < k._heightValues.length; p++) {
                             var A = b.south + (k._quantizedVertices[k._heightValues.length + p] / 32767) * b.height,
                                 H = b.west + (k._quantizedVertices[p] / 32767) * b.width;
                             if (Cesium.Rectangle.contains(c.rec, new Cesium.Cartographic(H, A, 0))) {
@@ -10347,11 +10533,11 @@ geofs.api.FlatRunwayTerrainProvider.prototype = {
                                     X = Cesium.Cartesian3.multiplyByScalar(m.direction, Cesium.Cartesian3.dot(C, m.direction) / Cesium.Cartesian3.dot(m.direction, m.direction), new Cesium.Cartesian3()),
                                     Y = Cesium.Cartesian3.subtract(C, X, new Cesium.Cartesian3());
                                 if (Math.sqrt(Cesium.Cartesian3.dot(Y, Y)) < m.padding && W < m.lengthMeters + m.padding) {
-                                    k._heightValues[p] = q;
+                                    k._heightValues[p] = n;
                                     continue;
                                 }
                             }
-                            r && (k._heightValues[p] = (k._heightValues[p] / u + n) * z);
+                            q && (k._heightValues[p] = (k._heightValues[p] / u + v) * t);
                         }
                     }
                     return k;
@@ -10409,7 +10595,7 @@ geofs.api.waterDetection = {
 };
 geofs.api.tileLayerConstructor = L.tileLayer.fallback;
 geofs.api.mapMaxZoom = 13;
-geofs.api.mapOption = { minZoom: 3, maxZoom: geofs.api.mapMaxZoom, markerZoomAnimation: !1, worldCopyJump: !0, preferCanvas: !1 };
+geofs.api.mapOption = { minZoom: 3, maxZoom: geofs.api.mapMaxZoom, markerZoomAnimation: !1, worldCopyJump: !0, preferCanvas: !0 };
 geofs.api.mapTooltipOptions = { permanent: !1 };
 geofs.api.toolTipPositioning = [
     { direction: "top", offset: L.point(0, -15) },
@@ -10417,57 +10603,64 @@ geofs.api.toolTipPositioning = [
     { direction: "bottom", offset: L.point(0, 15) },
     { direction: "left", offset: L.point(-15, 0) },
 ];
-geofs.api.map = function (a, b, c) {
-    var d = this;
-    a.zoom = a.zoom || 10;
-    this._holder = a.holder || $(".geofs-map-viewport")[0];
-    this.map = L.map(this._holder, geofs.api.mapOption);
-    geofs.api.tileLayerConstructor(geofs.osmTileProvider, { attribution: "\u00a9 OpenStreetMap contributors - Made with Natural Earth." }).addTo(this.map);
-    this.icons = { yellow: [], blue: [], traffic: [] };
-    this.icons.yellow = L.icon({ iconUrl: geofs.localUrl + "images/map/icons/yellow.png", iconSize: [40, 40], iconAnchor: [20, 20], popupAnchor: [0, 0], className: "geofs-map-icon" });
-    this.icons.blue = L.icon({ iconUrl: geofs.localUrl + "images/map/icons/blue.png", iconSize: [30, 30], iconAnchor: [15, 15], popupAnchor: [0, 0], className: "geofs-map-icon" });
-    this.icons.traffic = L.icon({ iconUrl: geofs.localUrl + "images/map/icons/blue.png", iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, 0], className: "geofs-traffic-icon" });
-    this.map.on("load zoomend resize moveend", function () {
-        d.updateMarkerLayers();
-    });
-    this.map.on("zoomend", function () {
-        for (var e in ui.playerMarkers) {
-            var f = ui.playerMarkers[e]._marker;
-            f._icon.style.transform += " rotate(" + f._geofsRotation + "deg)";
-        }
-    });
-    this.map.getPane("tooltipPane").style.opacity = 0.9;
-    this.map.getPane("overlayPane").style.opacity = 0.7;
-    this.map.setView(L.latLng(b, c), a.zoom);
-    this.map.on("mouseup", controls.mouseUpHandler);
-    $(document)
-        .on("click", ".geofs-createPath", function () {
-            geofs.api.map.flightPathOn ? geofs.api.map.stopCreatePath(d) : geofs.api.map.createPath(d);
-        })
-        .on("click", ".geofs-clearPath", function () {
-            geofs.api.map.clearPath(d);
+geofs.api.map = {
+    defaultMarker: { coords: [0, 0], radius: 5, color: "#ffffff", weight: 2, fillColor: "#000000", fillOpacity: 1, pane: "markerPane", popupMinWidth: 200, popupMaxWidth: 400 },
+    markerByMinZoom: [[], [], [], [], [], [], [], [], [], [], [], [], [], []],
+    markerLayers: { navaid: { minZoom: 6, maxZoom: 15, tileSize: 5, tiles: {} }, major: { minZoom: 6, maxZoom: 15, tileSize: 5, tiles: {} }, minor: { minZoom: 8, maxZoom: 15, tileSize: 5, tiles: {} } },
+    defaultLayer: { minZoom: 0, maxZoom: 15, tileSize: 10, tiles: {} },
+    init: function (a, b, c) {
+        var d = this;
+        a.zoom = a.zoom || 10;
+        this._holder = a.holder || $(".geofs-map-viewport")[0];
+        this._holder = a.holder || $(".geofs-map-viewport")[0];
+        this._map = L.map(this._holder, geofs.api.mapOption);
+        geofs.api.tileLayerConstructor(geofs.osmTileProvider, { attribution: "\u00a9 OpenStreetMap contributors - Made with Natural Earth." }).addTo(this._map);
+        this.icons = {};
+        this._map.on("load resize moveend", function () {
+            d.updateMarkerLayers();
         });
-};
-geofs.api.map.runwayMarkerRadius = 7;
-geofs.api.map.defaultLayer = { minZoom: 0, maxZoom: 15, tileSize: 10, tiles: {} };
-geofs.api.map.prototype = {
-    init: function () {
-        this.updateMarkerLayers();
-        geofs.api.map.instance = this;
+        this._map.on("zoomend", function () {
+            d._map.getZoom();
+            d.updateMarkerVisibility();
+            for (var e in ui.playerMarkers) {
+                var f = ui.playerMarkers[e]._marker;
+                f._icon && (f._icon.style.transform += " rotate(" + f._geofsRotation + "deg)");
+            }
+            d.updateMarkerLayers();
+        });
+        this._map.getPane("tooltipPane").style.opacity = 0.9;
+        this._map.getPane("overlayPane").style.opacity = 0.7;
+        this._map.setView(L.latLng(b, c), a.zoom);
+        this._map.on("mouseup", controls.mouseUpHandler);
+        $(document)
+            .on("click", ".geofs-createPath", function () {
+                geofs.api.map.flightPathOn ? geofs.api.map.stopCreatePath(d) : geofs.api.map.createPath(d);
+            })
+            .on("click", ".geofs-clearPath", function () {
+                geofs.api.map.clearPath(d);
+            });
     },
     updateMap: function (a, b) {
-        this.map.panTo(L.latLng(a, b));
+        this._map.panTo(L.latLng(a, b));
     },
     getCenterLla: function (a, b) {
-        a = this.map.getCenter();
+        a = this._map.getCenter();
         return [a.lat, a.lng];
     },
-    addLayeredMarker: function (a, b, c, d) {
-        c = geofs.getLatLonMatrixcoord(c, d, geofs.api.map.runwayLayers[a].tileSize);
-        geofs.api.map.runwayLayers[a] || (geofs.api.map.runwayLayers[a] = Object.assign({}, geofs.api.map.defaultLayer));
-        geofs.api.map.runwayLayers[a].visibileTiles = {};
-        geofs.api.map.runwayLayers[a].tiles[c] || (geofs.api.map.runwayLayers[a].tiles[c] = []);
-        geofs.api.map.runwayLayers[a].tiles[c].push(b);
+    getIcon: function (a, b) {
+        this.icons[a] ||
+            (this.icons[a] = b.url ? L.icon({ iconUrl: b.url, iconSize: b.size || [0, 0], iconAnchor: b.anchor || [0, 0], popupAnchor: [0, 0], opacity: b.opacity, className: b.className }) : L.divIcon({ className: b.className }));
+        return this.icons[a];
+    },
+    addLayer: function (a) {
+        return this._map.createPane(a);
+    },
+    addLayeredMarker: function (a, b) {
+        var c = geofs.getLatLonMatrixcoord(b.coords[0], b.coords[1], geofs.api.map.markerLayers[a].tileSize);
+        geofs.api.map.markerLayers[a] || (geofs.api.map.markerLayers[a] = Object.assign({}, geofs.api.map.defaultLayer));
+        geofs.api.map.markerLayers[a].visibileTiles = {};
+        geofs.api.map.markerLayers[a].tiles[c] || (geofs.api.map.markerLayers[a].tiles[c] = []);
+        geofs.api.map.markerLayers[a].tiles[c].push(b);
     },
     getVisibleTiles: function (a, b) {
         var c = a.getNorthEast().wrap(),
@@ -10481,13 +10674,11 @@ geofs.api.map.prototype = {
         return c;
     },
     showTile: function (a, b) {
-        var c = this;
-        a.visibileTiles &&
-            !a.visibileTiles[b] &&
-            a.tiles[b] &&
-            (a.tiles[b].forEach(function (d) {
-                d.marker || (d.marker = geofs.api.map.makeRunwayMarker(d, c));
-                d.marker.addTo(c.map);
+        a.tiles[b] &&
+            (a.tiles[b].forEach(function (c) {
+                c.marker || (c.marker = new geofs.api.map.marker(c));
+                c.marker.addToMap();
+                c.marker._marker.options.keepToFront && c.marker._marker.bringToFront();
             }),
             (a.visibileTiles[b] = a.tiles[b]));
     },
@@ -10496,27 +10687,42 @@ geofs.api.map.prototype = {
             a.visibileTiles[b] &&
             a.tiles[b] &&
             (a.tiles[b].forEach(function (c) {
-                c.marker && (c.marker.unbindPopup(), c.marker.remove(), (c.marker = null));
+                c.marker && (c.marker.destroy(), (c.marker = null));
             }),
             delete a.visibileTiles[b]);
     },
     updateMarkerLayers: function () {
-        var a = this.map.getZoom(),
+        var a = this._map.getZoom(),
             b;
-        for (b in geofs.api.map.runwayLayers) {
-            var c = geofs.api.map.runwayLayers[b];
+        for (b in geofs.api.map.markerLayers) {
+            var c = geofs.api.map.markerLayers[b];
             if (a > c.minZoom && a < c.maxZoom) {
-                var d = this.getVisibleTiles(this.map.getBounds(), c.tileSize),
+                var d = this.getVisibleTiles(this._map.getBounds(), c.tileSize),
                     e;
                 for (e in c.visibileTiles) d[e] || this.hideTile(c, e);
                 for (e in d) this.showTile(c, e);
             } else for (e in c.visibileTiles) this.hideTile(c, e);
         }
     },
+    updateMarkerVisibility: function () {
+        for (var a = this._map.getZoom(), b = 0; b < this.markerByMinZoom.length; b++)
+            this.markerByMinZoom[b].hidden
+                ? b <= a &&
+                  (this.markerByMinZoom[b].forEach(function (c) {
+                      c.addToMap();
+                      c._marker.options.keepToFront && c._marker.bringToFront();
+                  }),
+                  (this.markerByMinZoom[b].hidden = !1))
+                : b > a &&
+                  (this.markerByMinZoom[b].forEach(function (c) {
+                      c.removeFromMap();
+                  }),
+                  (this.markerByMinZoom[b].hidden = !0));
+    },
     setGenericLocationPopup: function () {
         var a = this,
             b = L.popup();
-        this.map.on("contextmenu click", function (c) {
+        this._map.on("contextmenu click", function (c) {
             if (2 == c.originalEvent.button || geofs.isApp) {
                 b.closePopup();
                 var d = c.latlng.lat + "," + c.latlng.lng;
@@ -10538,7 +10744,7 @@ geofs.api.map.prototype = {
                         ', 12192, 0, true">40,000 Feet</button></div>'
                 )
                     .setLatLng(c.latlng)
-                    .openOn(a.map);
+                    .openOn(a._map);
                 c.originalEvent.preventDefault();
             }
         });
@@ -10567,68 +10773,41 @@ geofs.api.map.prototype = {
                 [-90, 180],
             ],
             { opacity: b }
-        ).addTo(this.map);
+        ).addTo(this._map);
     },
     removeImageLayer: function (a) {
         a.remove();
     },
 };
-geofs.api.map.runwayLayers = { major: { minZoom: 6, maxZoom: 15, tileSize: 5, tiles: {} }, minor: { minZoom: 8, maxZoom: 15, tileSize: 5, tiles: {} } };
-geofs.api.map.majorRunwayMarkers = [];
-geofs.api.map.minorRunwayMarkers = [];
-geofs.api.map.runwayMarkerPopup = function (a) {
-    a = a.options.runway;
-    var b = a[2] + "," + a[3],
-        c = a[0].split("|");
-    return (
-        '<div class="geofs-map-popup"><header><span class="mdl-chip"><span class="mdl-chip__text"><b>' +
-        c[0] +
-        "</b> " +
-        c[1] +
-        "(" +
-        c[2] +
-        ')</span></span></header><button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored" href="http://flyto://' +
-        b +
-        ",0," +
-        a[1] +
-        '" title="Take-off from"><i class="material-icons">flight_takeoff</i></button><button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored" href="http://flyto://' +
-        b +
-        ",1000," +
-        a[1] +
-        '" title="Fly by"><i class="material-icons">flight</i></button><button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored" href="http://flyto://' +
-        b +
-        "," +
-        a[4] +
-        "," +
-        a[1] +
-        ',approach,4800,450" title="Approach"><i class="material-icons">flight_land</i></button></div>'
-    );
+geofs.api.map.marker = function (a) {
+    a = Object.assign({}, geofs.api.map.defaultMarker, a);
+    a.zIndexOffset = a.zIndex;
+    a.img
+        ? (a.img.offset && (a.img.rotate && (a.img.offset = V3.rotate([a.img.offset[0], a.img.offset[1], 0], [0, 0, 1], a.img.rotate * DEGREES_TO_RAD)), (a.img.offset = { x: a.img.offset[0], y: a.img.offset[1] })),
+          (this._marker = L.canvasMarker(a.coords, a)))
+        : a.icon
+        ? ((a.opacity = a.opacity || a.icon.options.opacity), (this._marker = L.marker(a.coords, a)))
+        : (this._marker = L.circleMarker(a.coords, a));
+    a.popup && this._marker.bindPopup(a.popup, { minWidth: a.popupMinWidth, maxWidth: a.popupMaxWidth });
+    a.label && ((this.label = a.label), (a = Object.assign({}, geofs.api.mapTooltipOptions, geofs.api.toolTipPositioning[Math.floor(4 * Math.random())])), this._marker.bindTooltip(this.label, a));
+    a.minZoom && a.minZoom <= geofs.api.mapMaxZoom && geofs.api.map.markerByMinZoom[a.minZoom].push(this);
 };
-geofs.api.map.addRunwayMarker = function (a, b) {
-    b.addLayeredMarker(a[5] ? "major" : "minor", a, a[2], a[3]);
-};
-geofs.api.map.makeRunwayMarker = function (a, b) {
-    return L.circleMarker([a[2], a[3]], { radius: geofs.api.map.runwayMarkerRadius, color: "#ffffff", weight: 2, fillColor: a[5] ? "#184888" : "#ffd200", fillOpacity: 1, pane: "overlayPane", runway: a }).bindPopup(
-        geofs.api.map.runwayMarkerPopup,
-        { minWidth: 200 }
-    );
-};
-geofs.api.map.planeMarker = function (a, b, c, d, e, f) {
-    this.style = d = d || "blue";
-    this.apiMap = c;
-    this.label = f;
-    this._marker = L.marker(L.latLng(a, b), { icon: c.icons[d], riseOnHover: !0 }).addTo(c.map);
-    f && ((a = Object.assign({}, geofs.api.mapTooltipOptions, geofs.api.toolTipPositioning[Math.floor(4 * Math.random())])), this._marker.bindTooltip(f, a));
-};
-geofs.api.map.planeMarker.prototype = {
-    updatePlaneMarker: function (a, b, c, d) {
-        this._marker.setLatLng(L.latLng(a, b));
-        d && ((this.label = d), this._marker.setTooltipContent(d));
-        this._marker._geofsRotation = c;
-        this._marker._icon.style.transform += " rotate(" + this._marker._geofsRotation + "deg)";
+geofs.api.map.marker.prototype = {
+    addToMap: function (a, b) {
+        this._marker.addTo(a || geofs.api.map._map);
     },
-    destroyPlaneMarker: function (a) {
-        this._marker && (this._marker.unbindTooltip(), this._marker.remove());
+    removeFromMap: function () {
+        this._marker.remove();
+    },
+    update: function (a, b, c, d) {
+        a && b && this._marker.setLatLng(L.latLng(a, b));
+        d && ((this.label = d), this._marker.setTooltipContent(d));
+        c && this._marker._icon && ((this._marker._geofsRotation = c), (this._marker._icon.style.transform += " rotate(" + this._marker._geofsRotation + "deg)"));
+    },
+    destroy: function () {
+        this._marker.unbindTooltip();
+        this._marker.unbindPopup();
+        this._marker.remove();
     },
     resetTooltip: function () {
         if (this._marker) {
@@ -10640,9 +10819,9 @@ geofs.api.map.planeMarker.prototype = {
 };
 geofs.api.map.flightPath = null;
 geofs.api.map.flightPathOn = !1;
-geofs.api.map.createPath = function (a, b) {
-    var c = { weight: 5 };
-    geofs.api.map.flightPath || (geofs.api.map.flightPath = L.Polyline.Plotter(b || [], c).addTo(a.map));
+geofs.api.map.createPath = function (a) {
+    var b = { weight: 5 };
+    geofs.api.map.flightPath || (geofs.api.map.flightPath = L.Polyline.Plotter(a || [], b).addTo(geofs.api.map._map));
     geofs.api.map.flightPath.setReadOnly(!1);
     $(".geofs-createPath").addClass("on");
     $(".geofs-clearPath").show();
@@ -10664,7 +10843,8 @@ geofs.api.map.getPathPoints = function () {
     }
 };
 geofs.api.map.setPathPoints = function (a) {
-    geofs.api.map.instance && (geofs.api.map.clearPath(), geofs.api.map.createPath(geofs.api.map.instance, a));
+    geofs.api.map.clearPath();
+    geofs.api.map.createPath(a);
 };
 geofs.api.reverserGeocode = function (a, b) {
     jQuery.getJSON(geofs.url + "/backend/geocode/geocode.php?query=" + a, function (c) {
@@ -10697,7 +10877,7 @@ geofs.api.doRetro = function () {
             geofs.useSimpleShadow(!0);
             var a = Cesium.Color.fromCssColorString("#2caecf"),
                 b = Cesium.Color.fromCssColorString("#0b2740");
-            geofs.fx.water.material = new Cesium.Material({ fabric: { type: "retrowire", source: geofs["wireFS.glsl"], uniforms: { windVector: new Cesium.Cartesian3(0, 0, 0), geofsTime: 0, wireframeColor: a, backgroundColor: b } } });
+            geofs.fx.water.material = new Cesium.Material({ fabric: { type: "retrowire", source: geofs["wireFS.glsl"], uniforms: { windVector: new Cesium.Cartesian3(0, 0, 0), wireframeColor: a, backgroundColor: b } } });
             geofs.api.viewer.scene.globe.material = geofs.fx.water.material;
             var c = geofs.api.viewer.entities.add({
                 position: Cesium.Cartesian3.fromDegrees(0, 0, 1e6),
@@ -10769,6 +10949,9 @@ geofs.animation.resetValues = function (a) {
 geofs.animation.getValue = function (a) {
     return geofs.animation.values[a] || 0;
 };
+geofs.animation.setValue = function (a, b) {
+    return (geofs.animation.values[a] = b);
+};
 geofs.animation.filter = function (a, b) {
     if ("random" == a.value) b = Math.random();
     else if (a["function"]) {
@@ -10778,7 +10961,7 @@ geofs.animation.filter = function (a, b) {
             } catch (f) {
                 b = 0;
             }
-    } else b = b || geofs.animation.values[a.value] || 0;
+    } else b = a.text ? a.text : b || geofs.animation.values[a.value] || 0;
     if (a.ramp) b = geofs.animation.getRampValue(a.ramp, b);
     else if (a.valueRamp) b = geofs.animation.getRampRatio(a.valueRamp, b);
     else if (a.ratioRamp) {
@@ -10872,8 +11055,29 @@ geofs.utils.hashCode = function (a) {
 geofs.utils.displayAltitude = function (a) {
     return (a = 18e3 < a ? "FL" + 5 * Math.round(a / 500) : a + "ft.");
 };
+geofs.utils.sortLocationByDistance = function (a, b) {
+    for (var c = 0, d = b.length; c < d; c++) {
+        var e = b[c];
+        e.distance = geofs.utils.distanceBetweenLocations(a, e.coords || [e.lat, e.lon]);
+    }
+    b.sort(function (f, g) {
+        return f.distance - g.distance;
+    });
+    return b;
+};
+geofs.utils.distanceBetweenLocations = function (a, b) {
+    var c = a[0] * DEGREES_TO_RAD,
+        d = b[0] * DEGREES_TO_RAD;
+    a = (b[1] * DEGREES_TO_RAD - a[1] * DEGREES_TO_RAD) * Math.cos((c + d) / 2);
+    c = d - c;
+    return Math.sqrt(a * a + c * c) * MERIDIONAL_RADIUS;
+};
 geofs.utils.bearingBetweenLocations = function (a, b) {
-    return Math.atan2(a[1] - b[1], a[0] - b[0]) * RAD_TO_DEGREES;
+    var c = a[0] * DEGREES_TO_RAD,
+        d = b[0] * DEGREES_TO_RAD;
+    a = a[1] * DEGREES_TO_RAD;
+    b = b[1] * DEGREES_TO_RAD;
+    return (Math.atan2(Math.sin(b - a) * Math.cos(d), Math.cos(c) * Math.sin(d) - Math.sin(c) * Math.cos(d) * Math.cos(b - a)) * RAD_TO_DEGREES + 360) % 360;
 };
 geofs.utils.lookAt = function (a, b, c) {
     a = lla2xyz(V3.sub(a, b), b);
@@ -10883,6 +11087,52 @@ geofs.utils.lookAt = function (a, b, c) {
 geofs.utils.limitRate = function (a, b, c, d) {
     var e = b - a;
     return Math.abs(e * d) > c ? a + e * c * d : b;
+};
+geofs.utils.morseMap = {
+    A: ".-",
+    B: "-...",
+    C: "-.-.",
+    D: "-..",
+    E: ".",
+    F: "..-.",
+    G: "--.",
+    H: "....",
+    I: "..",
+    J: ".---",
+    K: "-.-",
+    L: ".-..",
+    M: "--",
+    N: "-.",
+    O: "---",
+    P: ".--.",
+    Q: "--.-",
+    R: ".-.",
+    S: "...",
+    T: "-",
+    U: "..-",
+    W: ".--",
+    X: "-..-",
+    Y: "-.--",
+    Z: "--..",
+    1: ".----",
+    2: "..---",
+    3: "...--",
+    4: "....-",
+    5: ".....",
+    6: "-....",
+    7: "--...",
+    8: "---..",
+    9: "----.",
+    0: "-----",
+};
+geofs.utils.textToMorse = function (a) {
+    return a
+        .toUpperCase()
+        .split("")
+        .map(function (b) {
+            return geofs.utils.morseMap[b];
+        })
+        .join(" ");
 };
 geofs.utils.easingFunctions = {
     linear: function (a) {
@@ -10932,6 +11182,12 @@ geofs.utils.isWebglSupported = function () {
     } catch (b) {
         return !1;
     }
+};
+geofs.utils.getFunctionFromString = function (a) {
+    var b = window;
+    a = a.split(".");
+    for (i = 0; i < a.length - 1; i++) if (((b = b[a[i]]), void 0 == b)) return;
+    return b[a[a.length - 1]];
 };
 function absMin(a, b) {
     asbA = Math.abs(a);
@@ -11003,8 +11259,8 @@ function clamp(a, b, c) {
 function geoDecodeLocation(a, b) {
     geofs.api.reverserGeocode(a, b);
 }
-function Overlay(a, b) {
-    var c = this;
+function Overlay(a, b, c) {
+    var d = this;
     this.definition = {
         url: "",
         anchor: { x: 0, y: 0 },
@@ -11033,27 +11289,43 @@ function Overlay(a, b) {
     this.opacity = this.definition.opacity;
     this.anchor = this.definition.anchor;
     this.visibility = this.definition.visibility;
-    this.overlay = new geofs.api.cssTransform();
+    this.overlay = new geofs.api.cssTransform(c);
     this.overlay.setUrl(this.definition.url);
+    this.overlay.setMask(this.definition.maskUrl);
     this.overlay.setText(this.definition.text);
     this.overlay.setClass(this.definition.class);
     this.overlay.setStyle(this.definition.style);
     this.overlay.setDrawOrder(this.definition.drawOrder || 0);
-    $(this.overlay).one("load", function (e) {
-        var f = c.definition.size.x / e.currentTarget.naturalSize.x;
-        c.definition.size = e.currentTarget.naturalSize;
-        c._sizeScale = f;
-        c.scaleAndPlace();
+    $(this.overlay).one("load", function (f) {
+        var g = d.definition.size.x / f.currentTarget.naturalSize.x;
+        d.definition.size = f.currentTarget.naturalSize;
+        d._sizeScale = g;
+        d.scaleAndPlace();
     });
     this.overlay.setVisibility(this.definition.visibility);
     if (this.definition.animations)
         for (a = 0, b = this.definition.animations.length; a < b; a++) {
-            var d = this.definition.animations[a];
-            "rotate" == d.type && (this.definition.animateRotation = !0);
-            "show" == d.type && ((this.animateVisibility = !0), (this.animationVisibility = this.definition.visibility));
+            var e = this.definition.animations[a];
+            "rotate" == e.type && (this.definition.animateRotation = !0);
+            "show" == e.type && ((this.animateVisibility = !0), (this.animationVisibility = this.definition.visibility));
         }
-    for (a = 0; a < this.definition.overlays.length; a++) (b = new Overlay(this.definition.overlays[a], this)), (b.parent = this), (this.children[a] = b);
+    this.definition.manipulator &&
+        $(this.overlay._$element)
+            .on("mousedown", function (f) {
+                f.which = 4;
+                controls.mouseDownHandler(f);
+                controls.manipulator = d.definition.manipulator;
+                f.preventDefault();
+            })
+            .on("mouseup", function (f) {
+                controls.manipulator = null;
+            })
+            .css({ cursor: "ns-resize" });
+    for (a = 0; a < this.definition.overlays.length; a++) (b = new Overlay(this.definition.overlays[a], this, c)), (b.parent = this), (this.children[a] = b);
 }
+Overlay.prototype.makeDirty = function () {
+    this.dirty = !0;
+};
 Overlay.prototype.setVisibility = function (a) {
     (this.animateVisibility && !this.animationVisibility) || this.overlay.setVisibility(a);
     this.visibility = a;
@@ -11075,7 +11347,7 @@ Overlay.prototype.scaleAllProperties = function (a) {
     this.size = { x: this.definition.size.x * d.x, y: this.definition.size.y * d.y };
     this.overlay.setSize(this.size);
     this.positionOffset = { x: this.definition.offset.x * d.x, y: this.definition.offset.y * d.y };
-    this.overlay.setPositionOffset(this.positionOffset);
+    this.overlay.setTranslation(this.positionOffset);
     this.definition.iconFrame
         ? ((this.iconFrame = { x: this.definition.iconFrame.x * d.x, y: this.definition.iconFrame.y * d.y }), this.overlay.setFrameSize(this.iconFrame))
         : ((this.iconFrame = this.size), this.overlay.setFrameSize(this.size));
@@ -11084,19 +11356,17 @@ Overlay.prototype.scaleAllProperties = function (a) {
     this.rotationCenter = { x: this.anchor.x, y: this.iconFrame.y - this.anchor.y };
     this.overlay.setRotationCenter(this.rotationCenter);
 };
-Overlay.prototype.scaleAndPlace = function (a, b, c) {
-    ((this.definition.rescale && !this.parent) || this.definition.rescalePosition) && !c
-        ? ((this.scale = this.scaleFromParent(a)),
-          (a = clamp(geofs.viewportWidth / VIEWPORT_REFERENCE_WIDTH, 0.3, 1)),
-          (c = clamp(geofs.viewportHeight / VIEWPORT_REFERENCE_HEIGHT, 0.3, 1)),
-          (this.scale = S2.scale(this.scale, Math.min(a, c))))
-        : (this.scale = this.scaleFromParent(a));
+Overlay.prototype.scaleAndPlace = function (a, b, c, d) {
+    this.scale = this.scaleFromParent(a);
+    ((this.definition.rescale && !this.parent) || this.definition.rescalePosition) &&
+        !d &&
+        ((c = c || geofs.viewportDimensions), (a = clamp(c.x / VIEWPORT_REFERENCE_WIDTH, 0.3, 1)), (d = clamp(c.y / VIEWPORT_REFERENCE_HEIGHT, 0.3, 1)), (this.scale = S2.scale(this.scale, Math.min(a, d))));
     this.offset = { x: 0, y: 0 };
     this.scaleAllProperties();
-    this.place(b);
+    this.place(b, c);
     for (b = 0; b < this.children.length; b++) this.children[b].scaleAndPlace();
 };
-Overlay.prototype.place = function (a) {
+Overlay.prototype.place = function (a, b) {
     this.parent
         ? (this.definition.animateRotation || (this.rotation = this.definition.rotation + this.parent.rotation),
           (this.position = { x: this.parent.position.x + this.definition.position.x * this.scale.x, y: this.parent.position.y + this.definition.position.y * this.scale.y }))
@@ -11104,17 +11374,18 @@ Overlay.prototype.place = function (a) {
           "cockpit" == geofs.camera.currentModeName && this.definition.cockpit
               ? (this.position = a)
               : this.definition.alignment &&
-                ("right" == this.definition.alignment.x && (this.position.x = geofs.viewportWidth - a.x * this.scale.x),
-                "center" == this.definition.alignment.x && (this.position.x = geofs.viewportWidth / 2 - a.x * this.scale.x),
-                "top" == this.definition.alignment.y && (this.position.y = geofs.viewportHeight - a.y * this.scale.y),
-                "center" == this.definition.alignment.y && (this.position.y = geofs.viewportHeight / 2 - a.y * this.scale.y)));
+                ((b = b || geofs.viewportDimensions),
+                "right" == this.definition.alignment.x && (this.position.x = b.x - a.x * this.scale.x),
+                "center" == this.definition.alignment.x && (this.position.x = b.x / 2 - a.x * this.scale.x),
+                "top" == this.definition.alignment.y && (this.position.y = b.y - a.y * this.scale.y),
+                "center" == this.definition.alignment.y && (this.position.y = b.y / 2 - a.y * this.scale.y)));
     this.overlay.setPosition(this.position);
     this.overlay.setOpacity(this.opacity);
     this.overlay.setRotation(this.rotation);
 };
 Overlay.prototype.scaleFromParent = function (a) {
     a = a || { x: 1, y: 1 };
-    var b = this.parent ? this.parent.scale : a;
+    var b = this.parent ? this.parent.scale : { x: 1, y: 1 };
     return { x: this.definition.scale.x * b.x * a.x, y: this.definition.scale.y * b.y * a.y };
 };
 Overlay.prototype.positionFromParentRotation = function () {
@@ -11129,8 +11400,8 @@ Overlay.prototype.animate = function (a) {
         for (var b = 0; b < this.definition.animations.length; b++) {
             var c = this.definition.animations[b],
                 d = geofs.animation.filter(c);
-            if (c.lastValue != d || a)
-                switch (((c.lastValue = d), c.type)) {
+            if (c.lastValue != d || a || c.forceRefresh || (this.parent && this.parent.dirty))
+                switch (((this.dirty = !0), (c.lastValue = d), c.type)) {
                     case "moveY":
                         this.visibility && this.overlay.setPositionY(this.position.y + d * this.scale.y);
                         break;
@@ -11159,12 +11430,13 @@ Overlay.prototype.animate = function (a) {
                     default:
                         d && this.visibility && this.rotate(d);
                 }
+            else this.dirty = !1;
         }
     for (b = 0; b < this.children.length; b++) this.children[b].animate(a);
 };
 Overlay.prototype.translateIcon = function (a, b) {
     "Y" == b ? (this._offset.y = a * this.scale.y * this._sizeScale - this.size.y + this.iconFrame.y) : (this._offset.x = a * this.scale.x * this._sizeScale);
-    this.overlay.setPositionOffset(S2.add(this.positionOffset, this._offset));
+    this.overlay.setTranslation(S2.add(this.positionOffset, this._offset));
 };
 Overlay.prototype.rotate = function (a) {
     this.rotation = a;
@@ -11178,8 +11450,8 @@ Overlay.prototype.setTitle = function (a) {
     this.overlay.setTitle(a);
 };
 Overlay.prototype.destroy = function () {
-    geofs.removeResizeHandler(this.resizeHandler);
     this.overlay && this.overlay.destroy();
+    for (var a = 0; a < this.children.length; a++) this.children[a].destroy();
 };
 geofs.ajax = {};
 geofs.ajax.post = function (a, b, c, d) {
@@ -11408,11 +11680,11 @@ geofs.perlin = {
             k = a - d;
         c = b - f;
         var m = geofs.perlin.dotGridGradient(d, f, a, b);
-        var r = geofs.perlin.dotGridGradient(e, f, a, b);
-        f = geofs.perlin.lerp(m, r, k);
+        var q = geofs.perlin.dotGridGradient(e, f, a, b);
+        f = geofs.perlin.lerp(m, q, k);
         m = geofs.perlin.dotGridGradient(d, g, a, b);
-        r = geofs.perlin.dotGridGradient(e, g, a, b);
-        a = geofs.perlin.lerp(m, r, k);
+        q = geofs.perlin.dotGridGradient(e, g, a, b);
+        a = geofs.perlin.lerp(m, q, k);
         a = geofs.perlin.lerp(f, a, c);
         return geofs.perlin.normalizationRatio * a;
     },
@@ -11524,7 +11796,7 @@ geofs.init = function () {
     geofs.api.checkIfMobile();
     geofs.api.analytics.init();
     geofs.doPause(1);
-    geofs.viewport = $(".geofs-canvas-mouse-overlay")[0];
+    geofs.viewport = $(".geofs-ui-3dview")[0];
     geofs.canvas = $(".geofs-ui-3dview");
     geofs.resizeHandlers = {};
     geofs.resizeHandlersIndex = 0;
@@ -11537,6 +11809,8 @@ geofs.init = function () {
     geofs.readPreferences(function () {
         ui.init();
         controls.init();
+        geofs.nav.init();
+        geofs.radio.init();
         geofs.preferences.aircraft || geofs.isApp || geofs.autoStart
             ? geofs.manualStart || geofs.start()
             : ($(".geofs-startModal").show(),
@@ -11544,6 +11818,7 @@ geofs.init = function () {
                   $(".geofs-startModal").hide();
                   geofs.start();
               }));
+        window.fireBasicEvent("geofsInitialized");
     });
 };
 geofs.start = function (a, b) {
@@ -11604,7 +11879,7 @@ geofs.initLoggedInUser = function () {
     setInterval(function () {
         if (!geofs.pause) {
             var b = { action: "keeptime" };
-            a == controls.rawPitch || controls.autopilot.on || (b.activeFlying = !0);
+            a == controls.rawPitch || geofs.autopilot.on || (b.activeFlying = !0);
             $(".geofs-apiResponse").htmlView("load", geofs.url + "/backend/accounts/api.php", b);
         }
         a = controls.rawPitch;
@@ -11659,13 +11934,16 @@ geofs.frameCallback = function (a) {
     geofs.pause ||
         (flight.terrainElevationManagement(),
         controls.update(a),
+        geofs.autopilot.UI.update(a),
         flight.tick(a, b),
         multiplayer.update(b),
         geofs.debug.update(b),
+        geofs.nav.update(a),
+        geofs.radio.update(a),
         instruments.update(),
         audio.update(),
         geofs.fx.update(b),
-        ui.updateMap(),
+        geofs.map.updateMap(geofs.aircraft.instance.llaLocation),
         geofs.objects.update(geofs.camera.lla));
     3 > geofs.pauseLevel && (geofs.camera.update(a), weather.update(a), geofs.fx.atmosphere.update(geofs.camera.lla), geofs.preferences.graphics.waterEffect && geofs.fx.water.update(geofs.camera.lla), geofs.api.triggerExplicitRendering());
 };
@@ -11690,7 +11968,7 @@ geofs.flyTo = function (a, b) {
         b ? geofs.camera.set(geofs.camera.currentMode) : (geofs.probeTerrain(), geofs.camera.reset(), controls.reset(), weather.reset(), weather.refresh());
         geofs.api.waterDetection.reset();
         c.reset(k);
-        flight.reset();
+        instruments.reset();
         geofs.objects.update(c.llaLocation);
         geofs.runways.refresh();
         geofs.runwaysLights.updateAll();
@@ -11698,6 +11976,7 @@ geofs.flyTo = function (a, b) {
         geofs.api.getGuarantiedGroundAltitude([d, e, 0]).then(function (m) {
             m = m[0].height || 0;
             geofs.groundElevation = m;
+            flight.reset(geofs.groundElevation);
             k ? ((c.startAltitude = geofs.groundElevation + c.definition.startAltitude), (c.absoluteStartAltitude = !1)) : c.absoluteStartAltitude || (c.startAltitude += geofs.groundElevation);
             c.llaLocation[2] = c.startAltitude;
             flight.elevationAtPreviousLocation = m;
@@ -11787,7 +12066,6 @@ geofs.preferencesDefault = {
     graphics: {
         quality: 3,
         enhanceColors: 0.7,
-        cloudShadows: !1,
         volumetricClouds: !1,
         advancedAtmosphere: !0,
         waterEffect: !1,
@@ -12208,13 +12486,13 @@ geofs.setPreferenceFromInput = function (a) {
                 var m = new Function("value", k);
                 try {
                     m.call(a, g);
-                } catch (r) {
-                    geofs.debug.error(r, "setPreferenceFromInput updateFunction.call");
+                } catch (q) {
+                    geofs.debug.error(q, "setPreferenceFromInput updateFunction.call");
                 }
             }
         }
-    } catch (r) {
-        geofs.debug.error(r, "geofs.setPreferenceFromInput");
+    } catch (q) {
+        geofs.debug.error(q, "geofs.setPreferenceFromInput");
     }
 };
 geofs.savePreferencesPanel = function () {
@@ -12241,6 +12519,7 @@ ui.init = function () {
         }
         ui.runMouseUpHandlers(a);
     };
+    ui.$viewport = $(".geofs-ui-3dview");
     $(document).mouseup(ui.mouseUpHandler);
     $(".geofs-ui-3dview, .geofs-canvas-mouse-overlay").on("click", function () {
         window.focus();
@@ -12249,6 +12528,7 @@ ui.init = function () {
     $(document).on("contextmenu", ".geofs-canvas-mouse-overlay", function (a) {
         a.preventDefault();
     });
+    geofs.map.init();
     ui.panel.init();
     ui.hud.init();
     ui.userDialog.init();
@@ -12292,6 +12572,12 @@ ui.init = function () {
         a.preventDefault();
     });
     ui.applyPreferences();
+};
+ui.showManipulatorCursor = function () {
+    ui.$viewport.addClass("geofs-manipulator");
+};
+ui.hideManipulatorCursor = function () {
+    ui.$viewport.removeClass("geofs-manipulator");
 };
 ui.showCrashNotification = function () {
     $(".geofs-crashOverlay").addClass("geofs-crashed");
@@ -12404,138 +12690,15 @@ ui.panel = {
 ui.closePreferencePanel = function () {
     ui.panel.hide(".geofs-preference-list", !0);
 };
-geofs.map = {};
-ui.createMap = function (a) {
+ui.openMap = function (a) {
     a = a || {};
-    if (geofs.aircraft && geofs.aircraft.instance) {
-        var b = geofs.aircraft.instance.llaLocation[0];
-        var c = geofs.aircraft.instance.llaLocation[1];
-    } else (b = a.lat || 0), (c = a.lon || 0);
-    ui.mapInstance ? ((ui.mapInstance.lastMapUpdate = 0), ui.mapInstance.startMap(), ui.mapInstance.updateMap(b, c)) : (ui.mapInstance = new geofs.map(a, b, c));
+    var b = a.lat || geofs.aircraft.instance.llaLocation[0] || 0;
+    a = a.lon || geofs.aircraft.instance.llaLocation[1] || 0;
+    geofs.map.startMap();
+    geofs.map.updateMap([b, a], !0);
 };
-ui.stopMap = function () {
-    ui.mapInstance && ui.mapInstance.stopMap();
-};
-ui.updateMap = function () {
-    ui.mapInstance && ui.mapInstance.updateMap(geofs.aircraft.instance.llaLocation[0], geofs.aircraft.instance.llaLocation[1]);
-};
-geofs.map = function (a, b, c) {
-    var d = this;
-    b = b || 0;
-    c = c || 0;
-    this.dontMoveTimeoutValue = 1e4;
-    this.mapUpdateInterval = 1e3;
-    this.minimumPanDistance = 2e3;
-    this._options = a = a || {};
-    this.apiMap = new geofs.api.map(a, b, c);
-    a.standalone || (this.planeMarker = new geofs.api.map.planeMarker(b, c, this.apiMap, "yellow", 100, null));
-    this.setMapInfoWindow();
-    a.norunways || this.addRunways();
-    a.standalone ? (this.mapActive = !0) : this.startMap();
-    this.apiMap.init();
-    this.ATCMode = !1;
-    $(document).on("click", ".geofs-map-atc-button", function (e) {
-        d.toggleATCMode();
-        e.preventDefault();
-        e.stopPropagation();
-    });
-};
-geofs.map.prototype = {
-    resize: function () {
-        this.apiMap.map.invalidateSize();
-    },
-    addRunways: function () {
-        var a = this;
-        $.getJSON(geofs.localUrl + "data/runways.json" + geofs.killCache, function (b) {
-            b.forEach(function (c) {
-                geofs.api.map.addRunwayMarker(c, a.apiMap);
-            });
-            a.apiMap.updateMarkerLayers();
-        });
-    },
-    setMapInfoWindow: function () {
-        var a = this;
-        this.apiMap.setGenericLocationPopup();
-        $(this.apiMap._holder)
-            .on("click", function (b) {
-                try {
-                    a.apiMap.mapClickHandler && (a.apiMap.mapClickHandler(b), a.stopMovingMap());
-                } catch (c) {}
-            })
-            .mousedown(function () {
-                a.stopMovingMap(!0);
-            })
-            .mouseup(function () {
-                a.stopMovingMap();
-            });
-    },
-    stopMap: function () {
-        this.mapActive = !1;
-    },
-    startMap: function () {
-        this.stopMap();
-        this.resize();
-        this.mapActive = !0;
-    },
-    stopMovingMap: function (a) {
-        var b = this;
-        clearTimeout(this.dontMoveTimeout);
-        a ||
-            (this.dontMoveTimeout = setTimeout(function () {
-                b.dontMove = !1;
-            }, this.dontMoveTimeoutValue));
-        this.dontMove = !0;
-    },
-    updateMap: function (a, b) {
-        var c = geofs.utils.now();
-        c - this.lastMapUpdate < this.mapUpdateInterval ||
-            ((this.lastMapUpdate = c),
-            this.apiMap &&
-                this.mapActive &&
-                (this.dontMove || ((c = this.apiMap.getCenterLla()), geofs.utils.llaDistanceInMeters(c, [a, b]) > this.minimumPanDistance && this.apiMap.updateMap(a, b)),
-                this.planeMarker.updatePlaneMarker(a, b, geofs.aircraft.instance.htr[0])));
-    },
-    addPlayerMarker: function (a, b, c) {
-        b = new geofs.api.map.planeMarker(0, 0, this.apiMap, b, 1, c || "-");
-        return this.apiMap.map && this.mapActive && b ? (ui.playerMarkers[a] = b) : (ui.playerMarkers[a] = null);
-    },
-    updatePlayerMarker: function (a, b, c, d, e, f) {
-        if (this.apiMap.map && this.mapActive && (ui.playerMarkers[a] || this.addPlayerMarker(a, d, c), ui.playerMarkers[a])) {
-            var g = parseInt(b[2] * METERS_TO_FEET);
-            d = fixAngle360(b[3]);
-            c = (c || "-") + "<br/>" + ("unknown" != e ? "" + e + "<br/>" : "") + f + "kt " + parseInt(d) + "dg<br/>" + geofs.utils.displayAltitude(g);
-            ui.playerMarkers[a].updatePlaneMarker(b[0], b[1], d, c);
-        }
-    },
-    deletePlayerMarker: function (a) {
-        this.apiMap.map && ui.playerMarkers[a] && ui.playerMarkers[a].destroyPlaneMarker();
-        ui.playerMarkers[a] = null;
-        delete ui.playerMarkers[a];
-    },
-    toggleATCMode: function () {
-        this.ATCMode = !this.ATCMode;
-        this.setTooltipVisibility(this.ATCMode);
-        $(this.apiMap._holder).toggleClass("geofs-atc-map");
-    },
-    setTooltipVisibility: function (a) {
-        this.tooltipVisibility = a;
-        this.apiMap.setTooltipVisibility(a);
-        if (this.apiMap.map && this.mapActive) for (var b in ui.playerMarkers) ui.playerMarkers[b].resetTooltip();
-    },
-    showWeather: function () {
-        var a = this;
-        this.weatherOverlay ||
-            ((this.weatherOverlay = this.apiMap.addImageLayer(weather.realTimeCloudTexture, 0.5)),
-            (this.weatherOverlayZoomHandler = function () {
-                a.weatherOverlay.setOpacity(clamp(1 - 0.1 * a.apiMap.map.getZoom(), 0, 0.5));
-            }),
-            this.apiMap.map.on("zoomend", this.weatherOverlayZoomHandler));
-    },
-    hideWeather: function () {
-        this.apiMap.removeImageLayer(this.weatherOverlay);
-        this.apiMap.map.off("zoomend", this.weatherOverlayZoomHandler);
-        this.weatherOverlay = null;
-    },
+ui.closeMap = function () {
+    geofs.map.stopMap();
 };
 ui.Text = function (a, b) {
     b = Object.assign({}, this.defaultOptions, b);
@@ -12716,7 +12879,8 @@ geofs.removeResizeHandler = function (a) {
 geofs.getViewportDimentions = function () {
     geofs.viewportWidth = geofs.viewport.offsetWidth;
     geofs.viewportHeight = geofs.viewport.offsetHeight;
-    geofs.camera.cam && ((geofs.fovScale = Math.pow(geofs.viewportWidth / VIEWPORT_REFERENCE_WIDTH, 0.5)), (geofs.fovScale /= Math.pow(geofs.api.getFOV(geofs.camera.cam), 0.6)));
+    geofs.viewportDimensions = { x: geofs.viewportWidth, y: geofs.viewportHeight };
+    geofs.camera.cam && ((geofs.fovScale = Math.pow(geofs.viewportWidth / VIEWPORT_REFERENCE_WIDTH, 0.5)), (geofs.fovScale /= Math.pow(geofs.api.getFOV(geofs.camera.cam), 1)));
 };
 ui.hud.autopilotIndicator = function (a) {
     a ? $(document).trigger("autopilotOn") : $(document).trigger("autopilotOff");
@@ -13013,9 +13177,8 @@ geofs.fx.papi = function (a, b) {
     for (var d = 0; 4 > d; d++) (a[2] = 0.5), (this.lights[d] = { white: new geofs.fx.light(a, "whitepapi", geofs.fx.papiBillboardOptions), red: new geofs.fx.light(a, "redpapi", geofs.fx.papiBillboardOptions) }), (a = V2.add(a, b));
     this.location = a;
     geofs.api.viewer.terrainProvider.readyPromise.then(function () {
-        var e = Cesium.sampleTerrainMostDetailed(geofs.api.viewer.terrainProvider, [Cesium.Cartographic.fromDegrees(a[1], a[0])]);
-        Cesium.when(e, function (f) {
-            c.location[2] = f[0].height;
+        Cesium.sampleTerrainMostDetailed(geofs.api.viewer.terrainProvider, [Cesium.Cartographic.fromDegrees(a[1], a[0])]).then(function (e) {
+            c.location[2] = e[0].height;
         });
     });
     this.refresh();
@@ -13102,13 +13265,6 @@ geofs.fx.dayNightManager = {
                 : ((a = clamp(1 - weather.timeRatio + a, 0, 1)),
                   this.illumination != a &&
                       (geofs.api.setImageryColorModifier("time", { brightness: geofs.animation.filter(this.brightness, a), saturation: geofs.animation.filter(this.saturation, a), gamma: geofs.animation.filter(this.gamma, a) }),
-                      geofs.api.setAtmosphereColorModifier("time", {
-                          groundBrightnessShift: geofs.animation.filter(this.groundBrightnessShift, a),
-                          fogBrightness: geofs.animation.filter(this.fogBrightness, a),
-                          groundHueShift: geofs.animation.filter(this.groundHueShift, a),
-                          cloudsBrightness: geofs.animation.filter(this.cloudsBrightness, a),
-                          brightnessShift: geofs.animation.filter(this.brightnessShift, a),
-                      }),
                       (this.illumination = a))));
     },
 };
@@ -13126,12 +13282,13 @@ geofs.fx.atmosphere = {
         this.realTimeClouds != d && this.destroy();
         this.retro != e && this.destroy();
         if (!geofs.fx.atmosphere.postProcessingStages) {
+            this.reset();
             var g = a ? "#define ADVANCED_ATMOSPHERE\n" : "",
                 k = "#define QUALITY_" + b + "\n",
                 m = c ? "#define VOLUMETRIC_CLOUDS\n" : "",
-                r = d ? "#define REALTIME_CLOUDS\n" : "",
+                q = d ? "#define REALTIME_CLOUDS\n" : "",
                 u = e ? "#define RETRO\n" : "",
-                n = 0.01 * weather.definition.cloudCover;
+                v = 0.01 * weather.definition.cloudCover;
             this.quality = b;
             this.advancedAtmosphere = a;
             this.volumetricClouds = c && a;
@@ -13139,35 +13296,26 @@ geofs.fx.atmosphere = {
             this.retro = e;
             geofs.api.useNativeAtmosphere(!this.advancedAtmosphere);
             geofs.fx.atmosphere.atmospherePostProcessStage = new Cesium.PostProcessStage({
-                fragmentShader: g + u + r + m + k + geofs["atmosphereCommon.glsl"] + geofs["atmosphereOnlyFS.glsl"],
+                fragmentShader: g + u + q + m + k + geofs["atmosphereCommon.glsl"] + geofs["atmosphereOnlyFS.glsl"],
                 uniforms: { planetRadius: 6361e3, backgroundFogDensity: 0, backgroundFogColor: geofs.fx.atmosphere.color, volumetricFogDensity: 0, volumetricFogBottom: 0, volumetricFogTop: 0 },
             });
             c
                 ? ((geofs.fx.atmosphere.atmospherePostProcessStage.uniforms.volumetricCloudsTexture = "volumetricClouds"),
-                  (geofs.fx.atmosphere.atmospherePostProcessStage.uniforms.geofsTime = 0),
                   (geofs.fx.atmosphere.atmospherePostProcessStage.uniforms.windVector = weather.currentWindVectorWC),
-                  (geofs.fx.atmosphere.atmospherePostProcessStage.uniforms.cloudCover = n),
+                  (geofs.fx.atmosphere.atmospherePostProcessStage.uniforms.cloudCover = v),
                   (geofs.fx.atmosphere.atmospherePostProcessStage.uniforms.cloudBase = weather.definition.cloudBase),
                   (geofs.fx.atmosphere.atmospherePostProcessStage.uniforms.cloudTop = weather.definition.cloudTop),
                   (geofs.fx.atmosphere.cloudsPostProcessStage = new Cesium.PostProcessStage({
                       textureScale: clamp(0.1 * b, 0.25, 1),
-                      fragmentShader: g + u + r + m + k + geofs["atmosphereCommon.glsl"] + geofs["volumetricCloudsFS.glsl"],
-                      uniforms: {
-                          planetRadius: 6361e3,
-                          windVector: weather.currentWindVectorWC,
-                          cloudCover: n,
-                          cloudBase: weather.definition.cloudBase,
-                          cloudTop: weather.definition.cloudTop,
-                          geofsTime: 0,
-                          noiseTexture: "/shaders/noise/bluenoise.png",
-                      },
+                      fragmentShader: g + u + q + m + k + geofs["atmosphereCommon.glsl"] + geofs["volumetricCloudsFS.glsl"],
+                      uniforms: { planetRadius: 6361e3, windVector: weather.currentWindVectorWC, cloudCover: v, cloudBase: weather.definition.cloudBase, cloudTop: weather.definition.cloudTop, noiseTexture: "/shaders/noise/bluenoise.png" },
                   })),
                   d &&
-                      ((n = 1),
+                      ((v = 1),
                       (geofs.fx.atmosphere.atmospherePostProcessStage.uniforms.coverageTexture = weather.realTimeCloudTexture),
-                      (geofs.fx.atmosphere.atmospherePostProcessStage.uniforms.cloudCover = n),
+                      (geofs.fx.atmosphere.atmospherePostProcessStage.uniforms.cloudCover = v),
                       (geofs.fx.atmosphere.cloudsPostProcessStage.uniforms.coverageTexture = weather.realTimeCloudTexture),
-                      (geofs.fx.atmosphere.cloudsPostProcessStage.uniforms.cloudCover = n)),
+                      (geofs.fx.atmosphere.cloudsPostProcessStage.uniforms.cloudCover = v)),
                   (geofs.fx.atmosphere.blurStage = Cesium.PostProcessStageLibrary.createBlurStage()),
                   (geofs.fx.atmosphere.blurStage.uniforms.delta = 1),
                   (geofs.fx.atmosphere.blurStage.uniforms.sigma = 2),
@@ -13180,12 +13328,21 @@ geofs.fx.atmosphere = {
                       ],
                   })))
                 : (geofs.fx.atmosphere.postProcessingStages = geofs.fx.atmosphere.atmospherePostProcessStage);
-            if (this.globeLoaded) geofs.api.viewer.scene.postProcessStages.add(geofs.fx.atmosphere.postProcessingStages);
-            else
-                var z = geofs.api.viewer.scene.globe.tileLoadProgressEvent.addEventListener(function (q) {
-                    2 != q && ((f.globeLoaded = !0), geofs.api.viewer.scene.postProcessStages.add(geofs.fx.atmosphere.postProcessingStages), z());
-                });
+            $(document).on("terrainProviderWillUpdate", function () {
+                f.destroy();
+                f.globeLoaded = !1;
+            });
+            (function () {
+                if (f.globeLoaded) geofs.api.viewer.scene.postProcessStages.add(geofs.fx.atmosphere.postProcessingStages);
+                else
+                    var t = geofs.api.viewer.scene.globe.tileLoadProgressEvent.addEventListener(function (n) {
+                        2 < n && ((f.globeLoaded = !0), geofs.api.viewer.scene.postProcessStages.add(geofs.fx.atmosphere.postProcessingStages), t());
+                    });
+            })();
         }
+    },
+    reset: function () {
+        geofs.fx.atmosphere.earthRadius = null;
     },
     update: function (a) {
         geofs.fx.atmosphere.postProcessingStages &&
@@ -13194,8 +13351,7 @@ geofs.fx.atmosphere = {
             10 > Math.abs(a - geofs.fx.atmosphere.earthRadius) ||
                 ((geofs.fx.atmosphere.earthRadius = a),
                 (geofs.fx.atmosphere.atmospherePostProcessStage.uniforms.planetRadius = a - 1e4),
-                (geofs.fx.atmosphere.atmospherePostProcessStage.uniforms.geofsTime = geofs.fx.precisionTime),
-                geofs.fx.atmosphere.cloudsPostProcessStage && ((geofs.fx.atmosphere.cloudsPostProcessStage.uniforms.planetRadius = a - 1e4), (geofs.fx.atmosphere.cloudsPostProcessStage.uniforms.geofsTime = geofs.fx.precisionTime))));
+                geofs.fx.atmosphere.cloudsPostProcessStage && (geofs.fx.atmosphere.cloudsPostProcessStage.uniforms.planetRadius = a - 1e4)));
     },
     setConditions: function (a, b, c, d) {
         geofs.fx.atmosphere.postProcessingStages &&
@@ -13391,31 +13547,18 @@ geofs.fx.Cloud.prototype = {
             a[2] = Math.random() * (this._type.aboveCeiling - this._type.belowCeiling) + (weather.definition.cloudBase + this._type.belowCeiling);
         }
         this._location = a;
-        if (this._type.billboard) {
-            var c = Object.assign({}, this.billboardOptions);
-            c.scale = clamp(Math.random() * (this._type.maxScale - this._type.minScale) + this._type.minScale, this._type.minScale, this._type.maxScale);
-            c.translucencyByDistance = new Cesium.NearFarScalar(this._type.maxRadius / 2, this._type.opacity, this._type.maxRadius, 0.3);
-            c.opacity = this._type.billboardOpacity;
-            this._entity = new geofs.api.billboard(a, this._type.billboard, c);
-        } else
-            this._type.model &&
-                ((c = Object.assign({}, this.modelOptions)),
-                (c.scale = clamp(Math.random() * (this._type.maxScale - this._type.minScale) + this._type.minScale, this._type.minScale, this._type.maxScale)),
-                (c.rotation = [Math.random() * this._type.rotationMultiplier, 0, 0]),
-                (c.location = a),
-                (this._entity = new geofs.api.Model(this._type.model, c)));
-        geofs.preferences.graphics.cloudShadows &&
-            this._type.shadow &&
-            ((this._cloudShadowAppearance = this._cloudShadowAppearance || new Cesium.EllipsoidSurfaceAppearance({ material: new Cesium.Material({ fabric: { type: "Image", uniforms: { image: this.shadowTexture } } }) })),
-            (c = geofs.fx.Cloud.prototype.shadowSize * c.scale),
-            (this._shadowPrimitive = new Cesium.GroundPrimitive({
-                allowPicking: !1,
-                geometryInstances: new Cesium.GeometryInstance({
-                    geometry: new Cesium.RectangleGeometry({ rectangle: Cesium.Rectangle.fromDegrees(this._location[1] - c, this._location[0] - c, this._location[1] + c, this._location[0] + c) }),
-                }),
-                appearance: this._cloudShadowAppearance,
-            })),
-            geofs.api.viewer.scene.groundPrimitives.add(this._shadowPrimitive));
+        this._type.billboard
+            ? ((b = Object.assign({}, this.billboardOptions)),
+              (b.scale = clamp(Math.random() * (this._type.maxScale - this._type.minScale) + this._type.minScale, this._type.minScale, this._type.maxScale)),
+              (b.translucencyByDistance = new Cesium.NearFarScalar(this._type.maxRadius / 2, this._type.opacity, this._type.maxRadius, 0.3)),
+              (b.opacity = this._type.billboardOpacity),
+              (this._entity = new geofs.api.billboard(a, this._type.billboard, b)))
+            : this._type.model &&
+              ((b = Object.assign({}, this.modelOptions)),
+              (b.scale = clamp(Math.random() * (this._type.maxScale - this._type.minScale) + this._type.minScale, this._type.minScale, this._type.maxScale)),
+              (b.rotation = [Math.random() * this._type.rotationMultiplier, 0, 0]),
+              (b.location = a),
+              (this._entity = new geofs.api.Model(this._type.model, b)));
         this.update();
     },
     setCeiling: function (a) {
@@ -13548,7 +13691,9 @@ geofs.fx.water = {
     dayColors: { horizonColor: Cesium.Color.fromCssColorString("#f1f9fbff"), azimutColor: Cesium.Color.fromCssColorString("#38618aff"), sunColor: Cesium.Color.fromCssColorString("#f1f0eaff") },
     nightColors: { horizonColor: Cesium.Color.fromCssColorString("#d64b00ff"), azimutColor: Cesium.Color.fromCssColorString("#1a1c23ff"), sunColor: Cesium.Color.fromCssColorString("#ff6f00ff") },
     create: function () {
-        geofs.api.waterMask = geofs.api.viewer.imageryLayers.addImageryProvider(new Cesium.UrlTemplateImageryProvider({ url: geofs.landuseServer + "{z}/{x}/{y}.png", hasAlphaChannel: !1, enablePickFeatures: !1, maximumLevel: 11 }));
+        geofs.api.waterMask = geofs.api.viewer.imageryLayers.addImageryProvider(
+            new Cesium.UrlTemplateImageryProvider({ url: geofs.landuseServer + "{z}/{x}/{y}.png", hasAlphaChannel: !1, enablePickFeatures: !1, maximumAnisotropy: 0, maximumLevel: 11 })
+        );
         geofs.api.waterMask.alpha = 0.01;
         geofs.api.waterMask.show = !0;
         geofs.fx.water.material = new Cesium.Material({
@@ -13556,7 +13701,7 @@ geofs.fx.water = {
                 type: "MyWater",
                 source: geofs["oceanFS.glsl"],
                 uniforms: {
-                    windVector: new Cesium.Cartesian3(0, 0, 0),
+                    windSpeed: weather.currentWindSpeedMs || 0,
                     geofsTime: 0,
                     horizonColor: Cesium.Color.fromCssColorString("#f1f9fbff"),
                     azimutColor: Cesium.Color.fromCssColorString("#38618aff"),
@@ -13570,7 +13715,7 @@ geofs.fx.water = {
         geofs.api.viewer.scene.globe.material = geofs.fx.water.material;
     },
     setConditions: function (a) {
-        geofs.fx.water.material && (geofs.fx.water.material.uniforms.windVector = a);
+        geofs.fx.water.material && (geofs.fx.water.material.uniforms.windSpeed = a);
     },
     setTime: function (a) {
         geofs.fx.water.material &&
@@ -13585,7 +13730,7 @@ geofs.fx.water = {
     },
     getWaveHeight: function (a, b, c) {
         c = 0.001 * (geofs.fx.precisionTime + (c || 0));
-        var d = (weather.definition.windSpeedMS / 30) * 5;
+        var d = 0.16 * weather.definition.windSpeedMS;
         a = Cesium.Cartesian3.fromDegrees(b, a);
         a = Cesium.Cartesian3.normalize(a, a);
         a = V2.scale([Math.sin(((a.y / a.x) * 2e4 + c) % TWO_PI) + 1, Math.sin((1e5 * a.z + c) % TWO_PI) + 1], d);
@@ -13594,7 +13739,7 @@ geofs.fx.water = {
     destroy: function () {
         geofs.api.viewer.imageryLayers.remove(geofs.api.waterMask, !0);
         geofs.fx.water.material = new Cesium.Material({
-            fabric: { type: "Null", source: "czm_material czm_getMaterial(czm_materialInput materialInput) {czm_material material; return material;}", uniforms: { windVector: new Cesium.Cartesian3(0, 0, 0), geofsTime: 0 } },
+            fabric: { type: "Null", source: "czm_material czm_getMaterial(czm_materialInput materialInput) {czm_material material; return material;}", uniforms: { windSpeed: 0, geofsTime: 0 } },
         });
         geofs.api.viewer.scene.globe.material = geofs.fx.water.material;
     },
@@ -13866,7 +14011,7 @@ geofs.fx.vegetation = {
                 c.lods[e] = d;
                 for (e = 0; e < d.thicketNumber; e++) d.availableThickets.push(e), new geofs.api.Model(null, { url: d.url, asCesiumInstance: !0, collectionId: d.collectionId, location: c.collectionBaseLocation, rotation: [0, 0, 0] });
                 geofs.api.commitInstanceCollection(d.collectionId);
-                geofs.api.instanceCollections[d.collectionId]._readyPromise.then(function () {
+                geofs.api.instanceCollections[d.collectionId]._readyPromise.promise.then(function () {
                     d.textures && geofs.api.changeModelTexture(geofs.api.instanceCollections[d.collectionId]._model, d.textures[geofs.season], 0);
                 });
             }),
@@ -13907,15 +14052,15 @@ geofs.fx.vegetation = {
                     e.positions = [];
                     geofs.coord2tileGrid(c, d, e.zoomLevel, e.size, k).forEach(function (u) {
                         if (!(u.r < e.radius)) {
-                            var n = u.x + "-" + u.y;
-                            e.tiles[n] ? (g[n] = e.tiles[n]) : ((f[n] = b.createTreeTile(n, u, e)), (g[n] = f[n]));
+                            var v = u.x + "-" + u.y;
+                            e.tiles[v] ? (g[v] = e.tiles[v]) : ((f[v] = b.createTreeTile(v, u, e)), (g[v] = f[v]));
                         }
                     });
                     Cesium.sampleTerrain(geofs.api.viewer.terrainProvider, e.elevationLevel, e.positions).then(function (u) {
-                        for (var n in f)
-                            for (var z = f[n], q = z.positionPointerStart; q < z.positionPointerEnd - 1; q++) {
-                                var p = [e.thickets[q].lla[0], e.thickets[q].lla[1], u[q].height + (e.offsetHeight || 0)],
-                                    A = e.thickets[q].htr;
+                        for (var v in f)
+                            for (var t = f[v], n = t.positionPointerStart; n < t.positionPointerEnd - 1; n++) {
+                                var p = [e.thickets[n].lla[0], e.thickets[n].lla[1], u[n].height + (e.offsetHeight || 0)],
+                                    A = e.thickets[n].htr;
                                 p = Cesium.Cartesian3.fromDegrees(p[1], p[0], p[2]);
                                 A = geofs.headingPitchRollScaleToFixedFrame(p, A[0] * DEGREES_TO_RAD, A[1] * DEGREES_TO_RAD, A[2] * DEGREES_TO_RAD, [1, 1, 1]);
                                 p = e.availableThickets.shift();
@@ -13924,7 +14069,7 @@ geofs.fx.vegetation = {
                             }
                         e.updating = !1;
                     });
-                    for (var r in e.tiles) g[r] || b.destroyTreeTile(r, e);
+                    for (var q in e.tiles) g[q] || b.destroyTreeTile(q, e);
                     e.tiles = g;
                 }
             }));
@@ -13941,17 +14086,17 @@ geofs.fx.vegetation = {
             for (var g = 0; g < c.tileSize; g += c.samplingResolution)
                 for (var k = {}, m = 0; m < c.tileSize; k = { $jscomp$loop$prop$thicketLla$22: k.$jscomp$loop$prop$thicketLla$22 }, m += c.samplingResolution) {
                     k.$jscomp$loop$prop$thicketLla$22 = [0, 0, 0];
-                    var r = m + c.randomDisplacement * Math.random(),
+                    var q = m + c.randomDisplacement * Math.random(),
                         u = g + c.randomDisplacement * Math.random();
                     k.$jscomp$loop$prop$thicketLla$22[0] = d.lat + f * u;
-                    k.$jscomp$loop$prop$thicketLla$22[1] = d.lon + e * r;
-                    var n = this.tileManager.getSubTilePixel(b.x, b.y, c.zoomLevel, r, u);
+                    k.$jscomp$loop$prop$thicketLla$22[1] = d.lon + e * q;
+                    var v = this.tileManager.getSubTilePixel(b.x, b.y, c.zoomLevel, q, u);
                     c.pixelColorInts.forEach(
-                        (function (z) {
-                            return function (q) {
-                                q == n &&
-                                    (c.positions.push(Cesium.Cartographic.fromDegrees(z.$jscomp$loop$prop$thicketLla$22[1], z.$jscomp$loop$prop$thicketLla$22[0])),
-                                    c.thickets.push({ lla: [z.$jscomp$loop$prop$thicketLla$22[0], z.$jscomp$loop$prop$thicketLla$22[1], 0], htr: [360 * Math.random(), 0, 0] }));
+                        (function (t) {
+                            return function (n) {
+                                n == v &&
+                                    (c.positions.push(Cesium.Cartographic.fromDegrees(t.$jscomp$loop$prop$thicketLla$22[1], t.$jscomp$loop$prop$thicketLla$22[0])),
+                                    c.thickets.push({ lla: [t.$jscomp$loop$prop$thicketLla$22[0], t.$jscomp$loop$prop$thicketLla$22[1], 0], htr: [360 * Math.random(), 0, 0] }));
                             };
                         })(k)
                     );
@@ -14003,11 +14148,11 @@ flight.tick = function (a, b) {
     f.totalThrust = 0;
     var k = 1,
         m = 1,
-        r = f.definition.zeroThrustAltitude,
+        q = f.definition.zeroThrustAltitude,
         u = f.definition.zeroRPMAltitude;
-    r ? (k = clamp(r - g.altitude, 0, r) / r) : u && (m = clamp(u - g.altitude, 0, u) / u);
-    for (var n = geofs.aircraft.instance.engines, z = n.length, q = 0; q < z; q++) {
-        var p = n[q],
+    q ? (k = clamp(q - g.altitude, 0, q) / q) : u && (m = clamp(u - g.altitude, 0, u) / u);
+    for (var v = geofs.aircraft.instance.engines, t = v.length, n = 0; n < t; n++) {
+        var p = v[n],
             A = controls.throttle,
             H = 1,
             C = p.animations;
@@ -14040,11 +14185,11 @@ flight.tick = function (a, b) {
         p.currentThrust = ea;
         f.totalThrust += ea;
     }
-    0 < z && (f.engine.rpm = parseInt(da));
+    0 < t && (f.engine.rpm = parseInt(da));
     var I = 0;
-    q = 0;
-    for (var D = geofs.aircraft.instance.balloons.length; q < D; q++) {
-        var E = geofs.aircraft.instance.balloons[q],
+    n = 0;
+    for (var D = geofs.aircraft.instance.balloons.length; n < D; n++) {
+        var E = geofs.aircraft.instance.balloons[n],
             eb = clamp(controls[E.controller.name] * E.controller.ratio || 0, 0, 1);
         I = E.temperature;
         I += eb * E.heatingSpeed * a;
@@ -14058,7 +14203,7 @@ flight.tick = function (a, b) {
     if (0 < geofs.waterDepth)
         if (((geofs.groundIsWater = !0), 0.1 > geofs.groundElevation)) {
             geofs.waterIsSea = !0;
-            var fb = geofs.fx.water.getWaveHeight(f.llaLocation[0], f.llaLocation[1], -b),
+            var fb = geofs.fx.water.getWaveHeight(f.llaLocation[0], f.llaLocation[1], -1),
                 Da = geofs.fx.water.getWaveHeight(f.llaLocation[0], f.llaLocation[1], 0);
             geofs.waveVerticalSpeed = (fb - Da) / a;
             geofs.waveHeight = Da;
@@ -14072,14 +14217,15 @@ flight.tick = function (a, b) {
         f.velocity = f.rigidBody.v_linearVelocity;
         f.velocityDirection = V3.normalize(f.velocity);
         f.velocityScalar = V3.length(f.velocity);
+        f.groundSpeed = V2.length([f.velocity[0], f.velocity[1]]);
         f.airVelocity = V3.sub(f.velocity, weather.currentWindVector);
         f.airVelocityDirection = V3.normalize(f.airVelocity);
         f.trueAirSpeed = V3.length(f.airVelocity);
         geofs.aircraft.instance.object3d.getWorldFrame();
-        q = 0;
-        for (D = f.balloons.length; q < D; q++) (E = f.balloons[q]), f.rigidBody.applyForce([0, 0, E.liftingForce], E.points.forceSourcePoint.worldPosition);
-        for (q = 0; q < f.engines.length; q++) {
-            p = f.engines[q];
+        n = 0;
+        for (D = f.balloons.length; n < D; n++) (E = f.balloons[n]), f.rigidBody.applyForce([0, 0, E.liftingForce], E.points.forceSourcePoint.worldPosition);
+        for (n = 0; n < f.engines.length; n++) {
+            p = f.engines[n];
             var gb = p.object3d.getWorldFrame()[p.forceDirection];
             f.rigidBody.applyForce(V3.scale(gb, p.currentThrust), p.points.forceSourcePoint.worldPosition);
         }
@@ -14090,14 +14236,14 @@ flight.tick = function (a, b) {
                     -(f.definition.dragCoefficient ? 0.5 * f.definition.dragCoefficient * weather.atmosphere.airDensityAtAltitude * Fa : f.definition.dragFactor * Fa * weather.atmosphere.airDensityAtAltitude)
                 );
             f.rigidBody.applyCentralForce(Z);
-            q = 0;
-            for (D = f.airfoils.length; q < D; q++) {
-                var v = f.airfoils[q],
-                    fa = v.points.forceSourcePoint,
-                    hb = v.object3d.getWorldFrame(),
+            n = 0;
+            for (D = f.airfoils.length; n < D; n++) {
+                var x = f.airfoils[n],
+                    fa = x.points.forceSourcePoint,
+                    hb = x.object3d.getWorldFrame(),
                     F = f.rigidBody.getVelocityInLocalPoint(fa.worldPosition);
-                if (v.propwash) {
-                    var Ga = f.engine.rpm * v.propwash,
+                if (x.propwash) {
+                    var Ga = f.engine.rpm * x.propwash,
                         ib = V3.dot(F, f.object3d.worldRotation[1]);
                     F = V3.add(F, V3.scale(f.object3d.worldRotation[1], clamp(Ga - ib, 0, Ga)));
                 }
@@ -14105,46 +14251,46 @@ flight.tick = function (a, b) {
                 F = V3.sub(F, weather.thermals.currentVector);
                 var jb = Object3D.utilities.getPointLla(fa, f.llaLocation);
                 F = V3.add(F, weather.getLocalTurbulence(jb));
-                v.velocity = V3.length(F);
+                x.velocity = V3.length(F);
                 var na = V3.normalize(F),
-                    ha = v.velocity * v.velocity,
-                    oa = hb[v.forceDirection],
+                    ha = x.velocity * x.velocity,
+                    oa = hb[x.forceDirection],
                     O = -V3.dot(oa, na),
                     kb = V3.cross(oa, na),
                     lb = V3.rotate(oa, kb, O);
-                if (v.span) {
-                    var pa = v.aspectRatio || v.span / v.chord,
-                        mb = v.span * v.chord,
+                if (x.span) {
+                    var pa = x.aspectRatio || x.span / x.chord,
+                        mb = x.span * x.chord,
                         ia = (pa / (pa + 2)) * TWO_PI * O,
-                        nb = (ia * ia) / (PI * pa * (v.efficiencyFactor || PLANFORM_EFFICIENCY_FACTOR));
-                    if (1 == v.stalls) {
+                        nb = (ia * ia) / (PI * pa * (x.efficiencyFactor || PLANFORM_EFFICIENCY_FACTOR));
+                    if (1 == x.stalls) {
                         f.angleOfAttackDeg = O * RAD_TO_DEGREES;
                         var M = Math.abs(f.angleOfAttackDeg);
-                        M > v.stallIncidence && (ui.hud.stallAlarm(!0), (ia *= 1 - clamp(M - v.stallIncidence, 0, 0.9 * v.zeroLiftIncidence) / v.zeroLiftIncidence));
+                        M > x.stallIncidence && (ui.hud.stallAlarm(!0), (ia *= 1 - clamp(M - x.stallIncidence, 0, 0.9 * x.zeroLiftIncidence) / x.zeroLiftIncidence));
                     }
                     var Ha = 0.5 * weather.atmosphere.airDensityAtAltitude * ha * mb;
                     Z = nb * Ha;
                     var ja = ia * Ha;
-                } else if (v.area) {
+                } else if (x.area) {
                     var ka = O * TWO_PI;
-                    1 == v.stalls &&
+                    1 == x.stalls &&
                         ((f.angleOfAttackDeg = O * RAD_TO_DEGREES),
                         (M = Math.abs(f.angleOfAttackDeg)),
-                        M > v.stallIncidence && (ui.hud.stallAlarm(!0), (ka *= 1 - clamp(M - v.stallIncidence, 0, 0.9 * v.zeroLiftIncidence) / v.zeroLiftIncidence)));
+                        M > x.stallIncidence && (ui.hud.stallAlarm(!0), (ka *= 1 - clamp(M - x.stallIncidence, 0, 0.9 * x.zeroLiftIncidence) / x.zeroLiftIncidence)));
                     Z = 0.5 * ha * (MIN_DRAG_COEF + DRAG_CONSTANT * ka * ka) * weather.atmosphere.airDensityAtAltitude;
-                    ja = weather.atmosphere.airDensityAtAltitude * ha * 0.5 * v.area * ka;
+                    ja = weather.atmosphere.airDensityAtAltitude * ha * 0.5 * x.area * ka;
                 } else {
-                    var Ia = v.liftFactor,
-                        ob = v.dragFactor;
-                    1 == v.stalls &&
+                    var Ia = x.liftFactor,
+                        ob = x.dragFactor;
+                    1 == x.stalls &&
                         ((f.angleOfAttackDeg = O * RAD_TO_DEGREES),
                         (M = Math.abs(f.angleOfAttackDeg)),
-                        M > v.stallIncidence && (ui.hud.stallAlarm(!0), (Ia *= 0.9 - clamp(M - v.stallIncidence, 0, v.zeroLiftIncidence) / v.zeroLiftIncidence)));
+                        M > x.stallIncidence && (ui.hud.stallAlarm(!0), (Ia *= 0.9 - clamp(M - x.stallIncidence, 0, x.zeroLiftIncidence) / x.zeroLiftIncidence)));
                     var Ja = O * ha;
                     ja = Ia * Ja * weather.atmosphere.airDensityAtAltitude;
                     Z = ob * Math.abs(Ja) * weather.atmosphere.airDensityAtAltitude;
                 }
-                v.lift = ja;
+                x.lift = ja;
                 f.rigidBody.applyForce(V3.scale(lb, ja), fa.worldPosition);
                 f.rigidBody.applyForce(V3.scale(na, -Z), fa.worldPosition);
             }
@@ -14157,126 +14303,126 @@ flight.tick = function (a, b) {
             var Ka = geofs.aircraft.instance.collisionPoints,
                 P = [],
                 Q = 0;
-            q = 0;
-            for (D = Ka.length; q < D; q++) {
-                var y = Ka[q];
-                y.id = q;
-                var t = y.part;
-                t.contact = null;
-                var S = V3.add(f.llaLocation, xyz2lla(y.worldPosition, f.llaLocation));
-                f.rigidBody.getVelocityInLocalPoint(y.worldPosition);
-                var T = geofs.getCollisionResult(S, y.worldPosition, f.collResult, y),
+            n = 0;
+            for (D = Ka.length; n < D; n++) {
+                var z = Ka[n];
+                z.id = n;
+                var r = z.part;
+                r.contact = null;
+                var S = V3.add(f.llaLocation, xyz2lla(z.worldPosition, f.llaLocation));
+                f.rigidBody.getVelocityInLocalPoint(z.worldPosition);
+                var T = geofs.getCollisionResult(S, z.worldPosition, f.collResult, z),
                     U = T.location[2],
-                    R = t.object3d.getWorldFrame(),
+                    R = r.object3d.getWorldFrame(),
                     G = f.collResult.normal;
-                if (0 < geofs.waterDepth && t.buoyancy && !T.object) {
+                if (0 < geofs.waterDepth && r.buoyancy && !T.object) {
                     var ra = Math.min(U + geofs.waveHeight - S[2], 10);
-                    if (0 < ra && !y.wrongAltitude) {
+                    if (0 < ra && !z.wrongAltitude) {
                         var La = Math.min(ra, 1);
-                        var x = { collisionPoint: y, normal: [0, 0, 1], depth: ra, submersionRatio: La, force: La * t.buoyancy, type: "buoyancy" };
-                        t.contact = x;
-                        P.push(x);
+                        var y = { collisionPoint: z, normal: [0, 0, 1], depth: ra, submersionRatio: La, force: La * r.buoyancy, type: "buoyancy" };
+                        r.contact = y;
+                        P.push(y);
                     }
                     U -= geofs.waterDepth;
-                } else if (t.suspension) {
-                    var sa = t.points.suspensionOrigin,
-                        ta = t.suspension.restLength - (sa.worldPosition[2] + f.llaLocation[2] - U),
-                        ua = clamp(ta / t.suspension.restLength, 0, 1),
-                        pb = ua * t.suspension.restLength;
-                    if (0 < ua && sa.worldPosition[2] >= y.worldPosition[2] && !y.wrongAltitude) {
+                } else if (r.suspension) {
+                    var sa = r.points.suspensionOrigin,
+                        ta = r.suspension.restLength - (sa.worldPosition[2] + f.llaLocation[2] - U),
+                        ua = clamp(ta / r.suspension.restLength, 0, 1),
+                        pb = ua * r.suspension.restLength;
+                    if (0 < ua && sa.worldPosition[2] >= z.worldPosition[2] && !z.wrongAltitude) {
                         var qb = V3.dot(G, R[2]);
-                        x = { collisionPoint: y, normal: G, force: t.suspension.stiffness * pb, type: "raycast", contactFwdDir: V3.cross(G, V3.normalize(R[0])), contactSideDir: V3.cross(G, V3.normalize(R[1])) };
-                        if (ua >= t.suspension.hardPoint || 0.4 > qb) (x.type = "hardpoint"), (x.penetration = U - (y.worldPosition[2] + f.llaLocation[2])), (Q = Math.max(Q, x.penetration));
-                        t.contact = x;
-                        P.push(x);
+                        y = { collisionPoint: z, normal: G, force: r.suspension.stiffness * pb, type: "raycast", contactFwdDir: V3.cross(G, V3.normalize(R[0])), contactSideDir: V3.cross(G, V3.normalize(R[1])) };
+                        if (ua >= r.suspension.hardPoint || 0.4 > qb) (y.type = "hardpoint"), (y.penetration = U - (z.worldPosition[2] + f.llaLocation[2])), (Q = Math.max(Q, y.penetration));
+                        r.contact = y;
+                        P.push(y);
                         sa[2] = -ta;
-                        var aa = t.name + "Suspension";
+                        var aa = r.name + "Suspension";
                         g[aa] = ta;
-                        t.suspension.rest = !1;
-                    } else t.suspension.rest || ((aa = t.name + "Suspension"), (g[aa] = 0), (t.points.suspensionOrigin[2] = 0), (t.suspension.rest = !0));
+                        r.suspension.rest = !1;
+                    } else r.suspension.rest || ((aa = r.name + "Suspension"), (g[aa] = 0), (r.points.suspensionOrigin[2] = 0), (r.suspension.rest = !0));
                     var Ma = {};
-                    Ma[t.name] = t;
+                    Ma[r.name] = r;
                     f.placeParts(Ma);
-                } else if (t.hook) {
+                } else if (r.hook) {
                     if (T.object && T.object.arrestingCable && !f.arrestingCableContact) {
                         var ba = U - S[2];
                         ba >= -T.object.arrestingCableHeight &&
-                            (f.arrestingCableContact = { collisionPoint: y, normal: G, type: "arrestingCable", object: T.object, contactFwdDir: V3.cross(G, V3.normalize(R[0])), contactSideDir: V3.cross(G, V3.normalize(R[1])) });
+                            (f.arrestingCableContact = { collisionPoint: z, normal: G, type: "arrestingCable", object: T.object, contactFwdDir: V3.cross(G, V3.normalize(R[0])), contactSideDir: V3.cross(G, V3.normalize(R[1])) });
                     }
                     if (f.arrestingCableContact) {
                         var Na = geofs.utils.llaDistanceInMeters(S, f.arrestingCableContact.object.location);
                         f.velocityScalar < flight.arrestingHookDiscardVelocity || Na > flight.arrestingHookDiscardLength
                             ? (f.arrestingCableContact.object.model.setPositionOrientationAndScale(f.arrestingCableContact.object.location, null, 1), (f.arrestingCableContact = null))
-                            : ((t.contact = f.arrestingCableContact), P.push(f.arrestingCableContact), f.arrestingCableContact.object.model.setPositionOrientationAndScale(S, null, [1.6 * Na, 1, 1]));
+                            : ((r.contact = f.arrestingCableContact), P.push(f.arrestingCableContact), f.arrestingCableContact.object.model.setPositionOrientationAndScale(S, null, [1.6 * Na, 1, 1]));
                     }
                 } else
                     (ba = U - S[2]),
                         0 <= ba &&
-                            !y.wrongAltitude &&
+                            !z.wrongAltitude &&
                             ((Q = Math.max(Q, ba)),
-                            (x = { collisionPoint: y, normal: G, penetration: ba, type: "standard", contactFwdDir: V3.cross(G, V3.normalize(R[0])), contactSideDir: V3.cross(G, V3.normalize(R[1])) }),
-                            (t.contact = x),
-                            P.push(x));
+                            (y = { collisionPoint: z, normal: G, penetration: ba, type: "standard", contactFwdDir: V3.cross(G, V3.normalize(R[0])), contactSideDir: V3.cross(G, V3.normalize(R[1])) }),
+                            (r.contact = y),
+                            P.push(y));
             }
             if (P.length && ((f.groundContact = !0), !flight.skipCollisionResponse)) {
                 Q > flight.minPenetrationThreshold && !geofs.cautiousWithTerrain && ((f.llaLocation[2] += Q), (Q = 0));
                 var va = 0;
                 for (D = P.length; va < D; va++) {
-                    x = P[va];
-                    y = x.collisionPoint;
-                    t = y.part;
-                    var N = y.contactProperties,
-                        J = f.rigidBody.getVelocityInLocalPoint(y.worldPosition);
+                    y = P[va];
+                    z = y.collisionPoint;
+                    r = z.part;
+                    var N = z.contactProperties,
+                        J = f.rigidBody.getVelocityInLocalPoint(z.worldPosition);
                     J = V3.add(J, [0, 0, geofs.waveVerticalSpeed]);
-                    var V = V3.dot(x.normal, J);
+                    var V = V3.dot(y.normal, J);
                     qa = Math.max(qa, Math.abs(V));
                     var ca = 0;
-                    if ("buoyancy" == x.type) {
-                        var rb = clamp(0.1 * x.force * V, 0, x.force);
-                        f.rigidBody.applyForce(V3.scale(x.normal, x.force - rb), y.worldPosition);
+                    if ("buoyancy" == y.type) {
+                        var rb = clamp(0.1 * y.force * V, 0, y.force);
+                        f.rigidBody.applyForce(V3.scale(y.normal, y.force - rb), z.worldPosition);
                         var Oa = V3.normalize(J),
                             Pa = V3.length(J),
                             Qa = Pa * Pa * 0.5;
-                        if ("float" == t.type) {
-                            var Ra = t.object3d.getWorldFrame()[t.forceDirection],
+                        if ("float" == r.type) {
+                            var Ra = r.object3d.getWorldFrame()[r.forceDirection],
                                 sb = -V3.dot(Ra, Oa) * TWO_PI;
-                            f.rigidBody.applyForce(V3.scale(Ra, WATER_DENSITY * Qa * t.area * sb * 0.01), y.worldPosition);
+                            f.rigidBody.applyForce(V3.scale(Ra, WATER_DENSITY * Qa * r.area * sb * 0.01), z.worldPosition);
                         }
-                        var tb = Qa * WATER_DENSITY * x.submersionRatio;
-                        geofs.aircraft.instance.object3d.setVectorWorldPosition(t.dragVector);
-                        var ub = V3.mult(Oa, V3.abs(t.dragVector.worldPosition)),
+                        var tb = Qa * WATER_DENSITY * y.submersionRatio;
+                        geofs.aircraft.instance.object3d.setVectorWorldPosition(r.dragVector);
+                        var ub = V3.mult(Oa, V3.abs(r.dragVector.worldPosition)),
                             vb = V3.scale(ub, -tb);
-                        f.rigidBody.applyForce(vb, y.worldPosition);
+                        f.rigidBody.applyForce(vb, z.worldPosition);
                         f.waterContact = !0;
                     }
-                    if ("raycast" == x.type || "hardpoint" == x.type) (ca = (x.force - t.suspension.damping * V) * f.rigidBody.mass * d), 0 < ca && f.rigidBody.applyImpulse(V3.scale(x.normal, ca), y.worldPosition);
-                    "arrestingCable" == x.type && ((f.arrestingCableContact.force = V3.scale(J, -t.hook.strength)), f.rigidBody.applyForce(f.arrestingCableContact.force, y.worldPosition));
-                    if (("standard" == x.type || "hardpoint" == x.type) && 0 > V) {
-                        var Sa = f.rigidBody.computeJacobian(0, V, y.worldPosition, x.normal),
-                            wb = V3.scale(x.normal, Sa);
-                        f.rigidBody.applyImpulse(wb, y.worldPosition);
+                    if ("raycast" == y.type || "hardpoint" == y.type) (ca = (y.force - r.suspension.damping * V) * f.rigidBody.mass * d), 0 < ca && f.rigidBody.applyImpulse(V3.scale(y.normal, ca), z.worldPosition);
+                    "arrestingCable" == y.type && ((f.arrestingCableContact.force = V3.scale(J, -r.hook.strength)), f.rigidBody.applyForce(f.arrestingCableContact.force, z.worldPosition));
+                    if (("standard" == y.type || "hardpoint" == y.type) && 0 > V) {
+                        var Sa = f.rigidBody.computeJacobian(0, V, z.worldPosition, y.normal),
+                            wb = V3.scale(y.normal, Sa);
+                        f.rigidBody.applyImpulse(wb, z.worldPosition);
                         ca = Sa;
                     }
                     var K = ca * N.frictionCoef;
                     K = clamp(K, K, 2 * f.rigidBody.mass * d * N.frictionCoef);
-                    if ("buoyancy" != x.type)
-                        if ("wheel" == t.type) {
-                            var wa = x.contactFwdDir,
-                                xa = x.contactSideDir,
+                    if ("buoyancy" != y.type)
+                        if ("wheel" == r.type) {
+                            var wa = y.contactFwdDir,
+                                xa = y.contactSideDir,
                                 Ta = V3.dot(xa, J),
                                 ya = V3.dot(wa, J);
-                            x.forwardProjVel = ya;
-                            x.sideProjVel = Ta;
-                            var Ua = f.rigidBody.computeJacobian(0, Ta, y.worldPosition, xa),
-                                Va = f.rigidBody.computeJacobian(0, ya, y.worldPosition, wa),
+                            y.forwardProjVel = ya;
+                            y.sideProjVel = Ta;
+                            var Ua = f.rigidBody.computeJacobian(0, Ta, z.worldPosition, xa),
+                                Va = f.rigidBody.computeJacobian(0, ya, z.worldPosition, wa),
                                 za = Math.abs(Ua),
                                 Aa = Math.abs(Va),
                                 Wa = 1,
                                 la = 1;
                             Math.abs(ya) > N.lockSpeed && (la = N.rollingFriction);
-                            var Xa = t.brakesController;
+                            var Xa = r.brakesController;
                             if (Xa && 0 < Aa) {
-                                var xb = clamp(g[Xa] * t.brakesControllerRatio, 0, 1);
+                                var xb = clamp(g[Xa] * r.brakesControllerRatio, 0, 1);
                                 la = clamp(K / (Aa * N.frictionCoef), 0, 1) * xb;
                             }
                             var yb = f.definition.brakeDamping || 3;
@@ -14285,25 +14431,25 @@ flight.tick = function (a, b) {
                                 var Ba = K / (za * za);
                                 Wa = clamp(Ba, N.dynamicFriction, 1);
                             }
-                            f.rigidBody.applyImpulse(V3.scale(xa, Ua * Wa), y.worldPosition);
-                            f.rigidBody.applyImpulse(V3.scale(wa, Va * la), y.worldPosition);
+                            f.rigidBody.applyImpulse(V3.scale(xa, Ua * Wa), z.worldPosition);
+                            f.rigidBody.applyImpulse(V3.scale(wa, Va * la), z.worldPosition);
                         } else {
-                            var Ya = V3.sub(J, V3.scale(x.normal, V)),
+                            var Ya = V3.sub(J, V3.scale(y.normal, V)),
                                 Za = V3.normalize(Ya),
                                 $a = V3.length(Ya);
                             if ($a) {
-                                var ab = f.rigidBody.computeJacobian(0, $a, y.worldPosition, Za),
+                                var ab = f.rigidBody.computeJacobian(0, $a, z.worldPosition, Za),
                                     Ca = Math.abs(ab),
                                     bb = 1;
                                 Ca > K && ((Ba = K / (Ca * Ca)), (bb = clamp(Ba, N.dynamicFriction, 1)));
-                                f.rigidBody.applyImpulse(V3.scale(Za, bb * ab), y.worldPosition);
+                                f.rigidBody.applyImpulse(V3.scale(Za, bb * ab), z.worldPosition);
                             }
                         }
                 }
             }
         } else
-            for (q = 0, D = geofs.aircraft.instance.suspensions.length; q < D; q++)
-                (t = geofs.aircraft.instance.suspensions[q]), t.suspension && !t.suspension.rest && ((aa = t.name + "Suspension"), (g[aa] = 0), (t.points.suspensionOrigin[2] = 0), (t.suspension.rest = !0));
+            for (n = 0, D = geofs.aircraft.instance.suspensions.length; n < D; n++)
+                (r = geofs.aircraft.instance.suspensions[n]), r.suspension && !r.suspension.rest && ((aa = r.name + "Suspension"), (g[aa] = 0), (r.points.suspensionOrigin[2] = 0), (r.suspension.rest = !0));
         flight.recorder.playing ||
             flight.sharing.on ||
             (f.rigidBody.integrateVelocities(d),
@@ -14311,7 +14457,7 @@ flight.tick = function (a, b) {
             geofs.aircraft.instance.object3d.compute(f.llaLocation),
             (geofs.aircraft.instance.htr = geofs.aircraft.instance.object3d.htr),
             flight.setAnimationValues(d),
-            controls.autopilot.update(d),
+            geofs.autopilot.update(d),
             flight.recorder.record());
     }
     1 == flight.recorder.playing ? (flight.recorder.play(b), flight.setAnimationValues(a)) : flight.sharing.on ? (flight.sharing.update(b), flight.setAnimationValues(a)) : (f.rigidBody.setCurrentAcceleration(e, a), f.placeParts());
@@ -14321,9 +14467,9 @@ flight.tick = function (a, b) {
     f.htrAngularSpeed = fixAngles(f.htrAngularSpeed);
     f.htrAngularSpeed = V3.scale(f.htrAngularSpeed, 1 / b);
     f.htr = f.object3d.htr;
-    q = f.maxAngularVRatio = 0;
-    for (D = f.wheels.length; q < D; q++) {
-        var B = f.wheels[q];
+    n = f.maxAngularVRatio = 0;
+    for (D = f.wheels.length; n < D; n++) {
+        var B = f.wheels[n];
         B.oldAngularVelocity = B.angularVelocity;
         if (B.contact) {
             B.angularVelocity = (B.contact.forwardProjVel * a) / B.arcDegree;
@@ -14361,12 +14507,16 @@ flight.setAnimationValues = function (a) {
     c.accX = c.acceleration[0];
     c.accY = c.acceleration[1];
     c.accZ = c.acceleration[2];
-    c.ktas = 1.94 * b.trueAirSpeed;
+    c.slipball = exponentialSmoothing("slipball", c.acceleration[0], 0.02);
+    c.ktas = b.trueAirSpeed * MS_TO_KNOTS;
     c.kias = c.ktas;
+    c.groundSpeed = b.groundSpeed;
+    c.groundSpeedKnt = b.groundSpeed * MS_TO_KNOTS;
     c.altitudeMeters = b.llaLocation[2];
     c.altitude = d;
     c.haglMeters = geofs.relativeAltitude;
     c.haglFeet = geofs.relativeAltitude * METERS_TO_FEET;
+    c.verticalSpeed = e;
     c.climbrate = e;
     c.aoa = b.angleOfAttackDeg;
     c.turnrate = (60 * fixAngle(b.htr[0] - c.heading)) / a;
@@ -14374,7 +14524,7 @@ flight.setAnimationValues = function (a) {
     c.heading360 = fixAngle360(b.htr[0]);
     c.atilt = b.htr[1];
     c.aroll = b.htr[2];
-    c.engineOn = b.engine.on;
+    c.enginesOn = b.engine.on;
     c.engineVibration = 100 < b.engine.rpm ? Math.random() * clamp(1e3 / b.engine.rpm, 0, 1) : 0;
     c.prop = fixAngle360(c.prop + g);
     c.thrust = b.totalThrust;
@@ -14612,9 +14762,9 @@ flight.terrainElevationManagement = function () {
         a.lastLlaLocation = a.llaLocation;
     }
 };
-flight.reset = function () {
-    flight.currentAltitudeTestContext = {};
-    flight.pastAltitudeTestContext = {};
+flight.reset = function (a) {
+    flight.currentAltitudeTestContext = { lastGroundAltitude: a };
+    flight.pastAltitudeTestContext = { lastGroundAltitude: a };
 };
 ("use strict");
 var physics = window.physics || {};
@@ -14844,15 +14994,15 @@ geofs.aircraft.Aircraft.prototype.load = function (a, b, c, d) {
               $.ajax(f, {
                   data: { id: a, kc: geofs.killCache },
                   dataType: "text",
-                  success: function (m, r, u) {
-                      if ("error" != r) {
+                  success: function (m, q, u) {
+                      if ("error" != q) {
                           geofs.aircraftList[a] && geofs.aircraftList[a].local && (m = JSON.stringify({ id: a, name: geofs.aircraftList[a].name, fullPath: geofs.aircraftList[a].path, isPremium: !1, isCommunity: !1, definition: btoa(m) }));
-                          var n = e.parseRecord(m);
+                          var v = e.parseRecord(m);
                       }
-                      n ? (geofs.aircraftList[a] && !geofs.aircraftList[a].local && (e.fullPath = geofs.url + e.aircraftRecord.fullPath), (e.id = a), e.init(n, b, c, d)) : e.loadDefault("Could not load aircraft file");
+                      v ? (geofs.aircraftList[a] && !geofs.aircraftList[a].local && (e.fullPath = geofs.url + e.aircraftRecord.fullPath), (e.id = a), e.init(v, b, c, d)) : e.loadDefault("Could not load aircraft file");
                       g();
                   },
-                  error: function (m, r, u) {
+                  error: function (m, q, u) {
                       a != geofs.aircraft.default && e.loadDefault("Could not load aircraft file" + u);
                       k();
                   },
@@ -14872,6 +15022,7 @@ geofs.aircraft.Aircraft.prototype.init = function (a, b, c, d) {
     this.collisionPoints = [];
     this.lights = [];
     this.suspensions = [];
+    this.manipulators = {};
     this.definition.scale = this.definition.scale || 1;
     this.definition.startupTime = this.definition.startupTime || 1;
     this.definition.startAltitude *= this.definition.scale;
@@ -14903,7 +15054,7 @@ geofs.aircraft.Aircraft.prototype.init = function (a, b, c, d) {
     audio.init(this.definition.sounds);
     if (!c || d) controls.reset(), geofs.camera.reset();
     this.reset();
-    this.definition.autopilot ? controls.autopilot.init && controls.autopilot.init() : controls.autopilot.turnOff();
+    this.definition.autopilot ? geofs.autopilot.init && geofs.autopilot.init() : geofs.autopilot.turnOff();
     geofs.flyTo(b, !0);
 };
 geofs.aircraft.Aircraft.prototype.loadCockpit = function () {
@@ -15041,7 +15192,20 @@ geofs.aircraft.Aircraft.prototype.addParts = function (a, b, c) {
         e.volume && (e.buoyancy = WATER_DENSITY * GRAVITY * e.volume);
         e.controller && (geofs.aircraft.instance.controllers[e.controller.name] = e.controller);
     }
-    for (d = 0; d < a.length; d++) (e = a[d]), "root" != e.name && (e.parent || (e.parent = "root"), geofs.aircraft.instance.parts[e.parent].object3d.addChild(e.object3d)), e.node && e.object3d.setModel(e.object3d.findModelInAncestry());
+    for (d = 0; d < a.length; d++)
+        (e = a[d]),
+            "root" != e.name && (e.parent || (e.parent = "root"), geofs.aircraft.instance.parts[e.parent].object3d.addChild(e.object3d)),
+            e.node &&
+                (e.object3d.setModel(e.object3d.findModelInAncestry()),
+                e.manipulator &&
+                    ((b = e.manipulator),
+                    "string" === typeof b && (b = geofs.aircraft.instance.aircraftRecord.isCommunity ? null : geofs.utils.getFunctionFromString(b)),
+                    b &&
+                        ((geofs.aircraft.instance.manipulators[e.node] = b),
+                        controls.addNodeClickHandler(e.node, function (m) {
+                            controls.manipulator = geofs.aircraft.instance.manipulators[m];
+                            controls.mouse.down = 4;
+                        }))));
 };
 geofs.aircraft.Aircraft.prototype.setVisibility = function (a) {
     this.object3d && this.object3d.setVisibility(a);
@@ -15055,6 +15219,7 @@ geofs.aircraft.Aircraft.prototype.unloadAircraft = function () {
     geofs.aircraft.instance.parts = null;
     this.removeShadow();
     if (geofs.aircraft.instance.lights) for (a = 0, b = geofs.aircraft.instance.lights.length; a < b; a++) geofs.aircraft.instance.lights[a].lightBillboard.destroy();
+    controls.clearNodeClickHandlers();
 };
 geofs.aircraft.Aircraft.prototype.reset = function (a) {
     this.crashNotified = this.crashed = !1;
@@ -15086,12 +15251,12 @@ geofs.aircraft.Aircraft.prototype.reset = function (a) {
         kias: 0,
         mach: 0,
         heading: 0,
-        climbrate: 0,
+        verticalSpeed: 0,
         optionalAnimatedPartPosition: 0,
         turnrate: 0,
     });
     this.animationValue = geofs.animation.values;
-    controls.autopilot.resetPIDs && controls.autopilot.resetPIDs();
+    geofs.autopilot.resetPIDs && geofs.autopilot.resetPIDs();
 };
 geofs.aircraft.Aircraft.prototype.place = function (a, b) {
     this.lastLlaLocation = this.llaLocation = a;
@@ -15265,17 +15430,17 @@ geofs.objects.updateCollidables = function () {
 geofs.objects.getAltitudeAtLocation = function (a, b) {
     if (geofs.objects.collidableObject)
         for (var c = [a, b, 1e5], d = 0, e = geofs.objects.collidableObjectList.length; d < e; d++)
-            for (var f = geofs.objects.collidableObjectList[d], g = lla2xyz(V3.sub(c, f.location), f.location), k = [g[0], g[1], 0], m = 0, r = f.collisionTriangles.length; m < r; m++) {
+            for (var f = geofs.objects.collidableObjectList[d], g = lla2xyz(V3.sub(c, f.location), f.location), k = [g[0], g[1], 0], m = 0, q = f.collisionTriangles.length; m < q; m++) {
                 var u = f.collisionTriangles[m],
-                    n = intersect_RayTriangle([g, k], u);
-                if (n) {
+                    v = intersect_RayTriangle([g, k], u);
+                if (v) {
                     if (f.collisionCallback)
                         try {
                             eval(f.collisionCallback);
-                        } catch (z) {
-                            geofs.debug.error(z, "objects.getAltitudeAtLocation");
+                        } catch (t) {
+                            geofs.debug.error(t, "objects.getAltitudeAtLocation");
                         }
-                    return { location: [a, b, n.point[2] + f.location[2]], normal: V3.normalize(u.n), object: f };
+                    return { location: [a, b, v.point[2] + f.location[2]], normal: V3.normalize(u.n), object: f };
                 }
             }
 };
@@ -15338,24 +15503,29 @@ controls.init = function () {
                 : controls.altKeyPressed && geofs.objects.move(geofs.debug.placingObjectId, 0, 0, c);
             controls.mouse.lastX = a.pageX;
             controls.mouse.lastY = a.pageY;
+        } else if (!1 !== controls.mouse.down) {
+            b = controls.mouse.lastX - a.pageX;
+            c = controls.mouse.lastY - a.pageY;
+            if (4 == controls.mouse.down && controls.manipulator)
+                try {
+                    controls.manipulator(b, c);
+                } catch (d) {
+                    geofs.debug.error(d);
+                }
+            1 != controls.mouse.down ||
+                geofs.api.nativeMouseHandling ||
+                (controls.controlKeyPressed
+                    ? geofs.camera.translate(b * controls.mouse.offset.ratioX, 0, -c * controls.mouse.offset.ratioY) &&
+                      (a.preventDefault(), a.stopPropagation && a.stopPropagation(), a.stopImmediatePropagation && a.stopImmediatePropagation())
+                    : geofs.camera.rotate(b * controls.mouse.orbit.ratioX, c * controls.mouse.orbit.ratioY) && (a.preventDefault(), a.stopPropagation && a.stopPropagation(), a.stopImmediatePropagation && a.stopImmediatePropagation()));
+            3 == controls.mouse.down && !geofs.api.nativeMouseHandling && geofs.camera.translate(0, -c * controls.mouse.orbit.ratioZ, 0) && (a.preventDefault(), a.stopImmediatePropagation && a.stopImmediatePropagation());
+            controls.mouse.lastX = a.pageX;
+            controls.mouse.lastY = a.pageY;
         } else
-            !1 !== controls.mouse.down
-                ? ((b = controls.mouse.lastX - a.pageX),
-                  (c = controls.mouse.lastY - a.pageY),
-                  1 != controls.mouse.down ||
-                      geofs.api.nativeMouseHandling ||
-                      (controls.controlKeyPressed
-                          ? geofs.camera.translate(b * controls.mouse.offset.ratioX, 0, -c * controls.mouse.offset.ratioY) &&
-                            (a.preventDefault(), a.stopPropagation && a.stopPropagation(), a.stopImmediatePropagation && a.stopImmediatePropagation())
-                          : geofs.camera.rotate(b * controls.mouse.orbit.ratioX, c * controls.mouse.orbit.ratioY) &&
-                            (a.preventDefault(), a.stopPropagation && a.stopPropagation(), a.stopImmediatePropagation && a.stopImmediatePropagation())),
-                  3 == controls.mouse.down && !geofs.api.nativeMouseHandling && geofs.camera.translate(0, -c * controls.mouse.orbit.ratioZ, 0) && (a.preventDefault(), a.stopImmediatePropagation && a.stopImmediatePropagation()),
-                  (controls.mouse.lastX = a.pageX),
-                  (controls.mouse.lastY = a.pageY))
-                : "mouse" == controls.mode &&
-                  ((controls.mouse.xValue = clamp((a.pageX - controls.mouse.oX - controls.mouse.cX) * controls.mouse.rX, -1, 1)),
-                  (controls.mouse.yValue = clamp((a.pageY - controls.mouse.tY - controls.mouse.cY) * controls.mouse.rY, -1, 1)),
-                  (controls.keyboard.override = !1));
+            "mouse" == controls.mode &&
+                ((controls.mouse.xValue = clamp((a.pageX - controls.mouse.oX - controls.mouse.cX) * controls.mouse.rX, -1, 1)),
+                (controls.mouse.yValue = clamp((a.pageY - controls.mouse.tY - controls.mouse.cY) * controls.mouse.rY, -1, 1)),
+                (controls.keyboard.override = !1));
     };
     $(document).on("click", ".geofs-orientationReset, .geofs-orientationCalibrate", function () {
         controls.orientation.recenter();
@@ -15375,24 +15545,41 @@ controls.init = function () {
             (controls.mouse.lastY = controls.mouse.originalY),
             geofs.camera.saveRotation(),
             geofs.camera.saveOffset());
-        controls.mouse.clickedNode = geofs.api.getModelFromScreenCoords(a.pageX - controls.mouse.oX, a.pageY - controls.mouse.oY);
+        controls.mouse.clickedElement = a.currentTarget;
+        controls.mouse.clickedNode = geofs.api.getNodeNameFromScreenCoords(a.pageX - controls.mouse.oX, a.pageY - controls.mouse.oY);
+        controls.mouse.clickedNode && controls.runNodeClickHandlers(controls.mouse.clickedNode);
     };
     controls.mouseUpHandler = function (a) {
         geofs.camera.isHandlingMouseRotation() && geofs.camera.saveRotation();
         controls.mouse.down = !1;
         controls.mouse.clickedNode = null;
+        controls.mouse.clickedElement = null;
+        controls.manipulator = null;
         a && a.preventDefault && a.preventDefault();
     };
     $(document).on("mousedown", ".geofs-canvas-mouse-overlay", controls.mouseDownHandler);
-    $(document).on("mouseup", ".geofs-canvas-mouse-overlay", controls.mouseUpHandler);
+    $(document).on("mouseup", controls.mouseUpHandler);
     $(".geofs-canvas-mouse-overlay").on("wheel", function (a) {
         0 > a.originalEvent.deltaY / 120 ? geofs.camera.decreaseFOV() : geofs.camera.increaseFOV();
         a.preventDefault();
         a.stopPropagation();
     });
     controls.joystick.init();
-    controls.autopilot.initUI();
+    geofs.autopilot.UI.init();
     controls.setMode(geofs.preferences.controlMode);
+};
+controls.nodeClickHandlers = {};
+controls.addNodeClickHandler = function (a, b) {
+    controls.nodeClickHandlers[a] = b;
+};
+controls.runNodeClickHandlers = function (a) {
+    for (var b in controls.nodeClickHandlers) if (b == a) controls.nodeClickHandlers[b](a);
+};
+controls.removeNodeClickHandler = function (a) {
+    delete controls.nodeClickhandlerHandlers[a];
+};
+controls.clearNodeClickHandlers = function () {
+    controls.nodeClickHandlers = {};
 };
 controls.addHammerHandlers = function () {
     controls.addHammerHandlersAreSet ||
@@ -15486,7 +15673,7 @@ controls.addHammerHandlers = function () {
                 b.lastY = 0;
             });
             geofs.api.addFrameCallback(function () {
-                if (controls.autopilot.on) {
+                if (geofs.autopilot.on) {
                     var c = clamp(100 * controls.throttle, 5, 90);
                     a.css("bottom", c + "%");
                     b.lastY = controls.throttle * controls.throttlePad.hY;
@@ -15535,7 +15722,7 @@ controls.addHammerHandlers = function () {
                 d.preventDefault();
             });
         })(),
-        new Hammer($(".geofs-overlay-container")[0]).on("tap", function (a) {
+        new Hammer($(".geofs-instruments-container")[0]).on("tap", function (a) {
             var b = $(a.target);
             b.hasClass("control-pad") &&
                 (b.hasClass("gear-overlay") && controls.setters.setGear.set(),
@@ -15753,7 +15940,7 @@ controls.setters = {
     toggleAutoPilot: {
         label: "Autopilot",
         set: function () {
-            controls.autopilot.toggle();
+            geofs.autopilot.toggle();
         },
     },
     toggleParkingBrake: {
@@ -15889,8 +16076,7 @@ controls.trimDown = function (a) {
 controls.update = function (a) {
     controls.updateKeyboard(a);
     "joystick" == controls.mode && controls.updateJoystick(a);
-    if (controls.autopilot.on) controls.autopilot.update(a);
-    else {
+    if (!geofs.autopilot.on) {
         controls.states.elevatorTrimUp ? controls.trimUp(2 * a) : controls.states.elevatorTrimDown && controls.trimDown(2 * a);
         controls.elevatorTrim = clamp(controls.elevatorTrim, controls.elevatorTrimMin, controls.elevatorTrimMax);
         ("mouse" != controls.mode && "touch" != controls.mode) || controls.keyboard.override || controls.updateMouse(a);
@@ -16364,22 +16550,24 @@ controls.updateTouch = function (a) {
     controls.roll = controls.touch.roll;
     controls.yaw = controls.touch.yaw;
 };
-controls.autopilot = {
+geofs.autopilot = {
     on: !1,
+    mode: "HDG",
+    navInRange: null,
+    PIDs: {},
+    values: { course: 0, altitude: 0, speed: 0, verticalSpeed: 0 },
     defaults: {
         maxBankAngle: 30,
         maxPitchAngle: 20,
         minPitchAngle: -20,
-        baseClimbrate: 500,
-        baseDescentrate: -500,
+        baseClimbrate: 1e3,
+        baseDescentrate: -1e3,
         maxClimbrate: 6e3,
         maxDescentrate: -6e3,
+        ILSDescentrate: -2e3,
+        ILSClimbrate: 0,
         verticalSpeedHoldMargin: 1e3,
         targetBankAngleRatio: 2,
-        heading: 0,
-        altitude: 0,
-        kias: 0,
-        climbrate: 0,
         yawBankAngleRatio: 0.005,
         pitchAnglePID: [0.01, 0.002, 0.01],
         elevatorPitchPID: [0.01, 0.001, 1e-7],
@@ -16388,180 +16576,706 @@ controls.autopilot = {
         throttlePID: [0.5, 0.01, 0],
         effectivenessRatioMaximum: 1.5,
     },
-    PIDs: {},
+    init: function () {
+        var a = Object.assign({}, geofs.autopilot.defaults, geofs.aircraft.instance.definition.autopilot);
+        geofs.autopilot.PIDs.pitchAngle = new PID(a.pitchAnglePID[0], a.pitchAnglePID[1], a.pitchAnglePID[2]);
+        geofs.autopilot.PIDs.elevatorPitch = new PID(a.elevatorPitchPID[0], a.elevatorPitchPID[1], a.elevatorPitchPID[2]);
+        geofs.autopilot.PIDs.bankAngle = new PID(a.bankAnglePID[0], a.bankAnglePID[1], a.bankAnglePID[2]);
+        geofs.autopilot.PIDs.aileronsRoll = new PID(a.aileronsRollPID[0], a.aileronsRollPID[1], a.aileronsRollPID[2]);
+        geofs.autopilot.PIDs.throttle = new PID(a.throttlePID[0], a.throttlePID[1], a.throttlePID[2]);
+        geofs.autopilot.definition = a;
+    },
+    setMode: function (a) {
+        a = a || geofs.autopilot.mode;
+        geofs.autopilot.VNAV = !1;
+        if ("HDG" != a) {
+            if (!geofs.nav.units.NAV1.navaid) return;
+            geofs.autopilot.VNAV = geofs.nav.units.NAV1.hasVNAV;
+        }
+        geofs.autopilot.mode = a;
+    },
+    setCourse: function (a, b) {
+        var c = geofs.autopilot.values.course;
+        try {
+            (geofs.autopilot.values.course = fixAngle360(a)), geofs.nav.setHDG(geofs.autopilot.values.course), "NAV" == geofs.autopilot.mode && (b || geofs.autopilot.setMode("BOTH"));
+        } catch (d) {
+            geofs.autopilot.values.course = c;
+        }
+    },
+    setAltitude: function (a) {
+        var b = geofs.autopilot.values.altitude;
+        try {
+            geofs.autopilot.values.altitude = a;
+        } catch (c) {
+            geofs.autopilot.values.altitude = b;
+        }
+    },
+    setSpeed: function (a) {
+        var b = geofs.autopilot.values.speed;
+        try {
+            geofs.autopilot.values.speed = a;
+        } catch (c) {
+            geofs.autopilot.values.speed = b;
+        }
+    },
+    setVerticalSpeed: function (a) {
+        var b = geofs.autopilot.values.verticalSpeed;
+        if (a) {
+            geofs.autopilot.values.verticalSpeed || (a = geofs.autopilot.targetVerticalSpeed || 0);
+            try {
+                geofs.autopilot.values.verticalSpeed = clamp(a, geofs.autopilot.definition.maxDescentrate, geofs.autopilot.definition.maxClimbrate);
+            } catch (c) {
+                geofs.autopilot.values.verticalSpeed = b;
+            }
+        } else geofs.autopilot.values.verticalSpeed = null;
+    },
+    update: function (a) {
+        if (geofs.autopilot.on) {
+            var b = geofs.animation.values,
+                c = geofs.autopilot,
+                d = c.definition,
+                e = clamp(b.kias / 150, 1, 5),
+                f = clamp(b.kias / 100, 1, d.effectivenessRatioMaximum),
+                g = geofs.nav.units.NAV1;
+            if (g.inRange && g.hasNAV) {
+                if ("NAV" == c.mode) {
+                    var k = clamp(10 * g.courseDeviation, -45, 45);
+                    k = fixAngle360(g.course + k);
+                    c.setCourse(k, !0);
+                } else "BOTH" == c.mode && 4.5 > Math.abs(g.courseDeviation) && (c.setMode("NAV"), c.setCourse(g.course, !0));
+                geofs.autopilot.VNAV &&
+                    ((k = (g.height / (g.distance / geofs.aircraft.instance.groundSpeed / 60)) * METERS_TO_FEET * ("to" == g.direction ? -1 : 1)),
+                    (g = g.glideAngleDeviation * geofs.aircraft.instance.groundSpeed * 10),
+                    (k += g),
+                    c.setVerticalSpeed(k),
+                    geofs.debug.watch("verticalSpeedAP", k),
+                    geofs.debug.watch("verticalSpeedCorrection", g));
+            }
+            g = fixAngle(fixAngle360(b.heading) - c.values.course);
+            g = clamp(g * d.targetBankAngleRatio, -d.maxBankAngle, d.maxBankAngle);
+            c.PIDs.bankAngle.set(g, -d.maxBankAngle, d.maxBankAngle);
+            k = c.PIDs.bankAngle.compute(b.aroll, a);
+            c.PIDs.aileronsRoll.set(k, -1, 1);
+            controls.roll = -c.PIDs.aileronsRoll.compute(controls.roll, a) / f;
+            controls.yaw = -g * d.yawBankAngleRatio;
+            if (!geofs.autopilot.VNAV) {
+                var m = c.values.altitude - b.altitude;
+                g = clamp(e * d.baseClimbrate, 0, d.maxClimbrate);
+                k = clamp(e * d.baseDescentrate, d.maxDescentrate, 0);
+                c.targetVerticalSpeed = clamp(2 * m * e, k, g);
+            }
+            c.values.verticalSpeed &&
+                (!geofs.autopilot.VNAV && Math.abs(m) < d.verticalSpeedHoldMargin && Math.abs(c.targetVerticalSpeed) < Math.abs(c.values.verticalSpeed)
+                    ? c.setVerticalSpeed(null)
+                    : (geofs.autopilot.targetVerticalSpeed = geofs.autopilot.values.verticalSpeed));
+            c.PIDs.pitchAngle.set(c.targetVerticalSpeed, d.minPitchAngle, d.maxPitchAngle);
+            d = c.PIDs.pitchAngle.compute(b.verticalSpeed, a);
+            c.PIDs.elevatorPitch.set(d, -1, 1);
+            controls.rawPitch = c.PIDs.elevatorPitch.compute(-b.atilt, a) / f;
+            c.PIDs.throttle.set(c.values.speed, 0, 1);
+            controls.throttle = exponentialSmoothing("apThrottle", c.PIDs.throttle.compute(b.kias, a), 0.9);
+            controls.throttle = clamp(controls.throttle, 0, 1);
+        }
+    },
+    toggle: function () {
+        geofs.autopilot.on ? geofs.autopilot.turnOff() : geofs.autopilot.turnOn();
+    },
+    resetPIDs: function () {
+        for (var a in geofs.autopilot.PIDs) geofs.autopilot.PIDs[a].reset();
+    },
+    turnOn: function () {
+        if (geofs.aircraft.instance.definition.autopilot) {
+            var a = geofs.animation.values;
+            geofs.autopilot.resetPIDs();
+            geofs.autopilot.setAltitude(a.altitude);
+            geofs.autopilot.setCourse(a.heading);
+            geofs.autopilot.setSpeed(a.kias);
+            geofs.autopilot.setVerticalSpeed(a.verticalSpeed);
+            var b = clamp(a.kias / 100, 1, geofs.autopilot.definition.effectivenessRatioMaximum);
+            geofs.autopilot.PIDs.pitchAngle.initialize(-a.atilt, a.verticalSpeed);
+            geofs.autopilot.PIDs.elevatorPitch.initialize(controls.rawPitch * b, -a.atilt);
+            geofs.autopilot.PIDs.throttle.initialize(controls.throttle, a.kias);
+            geofs.autopilot.on = !0;
+            $(document).trigger("autopilotOn");
+        }
+    },
+    turnOff: function () {
+        geofs.autopilot.on = !1;
+        $(document).trigger("autopilotOff");
+    },
 };
-controls.autopilot.init = function () {
-    var a = Object.assign({}, controls.autopilot.defaults, geofs.aircraft.instance.definition.autopilot);
-    controls.autopilot.PIDs.pitchAngle = new PID(a.pitchAnglePID[0], a.pitchAnglePID[1], a.pitchAnglePID[2]);
-    controls.autopilot.PIDs.elevatorPitch = new PID(a.elevatorPitchPID[0], a.elevatorPitchPID[1], a.elevatorPitchPID[2]);
-    controls.autopilot.PIDs.bankAngle = new PID(a.bankAnglePID[0], a.bankAnglePID[1], a.bankAnglePID[2]);
-    controls.autopilot.PIDs.aileronsRoll = new PID(a.aileronsRollPID[0], a.aileronsRollPID[1], a.aileronsRollPID[2]);
-    controls.autopilot.PIDs.throttle = new PID(a.throttlePID[0], a.throttlePID[1], a.throttlePID[2]);
-    controls.autopilot.definition = a;
-};
-controls.autopilot.update = function (a) {
-    if (controls.autopilot.on) {
-        var b = geofs.animation.values,
-            c = controls.autopilot,
-            d = c.definition,
-            e = clamp(b.kias / 150, 1, 5),
-            f = clamp(b.kias / 100, 1, d.effectivenessRatioMaximum);
-        geofs.debug.watch("speedRatio", e);
-        geofs.debug.watch("effectivenessRatio", f);
-        var g = fixAngle(fixAngle360(b.heading) - c.heading);
-        g = clamp(g * d.targetBankAngleRatio, -d.maxBankAngle, d.maxBankAngle);
-        c.PIDs.bankAngle.set(g, -d.maxBankAngle, d.maxBankAngle);
-        var k = c.PIDs.bankAngle.compute(b.aroll, a);
-        c.PIDs.aileronsRoll.set(k, -1, 1);
-        controls.roll = -c.PIDs.aileronsRoll.compute(controls.roll, a) / f;
-        controls.yaw = -g * d.yawBankAngleRatio;
-        geofs.debug.watch("-> bankangle target", g);
-        geofs.debug.watch("bankangle", b.aroll);
-        geofs.debug.watch("-> roll target", k);
-        geofs.debug.watch("roll", b.roll);
-        g = c.altitude - b.altitude;
-        k = clamp(e * d.baseClimbrate, 0, d.maxClimbrate);
-        var m = clamp(e * d.baseDescentrate, d.maxDescentrate, 0);
-        controls.autopilot.targetClimbrate = clamp(2 * g * e, m, k);
-        controls.autopilot.climbrate &&
-            (Math.abs(g) < d.verticalSpeedHoldMargin && Math.abs(controls.autopilot.targetClimbrate) < Math.abs(controls.autopilot.climbrate)
-                ? controls.autopilot.setClimbrate(null)
-                : (controls.autopilot.targetClimbrate = controls.autopilot.climbrate));
-        c.PIDs.pitchAngle.set(controls.autopilot.targetClimbrate, d.minPitchAngle, d.maxPitchAngle);
-        d = c.PIDs.pitchAngle.compute(b.climbrate, a);
-        c.PIDs.elevatorPitch.set(d, -1, 1);
-        controls.rawPitch = c.PIDs.elevatorPitch.compute(-b.atilt, a) / f;
-        geofs.debug.watch("-> climbrate target", controls.autopilot.targetClimbrate);
-        geofs.debug.watch("climbrate", b.climbrate);
-        geofs.debug.watch("-> pitchAngle target", d);
-        geofs.debug.watch("pitchAngle", -b.atilt);
-        geofs.debug.watch("rawPitch", controls.rawPitch);
-        c.PIDs.throttle.set(c.kias, 0, 1);
-        controls.throttle = exponentialSmoothing("apThrottle", c.PIDs.throttle.compute(b.kias, a), 0.9);
-        controls.throttle = clamp(controls.throttle, 0, 1);
-    }
+geofs.autopilot.UI = {
+    values: { course: 0, altitude: 0, speed: 0, verticalSpeed: 0 },
+    init: function () {
+        var a = this;
+        this.$autopilotPad = $(".geofs-autopilot-pad");
+        this.$autopilotNavButton = $(".geofs-autopilot-NAV");
+        this.$autopilotHDGButton = $(".geofs-autopilot-HDG");
+        this.$displays = {};
+        this.$displays.course = $(".geofs-autopilot-course");
+        this.$displays.altitude = $(".geofs-autopilot-altitude");
+        this.$displays.speed = $(".geofs-autopilot-speed");
+        this.$displays.verticalSpeed = $(".geofs-autopilot-verticalSpeed");
+        $(document).on("autopilotOn", function () {
+            clearTimeout(geofs.autopilot.autopilotPadTimeout);
+            a.$autopilotPad.removeClass("red-pad").addClass("green-pad");
+            $(".geofs-autopilot-controls").show();
+            $(".geofs-autopilot-toggle").html("Engaged").addClass("mdl-button--colored");
+        });
+        $(document).on("autopilotOff", function () {
+            a.$autopilotPad.removeClass("green-pad").addClass("red-pad");
+            $(".geofs-autopilot-controls").hide();
+            $(".geofs-autopilot-toggle").html("Disengaged").removeClass("mdl-button--colored");
+            clearTimeout(geofs.autopilot.autopilotPadTimeout);
+            geofs.autopilot.autopilotPadTimeout = setTimeout(function () {
+                a.$autopilotPad.removeClass("red-pad").removeClass("green-pad");
+            }, 3e3);
+        });
+        $(document)
+            .on("pointerdown keydown change", ".numberUp, .numberDown, .numberValue", function (b) {
+                var c = $(b.currentTarget),
+                    d = $(b.currentTarget).parent().find(".numberValue"),
+                    e = parseInt(d.attr("step")),
+                    f = parseInt(d.attr("min")),
+                    g = parseInt(d.attr("max")),
+                    k = 0;
+                if (c.hasClass("numberUp") || 38 == b.which) k = e;
+                if (c.hasClass("numberDown") || 40 == b.which) k = -e;
+                var m = d.attr("data-loop"),
+                    q = d.attr("data-method"),
+                    u = function (t) {
+                        t = parseInt(d.val()) || 0;
+                        if (k) {
+                            var n = t % k;
+                            0 < n ? (t = 0 < k ? t + (k - n) : t - n) : ((t += k), (t = Math.floor(t / e) * e));
+                        }
+                        t = m && t > g ? f : m && t < f ? g : clamp(t, f, g);
+                        d.val(t);
+                        geofs.autopilot[q](t);
+                    },
+                    v = function () {
+                        u();
+                        clearTimeout(window.spinnerRepeat);
+                        window.spinnerRepeat = setTimeout(v, 50);
+                    };
+                clearTimeout(window.spinnerRepeat);
+                k && ((window.spinnerRepeat = setTimeout(v, 500)), u());
+                "change" == b.type && u();
+                b.stopImmediatePropagation();
+            })
+            .on("pointerup pointercancel mouseleave touchend", ".numberUp, .numberDown", function () {
+                clearTimeout(window.spinnerRepeat);
+            })
+            .on("pointerup", ".switchLeft, .switchRight", function (b) {
+                var c = $(b.currentTarget);
+                b = c.attr("value");
+                c = c.attr("data-method");
+                geofs.autopilot[c](b);
+            })
+            .on("click", ".geofs-autopilot-pad", function (b) {
+                geofs.autopilot.toggle();
+            })
+            .on("keyup", ".numberValue", function (b) {
+                clearTimeout(window.spinnerRepeat);
+                b.stopImmediatePropagation();
+            });
+    },
+    update: function () {
+        var a = geofs.autopilot;
+        for (c in this.values) {
+            var b = null == a.values[c] ? "----" : parseInt(a.values[c], 10);
+            this.values[c] != b && (this.$displays[c].val(b), (this.values[c] = b));
+        }
+        var c = geofs.nav.units.NAV1;
+        if (c.inRange != this.inRange || a.mode != this.mode || c.type != this.type) {
+            if ("HDG" != a.mode) {
+                if (!c.hasNAV) {
+                    a.setMode("HDG");
+                    return;
+                }
+                c.inRange ? this.$autopilotNavButton.removeClass("orange-pad").addClass("green-pad") : this.$autopilotNavButton.removeClass("green-pad").addClass("orange-pad");
+            } else this.$autopilotNavButton.removeClass("orange-pad").removeClass("green-pad");
+            "NAV" != a.mode ? this.$autopilotHDGButton.addClass("green-pad") : this.$autopilotHDGButton.removeClass("green-pad");
+            this.inRange = c.inRange;
+            this.mode = a.mode;
+            this.type = c.type;
+        }
+    },
 };
 ui.hud.autopilotIndicator = function () {};
-controls.autopilot.initUI = function () {
-    controls.autopilot.$autopilotPad = $(".geofs-autopilot-pad .control-pad-label");
-    controls.autopilot.setHeading = function (a) {
-        var b = controls.autopilot.heading;
-        try {
-            (controls.autopilot.heading = fixAngle360(parseInt(a, 10))), $(".geofs-autopilot-heading").val(controls.autopilot.heading);
-        } catch (c) {
-            controls.autopilot.heading = b;
-        }
-    };
-    controls.autopilot.setAltitude = function (a) {
-        var b = controls.autopilot.altitude;
-        try {
-            (controls.autopilot.altitude = parseInt(a, 10)), $(".geofs-autopilot-altitude").val(controls.autopilot.altitude);
-        } catch (c) {
-            controls.autopilot.altitude = b;
-        }
-    };
-    controls.autopilot.setKias = function (a) {
-        var b = controls.autopilot.kias;
-        try {
-            (controls.autopilot.kias = parseInt(a, 10)), $(".geofs-autopilot-kias").val(controls.autopilot.kias);
-        } catch (c) {
-            controls.autopilot.kias = b;
-        }
-    };
-    controls.autopilot.setClimbrate = function (a) {
-        var b = controls.autopilot.climbrate;
-        if (a) {
-            controls.autopilot.climbrate || ((a = controls.autopilot.targetClimbrate || 0), $(".geofs-autopilot-climbrate").val(a));
-            try {
-                (controls.autopilot.climbrate = clamp(parseInt(a, 10), controls.autopilot.definition.maxDescentrate, controls.autopilot.definition.maxClimbrate)), $(".geofs-autopilot-climbrate").val(controls.autopilot.climbrate);
-            } catch (c) {
-                controls.autopilot.climbrate = b;
-            }
-        } else (controls.autopilot.climbrate = null), $(".geofs-autopilot-climbrate").val("-----");
-    };
-    $(document).on("autopilotOn", function () {
-        clearTimeout(controls.autopilot.autopilotPadTimeout);
-        controls.autopilot.$autopilotPad.removeClass("red-pad").addClass("green-pad");
-        $(".geofs-autopilot-controls").show();
-        $(".geofs-autopilot-toggle").html("Engaged").addClass("mdl-button--colored");
-    });
-    $(document).on("autopilotOff", function () {
-        controls.autopilot.$autopilotPad.removeClass("green-pad").addClass("red-pad");
-        $(".geofs-autopilot-controls").hide();
-        $(".geofs-autopilot-toggle").html("Disengaged").removeClass("mdl-button--colored");
-        clearTimeout(controls.autopilot.autopilotPadTimeout);
-        controls.autopilot.autopilotPadTimeout = setTimeout(function () {
-            controls.autopilot.$autopilotPad.removeClass("red-pad").removeClass("green-pad");
-        }, 3e3);
-    });
-    $(document)
-        .on("pointerdown keydown change", ".numberUp, .numberDown, .numberValue", function (a) {
-            var b = $(a.currentTarget),
-                c = $(a.currentTarget).parent().find(".numberValue"),
-                d = parseInt(c.attr("step")),
-                e = parseInt(c.attr("min")),
-                f = parseInt(c.attr("max")),
-                g = 0;
-            if (b.hasClass("numberUp") || 38 == a.which) g = d;
-            if (b.hasClass("numberDown") || 40 == a.which) g = -d;
-            var k = c.attr("data-loop"),
-                m = c.attr("data-method"),
-                r = function (n) {
-                    n = parseInt(c.val()) || 0;
-                    if (g) {
-                        var z = n % g;
-                        0 < z ? (n = 0 < g ? n + (g - z) : n - z) : ((n += g), (n = Math.floor(n / d) * d));
-                    }
-                    n = k && n > f ? e : k && n < e ? f : clamp(n, e, f);
-                    c.val(n);
-                    controls.autopilot[m](n);
-                },
-                u = function () {
-                    r();
-                    clearTimeout(window.spinnerRepeat);
-                    window.spinnerRepeat = setTimeout(u, 50);
-                };
-            clearTimeout(window.spinnerRepeat);
-            g && ((window.spinnerRepeat = setTimeout(u, 500)), r());
-            "change" == a.type && r();
-            a.stopImmediatePropagation();
-        })
-        .on("pointerup pointercancel mouseleave touchend", ".numberUp, .numberDown", function () {
-            clearTimeout(window.spinnerRepeat);
-        })
-        .on("click", ".geofs-autopilot-pad", function (a) {
-            controls.autopilot.toggle();
-        })
-        .on("keyup", ".numberValue", function (a) {
-            clearTimeout(window.spinnerRepeat);
-            a.stopImmediatePropagation();
+geofs.autopilot.setKias = geofs.autopilot.setSpeed;
+controls.autopilot = geofs.autopilot;
+geofs.map = {
+    dontMoveTimeoutValue: 1e4,
+    mapUpdateInterval: 1e3,
+    minimumPanDistance: 2e3,
+    init: function (a, b, c) {
+        var d = this;
+        this._options = a = a || {};
+        geofs.api.map.init(a, b || 0, c || 0);
+        this.navaidsLayer = geofs.api.map.addLayer("navaids");
+        a.standalone || ((this.planeMarker = new geofs.api.map.marker({ zIndex: 1e3, icon: geofs.api.map.getIcon("yellow", geofs.map.icons.yellow) })), this.planeMarker.addToMap());
+        this.setMapInfoWindow();
+        a.norunways || this.loadRunways();
+        a.standalone ? (this.mapActive = !0) : this.startMap();
+        geofs.api.map.updateMarkerLayers();
+        this.ATCMode = !1;
+        $(document).on("click", ".geofs-map-atc-button", function (e) {
+            d.toggleATCMode();
+            e.preventDefault();
+            e.stopPropagation();
         });
+    },
+    runwayMarkerRadius: 7,
+    runwayMarkerPopup: function (a) {
+        a = a.options.runway;
+        var b = a.lat + "," + a.lon,
+            c = a.name.split("|");
+        return (
+            '<div class="geofs-map-popup"><header><span class="mdl-chip"><span class="geofs-map-runway-chipIcon mdl-chip__contact mdl-color-text--white">' +
+            c[0] +
+            '</span><span class="mdl-chip__text">' +
+            c[1] +
+            " (" +
+            c[2] +
+            ')</span></span></header><button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored mdl-button--mini-fab" href="http://flyto://' +
+            b +
+            ",0," +
+            a.heading +
+            '" title="Take-off from"><i class="material-icons">flight_takeoff</i></button><button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored mdl-button--mini-fab" href="http://flyto://' +
+            b +
+            ",1000," +
+            a.heading +
+            '" title="Fly by"><i class="material-icons">flight</i></button><button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored mdl-button--mini-fab" href="http://flyto://' +
+            b +
+            ",0," +
+            a.heading +
+            ',approach,4800,450" title="Approach"><i class="material-icons">flight_land</i></button></div>'
+        );
+    },
+    navaidMarkerPopup: function (a) {
+        a = a.options.navaid;
+        var b = a.lat + "," + a.lon,
+            c = geofs.nav.isNavaidInRange(a);
+        a.type;
+        var d = 1e3 < a.freq ? a.freq / 1e3 + "MHz" : a.freq + "KHz";
+        return (
+            '<div class="geofs-map-popup"><header><span class="mdl-chip"><span class="mdl-chip__text"><b>' +
+            a.type +
+            "</b> " +
+            a.name +
+            " (" +
+            a.ident +
+            ') <code class="geofs-morse">' +
+            geofs.utils.textToMorse(a.ident) +
+            '</code></span></span></header><button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored mdl-button--mini-fab" href="http://flyto://' +
+            b +
+            ',1000,0" title="Fly by"><i class="material-icons">flight</i></button><button type="button" class="mdl-chip" title="Tune in NAV/ILS" onclick="geofs.radio.selectNavaid(' +
+            a.id +
+            ')" style="cursor: pointer;" ><span class="geofs-map-radio-chipIcon mdl-chip__contact mdl-color-text--white"><i class="material-icons">sensors</i></span><span class="mdl-chip__text">' +
+            d +
+            "</span></button>" +
+            (c ? "" : '<span class="mdl-chip geofs-outofrange"><span class="mdl-chip__text">Out of range</span></span>') +
+            "</div>"
+        );
+    },
+    icons: {
+        ILS: { url: "images/map/icons/ils.png", size: [80, 80], anchor: [0, 0], offset: [0, 0], minZoom: 8 },
+        DME: { url: "images/map/icons/dme.png", size: [20, 20], anchor: [10, 10], minZoom: 5 },
+        NDB: { url: "images/map/icons/ndb.png", size: [40, 40], anchor: [20, 20], minZoom: 7 },
+        "NDB-DME": { url: "images/map/icons/ndb-dme.png", size: [40, 40], anchor: [20, 20], minZoom: 7 },
+        TACAN: { url: "images/map/icons/tacan.png", size: [20, 20], anchor: [10, 10], minZoom: 6 },
+        VOR: { url: "images/map/icons/vor.png", size: [20, 20], anchor: [10, 10], minZoom: 6 },
+        "VOR-DME": { url: "images/map/icons/vor-dme.png", size: [20, 20], anchor: [10, 10], minZoom: 6 },
+        VORTAC: { url: "images/map/icons/vortac.png", size: [20, 20], anchor: [10, 10], minZoom: 6 },
+        yellow: { url: geofs.localUrl + "images/map/icons/yellow.png", size: [40, 40], anchor: [20, 20], className: "geofs-map-icon" },
+        blue: { url: geofs.localUrl + "images/map/icons/blue.png", size: [30, 30], anchor: [15, 15], className: "geofs-map-icon" },
+        traffic: { url: geofs.localUrl + "images/map/icons/blue.png", size: [20, 20], anchor: [10, 10], className: "geofs-traffic-icon" },
+    },
+    resize: function () {
+        geofs.api.map._map.invalidateSize();
+    },
+    loadRunways: function () {
+        var a = this;
+        $.getJSON(geofs.localUrl + "data/runways.json" + geofs.killCache, function (b) {
+            b.forEach(function (c) {
+                runway = { name: c[0], heading: c[1], lat: c[2], lon: c[3], length: c[4], major: c[5], freq: c[6], ident: c[7], slope: c[8] };
+                runway.freq && ((c = runway.name.split("|")), (runway.icao = c[2]), (runway.type = "ILS"), geofs.nav.addNavaid(runway), a.addNavaidMarker(runway));
+                a.addRunwayMarker(runway);
+            });
+            geofs.api.map.updateMarkerLayers();
+        });
+    },
+    addRunwayMarker: function (a) {
+        geofs.api.map.addLayeredMarker(a.major ? "major" : "minor", {
+            coords: [a.lat, a.lon],
+            radius: geofs.map.runwayMarkerRadius,
+            color: "#ffffff",
+            zIndex: 1e3,
+            fillColor: a.major ? "#184888" : "#ffd200",
+            popup: geofs.map.runwayMarkerPopup,
+            pane: "overlayPane",
+            popupMinWidth: 200,
+            keepToFront: !0,
+            runway: a,
+        });
+    },
+    addNavaidMarker: function (a) {
+        var b = this.icons[a.type];
+        if (b) {
+            var c = { url: b.url, size: b.size, rotate: a.heading || 0 };
+            b.offset && (c.offset = b.offset);
+            a = new geofs.api.map.marker({ coords: [a.lat, a.lon], opacity: b.opacity, radius: b.size[0] / 2, zIndex: 1, img: c, popup: geofs.map.navaidMarkerPopup, popupMinWidth: 200, pane: "overlayPane", navaid: a, minZoom: b.minZoom });
+            a.addToMap();
+            return a;
+        }
+    },
+    setMapInfoWindow: function () {
+        var a = this;
+        geofs.api.map.setGenericLocationPopup();
+        $(geofs.api.map._holder)
+            .on("click", function (b) {
+                try {
+                    geofs.api.map.mapClickHandler && (geofs.api.map.mapClickHandler(b), a.stopMovingMap());
+                } catch (c) {}
+            })
+            .mousedown(function () {
+                a.stopMovingMap(!0);
+            })
+            .mouseup(function () {
+                a.stopMovingMap();
+            });
+    },
+    stopMap: function () {
+        this.mapActive = !1;
+    },
+    startMap: function () {
+        this.stopMap();
+        this.resize();
+        this.mapActive = !0;
+    },
+    stopMovingMap: function (a) {
+        var b = this;
+        clearTimeout(this.dontMoveTimeout);
+        a ||
+            (this.dontMoveTimeout = setTimeout(function () {
+                b.dontMove = !1;
+            }, this.dontMoveTimeoutValue));
+        this.dontMove = !0;
+    },
+    updateMap: function (a, b) {
+        var c = a[0];
+        a = a[1];
+        var d = geofs.utils.now();
+        (d - this.lastMapUpdate < this.mapUpdateInterval && !b) ||
+            ((this.lastMapUpdate = d),
+            geofs.api.map &&
+                this.mapActive &&
+                (this.dontMove || ((b = geofs.api.map.getCenterLla()), geofs.utils.llaDistanceInMeters(b, [c, a]) > this.minimumPanDistance && geofs.api.map.updateMap(c, a)), this.planeMarker.update(c, a, geofs.aircraft.instance.htr[0])));
+    },
+    addPlayerMarker: function (a, b, c) {
+        ui.playerMarkers[a] || ((b = { coords: [0, 0], icon: geofs.api.map.getIcon(b, geofs.map.icons[b || "blue"]), label: c || "-" }), (ui.playerMarkers[a] = new geofs.api.map.marker(b)));
+        geofs.api.map._map && this.mapActive && ui.playerMarkers[a].addToMap();
+        return ui.playerMarkers[a];
+    },
+    updatePlayerMarker: function (a, b, c, d, e, f) {
+        if (geofs.api.map._map && this.mapActive && (ui.playerMarkers[a] || this.addPlayerMarker(a, d, c), ui.playerMarkers[a])) {
+            var g = parseInt(b[2] * METERS_TO_FEET);
+            d = fixAngle360(b[3]);
+            c = (c || "-") + "<br/>" + ("unknown" != e ? "" + e + "<br/>" : "") + f + "kt " + parseInt(d) + "dg<br/>" + geofs.utils.displayAltitude(g);
+            ui.playerMarkers[a].update(b[0], b[1], d, c);
+        }
+    },
+    deletePlayerMarker: function (a) {
+        ui.playerMarkers[a] && ui.playerMarkers[a].destroy();
+        ui.playerMarkers[a] = null;
+        delete ui.playerMarkers[a];
+    },
+    toggleATCMode: function () {
+        this.ATCMode = !this.ATCMode;
+        this.setTooltipVisibility(this.ATCMode);
+        $(geofs.api.map._holder).toggleClass("geofs-atc-map");
+    },
+    setTooltipVisibility: function (a) {
+        this.tooltipVisibility = a;
+        geofs.api.map.setTooltipVisibility(a);
+        if (geofs.api.map._map && this.mapActive) for (var b in ui.playerMarkers) ui.playerMarkers[b].resetTooltip();
+    },
+    showWeather: function () {
+        var a = this;
+        this.weatherOverlay ||
+            ((this.weatherOverlay = geofs.api.map.addImageLayer(weather.realTimeCloudTexture, 0.5)),
+            (this.weatherOverlayZoomHandler = function () {
+                a.weatherOverlay.setOpacity(clamp(1 - 0.1 * geofs.api.map._map.getZoom(), 0, 0.5));
+            }),
+            geofs.api.map._map.on("zoomend", this.weatherOverlayZoomHandler));
+    },
+    hideWeather: function () {
+        geofs.api.map.removeImageLayer(this.weatherOverlay);
+        geofs.api.map._map.off("zoomend", this.weatherOverlayZoomHandler);
+        this.weatherOverlay = null;
+    },
 };
-controls.autopilot.toggle = function () {
-    controls.autopilot.on ? controls.autopilot.turnOff() : controls.autopilot.turnOn();
+geofs.nav = {
+    navaids: [],
+    units: { NAV1: { OBS: 0 }, ADF: {} },
+    frequencies: [],
+    HDG: 0,
+    ADFCourse: 0,
+    course: 0,
+    bearing: 0,
+    bearingToStation: 0,
+    courseDeviation: 0,
+    slopeDeviation: 0,
+    direction: "",
+    distance: 0,
+    height: 0,
+    glideAngle: 0,
+    types: {
+        ILS: { range: 33e3, ILS: !0, DME: !0 },
+        DME: { range: 48e4, DME: !0 },
+        NDB: { range: 14e4, ADF: !0 },
+        "NDB-DME": { range: 14e4, ADF: !0, DME: !0 },
+        VOR: { range: 24e4, VOR: !0 },
+        "VOR-DME": { range: 24e4, VOR: !0, DME: !0 },
+        TACAN: { range: 24e4, VOR: !0, DME: !0 },
+        VORTAC: { range: 24e4, VOR: !0, DME: !0 },
+    },
+    init: function () {
+        var a = this;
+        $.getJSON(geofs.localUrl + "data/navaids.json" + geofs.killCache, function (b) {
+            b.forEach(function (c) {
+                c = { icao: c[0], ident: c[1], name: c[2], type: c[3], lat: c[4], lon: c[5], freq: c[6], DMEfreq: c[7] };
+                a.addNavaid(c);
+                geofs.map.addNavaidMarker(c);
+            });
+            geofs.api.map.updateMarkerLayers();
+        });
+    },
+    addNavaid: function (a) {
+        a.id = this.navaids.length;
+        this.navaids.push(a);
+        this.frequencies[a.freq] = this.frequencies[a.freq] || [];
+        this.frequencies[a.freq].push(a);
+    },
+    setNavaid: function (a, b) {
+        var c = geofs.nav.types[a.type];
+        a = $.extend(!0, a, c);
+        unit = c.ADF ? this.units.ADF : this.units[b || "NAV1"];
+        unit.navaid = a;
+        unit.hasNAV = !1;
+        unit.hasVNAV = !1;
+        c.VOR ? (unit.hasNAV = !0) : c.ILS && ((unit.hasNAV = !0), (unit.hasVNAV = !0));
+        a.elevation ||
+            ((a.elevation = 0),
+            geofs.api.getGuarantiedGroundAltitude([a.lat, a.lon, 0]).then(function (d) {
+                a.elevation = d[0].height || 0;
+            }));
+        geofs.autopilot.setMode();
+    },
+    setOBS: function (a, b, c) {
+        var d = this.units[a];
+        d.OBS = fixAngle360(null != b ? b : d.OBS + c);
+        geofs.animation.setValue(a + "OBS", d.OBS);
+    },
+    setHDG: function (a, b, c) {
+        this.HDG = fixAngle360(null != a ? a : this.HDG + b);
+        c && geofs.autopilot.setCourse(this.HDG);
+        geofs.animation.setValue("navHDG", this.HDG);
+    },
+    setADFCourse: function (a, b) {
+        this.ADFCourse = fixAngle360(null != a ? a : this.ADFCourse + b);
+        geofs.animation.setValue("ADFCourse", this.ADFCourse);
+    },
+    clear: function (a) {
+        if (a) (this.units[a].navaid = null), (this.units[a].inRange = !1), (this.units[a].hasNAV = !1), (this.units[a].hasVNAV = !1);
+        else for (var b in this.units) (this.units[b].navaid = null), (this.units[b].inRange = !1), (this.units[b].hasNAV = !1), (this.units[b].hasVNAV = !1);
+    },
+    isNavaidInRange: function (a) {
+        return geofs.utils.distanceBetweenLocations([geofs.aircraft.instance.llaLocation[0], geofs.aircraft.instance.llaLocation[1]], [a.lat, a.lon]) < geofs.nav.types[a.type].range ? !0 : !1;
+    },
+    update: function (a) {
+        this.hasDME = !1;
+        for (var b in this.units) this.updateUnit(a, b);
+    },
+    updateUnit: function (a, b) {
+        var c = this.units[b],
+            d = c.navaid;
+        if (d) {
+            var e = geofs.nav.types[d.type],
+                f = [geofs.aircraft.instance.llaLocation[0], geofs.aircraft.instance.llaLocation[1]],
+                g = geofs.aircraft.instance.htr[0],
+                k = geofs.utils.distanceBetweenLocations(f, [d.lat, d.lon]),
+                m = Math.abs(k - c.distance);
+            c.distance = k;
+            c.bearing = geofs.utils.bearingBetweenLocations(f, [d.lat, d.lon]);
+            c.height = geofs.aircraft.instance.llaLocation[2] - d.elevation;
+            c.glideAngle = Math.atan2(c.height, c.distance) * RAD_TO_DEGREES;
+            c.glideAngleDeviation = e.ILS ? (d.slope || STANDARD_GLIDE_ANGLE) - c.glideAngle : 0;
+            e.VOR
+                ? ((c.course = c.OBS), (c.hasNAV = !0), (c.hasVNAV = !1))
+                : e.ILS
+                ? ((c.course = d.heading), (c.hasNAV = !0), (c.hasVNAV = !0))
+                : (e.ADF ? ((c.course = g), (c.hasNAV = !0)) : ((c.course = null), (c.hasNAV = !1)), (c.hasVNAV = !1));
+            c.bearingToStation = fixAngle(g - this.bearing);
+            c.courseDeviation = fixAngle(c.bearing - c.course);
+            90 < Math.abs(c.courseDeviation) ? ((c.direction = "from"), (c.courseDeviation = -fixAngle(c.courseDeviation - 180))) : (c.direction = "to");
+            e.DME
+                ? ((this.hasDME = !0),
+                  (c.DME = (Math.sqrt(c.distance * c.distance + c.height * c.height) * METERS_TO_NM).toFixed(1)),
+                  (c.speedToSignal = (m / a) * MS_TO_KNOTS),
+                  (c.timeToSignal = Math.round(geofs.nav.distance / geofs.aircraft.instance.groundSpeed / 60)))
+                : ((c.DME = null), (c.speedToSignal = null), (c.timeToSignal = null));
+            c.distance > e.range || 50 < c.glideAngle
+                ? ((c.inRange = !1), (c.course = 0), (c.courseDeviation = 0), (c.glideAngleDeviation = 0), (c.direction = ""), (c.distance = 0), (c.DME = null), (c.speedToSignal = null), (c.timeToSignal = null))
+                : (c.inRange = !0);
+            geofs.animation.setValue(b + "Course", c.course);
+            geofs.animation.setValue(b + "BearingToStation", c.bearingToStation);
+            geofs.animation.setValue(b + "CourseDeviation", c.courseDeviation);
+            geofs.animation.setValue(b + "Direction", c.direction);
+            geofs.animation.setValue(b + "Distance", c.distance);
+            geofs.animation.setValue(b + "DME", c.DME);
+            geofs.animation.setValue(b + "SpeedToSignal", c.speedToSignal);
+            geofs.animation.setValue(b + "TimeToSignal", c.timeToSignal);
+            geofs.animation.setValue(b + "Bearing", c.bearing);
+            geofs.animation.setValue(b + "GlideAngleDeviation", c.glideAngleDeviation);
+            geofs.animation.setValue(b + "InRange", c.inRange);
+            geofs.debug.watch(b + "Course", c.course);
+            geofs.debug.watch(b + "CourseDeviation", c.courseDeviation);
+            geofs.debug.watch(b + "Bearing", c.bearing);
+            geofs.debug.watch(b + "Direction", c.direction);
+            geofs.debug.watch(b + "Distance", c.distance);
+            geofs.debug.watch(b + "Slope", c.glideAngle);
+            geofs.debug.watch(b + "GlideAngleDeviation", c.glideAngleDeviation);
+            geofs.debug.watch(b + "InRange", c.inRange);
+        }
+    },
 };
-controls.autopilot.resetPIDs = function () {
-    for (var a in controls.autopilot.PIDs) controls.autopilot.PIDs[a].reset();
-};
-controls.autopilot.turnOn = function () {
-    if (geofs.aircraft.instance.definition.autopilot) {
-        var a = geofs.animation.values;
-        controls.autopilot.resetPIDs();
-        controls.autopilot.setAltitude(a.altitude);
-        controls.autopilot.setHeading(a.heading);
-        controls.autopilot.setKias(a.kias);
-        controls.autopilot.setClimbrate(a.climbrate);
-        var b = clamp(a.kias / 100, 1, controls.autopilot.definition.effectivenessRatioMaximum);
-        controls.autopilot.PIDs.pitchAngle.initialize(-a.atilt, a.climbrate);
-        controls.autopilot.PIDs.elevatorPitch.initialize(controls.rawPitch * b, -a.atilt);
-        controls.autopilot.PIDs.throttle.initialize(controls.throttle, a.kias);
-        controls.autopilot.on = !0;
-        $(document).trigger("autopilotOn");
-    }
-};
-controls.autopilot.turnOff = function () {
-    controls.autopilot.on = !1;
-    $(document).trigger("autopilotOff");
+geofs.radio = {
+    visible: !1,
+    units: { NAV1: { frequency: 0, rawFrequency: 0 }, ADF: { frequency: 0, rawFrequency: 0 } },
+    frequencyScanInterval: 5e3,
+    NAVFrequencyRange: [108e3, 117950],
+    ADFFrequencyRange: [190, 535],
+    init: function () {
+        var a = this;
+        this.$radioNavFreq = $('[name="NAVFrequency"]');
+        this.$radioADFFreq = $('[name="ADFFrequency"]');
+        this.$radioOBSDisplay = $('[name="radioOBS"]');
+        this.$radioDMEDisplay = $('[name="dme"]');
+        this.$radioGroundSpeedDisplay = $('[name="groundSpeed"]');
+        this.$radioTTSDisplay = $('[name="timeToStation"]');
+        $(document).on("click", ".geofs-radio-pad", function (b) {
+            geofs.radio.toggle();
+        });
+        this.navKnob = new Indicator({
+            container: ".geofs-nav-frequency",
+            overlay: {
+                url: "images/instruments/radioknob.png",
+                class: "geofs-radio-knob",
+                size: { x: 40, y: 40 },
+                anchor: { x: 20, y: 20 },
+                position: { x: -5, y: 25 },
+                rescale: !1,
+                rescalePosition: !1,
+                manipulator: function (b, c) {
+                    geofs.radio.tuneNAVFrequency(null, c, "NAV1");
+                },
+                animations: [{ type: "rotate", value: "NAV1Frequency", ratio: -0.1 }],
+            },
+        });
+        this.adfKnob = new Indicator({
+            container: ".geofs-adf-frequency",
+            overlay: {
+                url: "images/instruments/radioknob.png",
+                class: "geofs-radio-knob",
+                size: { x: 40, y: 40 },
+                anchor: { x: 20, y: 20 },
+                position: { x: -5, y: 25 },
+                rescale: !1,
+                rescalePosition: !1,
+                manipulator: function (b, c) {
+                    geofs.radio.tuneADFFrequency(null, c);
+                },
+                animations: [{ type: "rotate", value: "ADFFrequency", ratio: -2 }],
+            },
+        });
+        this.OBSKnob = new Indicator({
+            container: ".geofs-radio-OBS",
+            overlay: {
+                url: "images/instruments/radioknob.png",
+                class: "geofs-radio-knob",
+                size: { x: 40, y: 40 },
+                anchor: { x: 20, y: 20 },
+                position: { x: -5, y: 25 },
+                rescale: !1,
+                rescalePosition: !1,
+                manipulator: function (b, c) {
+                    instruments.manipulators.setNAV1OBS(null, c);
+                },
+                animations: [{ type: "rotate", value: "NAV1OBS", ratio: -1 }],
+            },
+        });
+        setInterval(function () {
+            a.scanFrequenciesAround();
+        }, this.frequencyScanInterval);
+    },
+    scanUnitFrequency: function (a) {
+        var b = geofs.nav.frequencies[this.units[a].frequency];
+        b && b.length ? (geofs.utils.sortLocationByDistance(geofs.aircraft.instance.llaLocation, b), geofs.nav.setNavaid(b[0], a)) : geofs.nav.clear(a);
+    },
+    scanFrequenciesAround: function () {
+        for (var a in this.units) this.scanUnitFrequency(a);
+    },
+    selectNavaid: function (a) {
+        if ((a = geofs.nav.navaids[a])) geofs.radio.setSelectedNavaidFrequencies(a.freq), "NDB-DME" == a.type && geofs.radio.setSelectedNavaidFrequencies(a.DMEfreq), this.scanFrequenciesAround(), this.show();
+    },
+    setSelectedNavaidFrequencies: function (a) {
+        1e3 <= a ? this.tuneNAVFrequency(a, null, "NAV1") : this.tuneADFFrequency(a);
+    },
+    tuneNAVFrequency: function (a, b, c) {
+        var d = this.units[c];
+        d.rawFrequency = a || d.rawFrequency;
+        void 0 != b && (d.rawFrequency += 10 * b);
+        d.rawFrequency = clamp(d.rawFrequency, this.NAVFrequencyRange[0], this.NAVFrequencyRange[1]);
+        a = Math.round((d.rawFrequency / 100) * 2) / 0.02;
+        a != d.frequency && ((d.frequency = a), geofs.animation.setValue(c + "Frequency", d.frequency), this.displayNAVFrequency(null, c), this.scanUnitFrequency(c));
+    },
+    tuneADFFrequency: function (a, b) {
+        var c = this.units.ADF;
+        c.rawFrequency = a || c.rawFrequency;
+        b && (c.rawFrequency += 0.5 * b);
+        c.rawFrequency = clamp(c.rawFrequency, this.ADFFrequencyRange[0], this.ADFFrequencyRange[1]);
+        a = Math.round(c.rawFrequency);
+        a != c.frequency && ((c.frequency = a), geofs.animation.setValue("ADFFrequency", c.frequency), this.displayADFFrequency(), this.scanUnitFrequency("ADF"));
+    },
+    displayNAVFrequency: function (a, b) {
+        this.$radioNavFreq.val((this.units[b || "NAV1"].frequency / 1e3).toFixed(2));
+    },
+    displayADFFrequency: function (a) {
+        this.units.ADF.frequency = a || this.units.ADF.frequency;
+        this.$radioADFFreq.val(this.units.ADF.frequency);
+    },
+    update: function (a) {
+        this.visible &&
+            (geofs.nav.hasDME &&
+                (this.$radioDMEDisplay.val(geofs.animation.getValue("NAV1DME")),
+                this.$radioGroundSpeedDisplay.val(Math.round(geofs.animation.getValue("NAV1SpeedToSignal"))),
+                this.$radioTTSDisplay.val(Math.round(geofs.animation.getValue("NAV1TimeToSignal")))),
+            this.$radioOBSDisplay.val(geofs.animation.getValue("NAV1OBS")),
+            this.navKnob.update(),
+            this.adfKnob.update(),
+            this.OBSKnob.update());
+    },
+    toggle: function () {
+        geofs.radio.visible ? geofs.radio.hide() : geofs.radio.show();
+    },
+    show: function () {
+        geofs.radio.visible || ((geofs.radio.visible = !0), $(".geofs-radio-pad").addClass("blue-pad"), $(".geofs-radio-controls").show());
+    },
+    hide: function () {
+        geofs.radio.visible && ((geofs.radio.visible = !1), $(".geofs-radio-pad").removeClass("blue-pad"), $(".geofs-radio-controls").hide());
+    },
 };
 ("use strict");
 var weather = window.weather || {};
@@ -16764,10 +17478,11 @@ weather.set = function (a, b) {
     weather.currentWindVectorWC = new Cesium.Cartesian3(0, 0, 0);
     weather.windLayers.length && (weather.currentWindVectorWC = weather.windLayers[0].vectorWC);
     geofs.fx.atmosphere.setConditions(weather.currentWindVectorWC, 0.01 * weather.definition.cloudCover, weather.definition.cloudBase, weather.definition.cloudTop);
-    geofs.fx.water.setConditions(weather.currentWindVectorWC);
+    geofs.fx.water.setConditions(weather.currentWindSpeedMs);
     geofs.fx.dayNightManager.update();
     "snow" == weather.definition.precipitationType ? geofs.api.setImageryColorModifier("snow", { brightness: 2.5, contrast: 1.5, saturation: 0.1 }) : geofs.api.removeImageryColorModifier("snow");
     geofs.fx.cloudManager.instance.triggerUpdate();
+    window.fireBasicEvent("geofsWeatherChange");
 };
 weather.animationRate = -5;
 weather.update = function (a) {
@@ -16810,7 +17525,7 @@ weather.setDateAndTime = function (a) {
     weather.timeRatio = Number.parseFloat(weather.timeRatio.toFixed(2));
     weather.seasonRatio = Math.sin(2.7 * weather.localSeason * DEGREES_TO_RAD);
     geofs.animation.values.night != geofs.isNight && $("body").trigger("nightChange");
-    0 < weather.localSeason && (geofs.season = "spring");
+    0 <= weather.localSeason && (geofs.season = "spring");
     25 < weather.localSeason && (geofs.season = "summer");
     50 < weather.localSeason && (geofs.season = "autumn");
     75 < weather.localSeason && (geofs.season = "winter");
@@ -16819,7 +17534,7 @@ weather.setDateAndTime = function (a) {
     geofs.animation.values.season = geofs.season;
     geofs.animation.values.minutes = 60 * (weather.localTime % 1).toFixed(2);
     geofs.animation.values.hours = weather.localTime;
-    $("body").trigger("geofsTimeChange");
+    window.fireBasicEvent("geofsTimeChange");
 };
 weather.getLocalTurbulence = function (a) {
     return [0, 0, geofs.perlin.get(a[0], a[1], 2500) * weather.definition.turbulences * 4];
@@ -16853,7 +17568,7 @@ weather.Wind = function (a, b, c, d) {
     this.speed = this.speedMs;
     a = new Cesium.HeadingPitchRoll(a * DEGREES_TO_RAD, 0, 0);
     a = Cesium.Transforms.headingPitchRollToFixedFrame(geofs.camera.cam.position, a);
-    this.vectorWC = Cesium.Matrix4.multiplyByPointAsVector(a, new Cesium.Cartesian3(0, -b / 30, 0), new Cesium.Cartesian3());
+    this.vectorWC = Cesium.Matrix4.multiplyByPointAsVector(a, new Cesium.Cartesian3(0, -b, 0), new Cesium.Cartesian3());
 };
 weather.Wind.prototype.randomize = function () {
     var a = clamp(weather.definition.cloudBase / geofs.animation.values.altitudeMeters, 0, 1);
@@ -16862,7 +17577,8 @@ weather.Wind.prototype.randomize = function () {
 weather.Wind.prototype.computeAndSet = function (a) {
     a = a || [0, 0, 0];
     this.randomize();
-    var b = this.computeTerrainLift();
+    var b = [0, 0, 0];
+    this.speed && (b = this.computeTerrainLift());
     weather.currentWindVector = V3.scale(b, this.speed);
     weather.currentWindVectorLla = xyz2lla(weather.currentWindVector, a);
     weather.currentWindDirection = this.direction;
@@ -16888,8 +17604,8 @@ weather.initWind = function (a, b) {
     a = fixAngle(a + 180);
     var c = weather.definition.windLayerHeight + Math.random() * weather.definition.windLayerHeight;
     weather.windLayers.push(new weather.Wind(a, b, 0, c));
-    weather.windLayers[0].computeAndSet();
-    if (b)
+    if (b) {
+        weather.windLayers[0].computeAndSet();
         for (var d = 1; d < weather.windLayerNb; d++) {
             var e = c;
             c = e + weather.windLayerHeight + Math.random() * weather.definition.windLayerHeight;
@@ -16897,6 +17613,7 @@ weather.initWind = function (a, b) {
                 g = fixAngle(a + 360 * Math.random());
             weather.windLayers.push(new weather.Wind(g, f, e, c));
         }
+    }
 };
 weather.windOff = function () {
     weather.windLayers = [];
@@ -16935,7 +17652,7 @@ geofs.camera = {
     currentFOV: 1,
     minFOV: 0.2,
     maxFOV: 2.5,
-    groundAvoidanceMargin: 1,
+    groundAvoidanceMargin: 0.5,
     groundAvoidanceIgnore: 100,
     shortestDistance: 5,
     init: function () {
@@ -17051,8 +17768,12 @@ geofs.camera = {
                   instruments.updateCockpitPositions(),
                   geofs.api.configureInsideView(),
                   (geofs.camera.motionOffset = [0, 0, 0]),
+                  $("body").addClass("geofs-cockpitView"),
                   (geofs.animation.values.overlaysVisibility = "hidden"))
-                : (geofs.aircraft.instance.fixCockpitScale(1), geofs.camera.currentDefinition.insideView ? geofs.api.configureInsideView() : geofs.api.configureOutsideView(), (geofs.animation.values.overlaysVisibility = "visible"));
+                : (geofs.aircraft.instance.fixCockpitScale(1),
+                  geofs.camera.currentDefinition.insideView ? geofs.api.configureInsideView() : geofs.api.configureOutsideView(),
+                  $("body").removeClass("geofs-cockpitView"),
+                  (geofs.animation.values.overlaysVisibility = "visible"));
             geofs.animation.values.view = geofs.camera.currentView;
             geofs.animation.values.cameraMode = geofs.camera.currentModeName;
             geofs.aircraft.instance.placeParts();
@@ -17155,12 +17876,11 @@ geofs.camera = {
         "cockpit" == geofs.camera.currentModeName && (geofs.camera.hasMoved = !0);
     },
     avoidGround: function () {
-        if (!(100 < geofs.relativeAltitude)) {
+        if (!(geofs.relativeAltitude > geofs.camera.groundAvoidanceIgnore)) {
             var a = geofs.getCollisionResult(geofs.camera.lla, geofs.camera.worldPosition, geofs.aircraft.instance.collResult, geofs.camera);
             geofs.camera.groundAltitude = a.location[2];
-            a = geofs.camera.lla[2] - geofs.camera.groundAltitude;
-            (geofs.cautiousWithTerrain && Math.abs(a) > geofs.camera.groundAvoidanceIgnore) ||
-                (a <= geofs.camera.groundAvoidanceMargin && (geofs.camera.lla[2] = geofs.camera.groundAltitude + geofs.camera.groundAvoidanceMargin), (geofs.camera.hasMoved = !0));
+            geofs.camera.lla[2] - geofs.camera.groundAltitude <= geofs.camera.groundAvoidanceMargin && (geofs.camera.lla[2] = geofs.camera.groundAltitude + geofs.camera.groundAvoidanceMargin);
+            geofs.camera.hasMoved = !0;
         }
     },
     getFlytToCoordinates: function () {
@@ -17252,7 +17972,7 @@ geofs.camera = {
     },
     openSlaveWindow: function (a) {
         var b = "left=" + ((window.screenX || window.screenLeft) + a * (window.outerWidth || 1024));
-        window.open("slave.html?order=" + a, ("geofsSlave" + a).replace("-", "l"), b) && (geofs.camera.openSlave = !0);
+        window.open("slave.php?order=" + a, ("geofsSlave" + a).replace("-", "l"), b) && (geofs.camera.openSlave = !0);
     },
     updateSlaveData: function () {
         geofs.camera.transform = M33.setFromEuler([-geofs.camera.htr[1] * DEGREES_TO_RAD, -geofs.camera.htr[2] * DEGREES_TO_RAD, geofs.camera.htr[0] * DEGREES_TO_RAD]);
@@ -17269,27 +17989,35 @@ instruments.gaugeOverlayPosition = [0, 0, 0];
 instruments.gaugeOverlayOrigin = [20, 200, 0.8];
 instruments.definitions = {
     airspeed: {
+        container: ".geofs-instruments-container",
         stackX: !0,
         overlay: {
-            url: "images/instruments/airspeed.png",
-            size: { x: 200, y: 200 },
-            anchor: { x: 100, y: 100 },
-            position: { x: 0, y: 110 },
-            rescale: !0,
-            rescalePosition: !0,
-            overlays: [{ animations: [{ type: "rotate", value: "kias", ratio: -1.5, min: 0 }], url: "images/instruments/airspeed-hand.png", anchor: { x: 10, y: 34 }, size: { x: 20, y: 120 }, position: { x: 0, y: 0 } }],
-        },
-    },
-    airspeedArcs: {
-        stackX: !0,
-        overlay: {
-            url: "images/instruments/airspeed-raw.png",
+            url: "images/instruments/background.png",
+            class: "geofs-instrument-background",
             size: { x: 200, y: 200 },
             anchor: { x: 100, y: 100 },
             position: { x: 0, y: 110 },
             rescale: !0,
             rescalePosition: !0,
             overlays: [
+                { url: "images/instruments/airspeed.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 } },
+                { animations: [{ type: "rotate", value: "kias", ratio: -1.5, min: 0 }], url: "images/instruments/airspeed-hand.png", anchor: { x: 10, y: 34 }, size: { x: 20, y: 120 }, position: { x: 0, y: 0 } },
+            ],
+        },
+    },
+    airspeedArcs: {
+        container: ".geofs-instruments-container",
+        stackX: !0,
+        overlay: {
+            url: "images/instruments/background.png",
+            class: "geofs-instrument-background",
+            size: { x: 200, y: 200 },
+            anchor: { x: 100, y: 100 },
+            position: { x: 0, y: 110 },
+            rescale: !0,
+            rescalePosition: !0,
+            overlays: [
+                { url: "images/instruments/airspeed-raw.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 } },
                 { animations: [{ type: "rotate", value: "kias", ratio: -1.5, min: 0 }], url: "images/instruments/airspeed-hand.png", anchor: { x: 10, y: 34 }, size: { x: 20, y: 120 }, position: { x: 0, y: 0 } },
                 {
                     url: "/images/instruments/airspeed-yellow-arc.png",
@@ -17311,6 +18039,16 @@ instruments.definitions = {
                     size: { x: 200, y: 200 },
                     position: { x: 0, y: 0 },
                     animations: [{ type: "rotate", function: "{return geofs.aircraft.instance.definition.Vspeeds.VS}", ratio: -1.5 }],
+                },
+                {
+                    url: "/images/instruments/airspeed-green-arc.png",
+                    anchor: { x: 100, y: 100 },
+                    size: { x: 200, y: 200 },
+                    position: { x: 0, y: 0 },
+                    animations: [
+                        { type: "rotate", function: "{return geofs.aircraft.instance.definition.Vspeeds.VS + 40}", ratio: -1.5 },
+                        { type: "show", function: "{return geofs.aircraft.instance.definition.Vspeeds.VNO - geofs.aircraft.instance.definition.Vspeeds.VS > 80}" },
+                    ],
                 },
                 {
                     url: "/images/instruments/airspeed-green-arc.png",
@@ -17343,42 +18081,53 @@ instruments.definitions = {
         },
     },
     airspeedJet: {
+        container: ".geofs-instruments-container",
         stackX: !0,
         overlay: {
-            url: "images/instruments/airspeed-high.png",
-            size: { x: 200, y: 200 },
-            anchor: { x: 100, y: 100 },
-            position: { x: 0, y: 110 },
-            rescale: !0,
-            rescalePosition: !0,
-            overlays: [{ animations: [{ type: "rotate", value: "kias", ratio: -0.6, min: 0 }], url: "images/instruments/airspeed-hand.png", anchor: { x: 10, y: 34 }, size: { x: 20, y: 120 }, position: { x: 0, y: 0 } }],
-        },
-    },
-    airspeedSupersonic: {
-        stackX: !0,
-        overlay: {
-            url: "images/instruments/airspeed-supersonic.png",
+            url: "images/instruments/background.png",
+            class: "geofs-instrument-background",
             size: { x: 200, y: 200 },
             anchor: { x: 100, y: 100 },
             position: { x: 0, y: 110 },
             rescale: !0,
             rescalePosition: !0,
             overlays: [
+                { url: "images/instruments/airspeed-high.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 } },
+                { animations: [{ type: "rotate", value: "kias", ratio: -0.6, min: 0 }], url: "images/instruments/airspeed-hand.png", anchor: { x: 10, y: 34 }, size: { x: 20, y: 120 }, position: { x: 0, y: 0 } },
+            ],
+        },
+    },
+    airspeedSupersonic: {
+        container: ".geofs-instruments-container",
+        stackX: !0,
+        overlay: {
+            url: "images/instruments/background.png",
+            class: "geofs-instrument-background",
+            size: { x: 200, y: 200 },
+            anchor: { x: 100, y: 100 },
+            position: { x: 0, y: 110 },
+            rescale: !0,
+            rescalePosition: !0,
+            overlays: [
+                { url: "images/instruments/airspeed-supersonic.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 } },
                 { animations: [{ type: "rotate", value: "kias", ratio: -0.3, min: 0 }], url: "images/instruments/airspeed-hand.png", anchor: { x: 10, y: 34 }, size: { x: 20, y: 120 }, position: { x: 0, y: 0 } },
                 { animations: [{ type: "rotate", value: "mach", ratio: -72, min: 0 }], url: "images/instruments/mach-hand.png", anchor: { x: 5, y: 5 }, size: { x: 11, y: 31 }, position: { x: -70, y: -70 } },
             ],
         },
     },
     altitude_legacy: {
+        container: ".geofs-instruments-container",
         stackX: !0,
         overlay: {
-            url: "images/instruments/altitude.png",
+            url: "images/instruments/background.png",
+            class: "geofs-instrument-background",
             size: { x: 200, y: 200 },
             anchor: { x: 100, y: 100 },
             position: { x: 0, y: 110 },
             rescale: !0,
             rescalePosition: !0,
             overlays: [
+                { url: "images/instruments/altitude.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 } },
                 { animations: [{ type: "rotate", value: "altitude", ratio: -0.0036 }], url: "images/instruments/tenthousandhand.png", anchor: { x: 8, y: 0 }, size: { x: 16, y: 91 }, position: { x: 0, y: 0 } },
                 { animations: [{ type: "rotate", value: "altitude", ratio: -0.036 }], url: "images/instruments/small-hand.png", anchor: { x: 10, y: 28 }, size: { x: 20, y: 87 }, position: { x: 0, y: 0 } },
                 { animations: [{ type: "rotate", value: "altitude", ratio: -0.36 }], url: "images/instruments/airspeed-hand.png", anchor: { x: 10, y: 34 }, size: { x: 20, y: 120 }, position: { x: 0, y: 0 } },
@@ -17386,18 +18135,22 @@ instruments.definitions = {
         },
     },
     altitude: {
+        container: ".geofs-instruments-container",
         stackX: !0,
         overlay: {
-            url: "images/instruments/altitude2/background.png",
+            url: "images/instruments/background.png",
+            class: "geofs-instrument-background",
             size: { x: 200, y: 200 },
             anchor: { x: 100, y: 100 },
             position: { x: 0, y: 110 },
             rescale: !0,
             rescalePosition: !0,
             overlays: [
+                { url: "images/instruments/altitude2/altitude.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 } },
                 {
                     animations: [{ type: "rotate", value: "altitude", ratio: -0.011, preoffset: -1e4, min: 1e4, max: 15e3 }],
                     url: "images/instruments/altitude2/stripe_mask.png",
+                    class: "geofs-instrument-background",
                     anchor: { x: 58, y: 54 },
                     size: { x: 116, y: 111 },
                     position: { x: 0, y: 0 },
@@ -17405,22 +18158,24 @@ instruments.definitions = {
                 { animations: [{ type: "rotate", value: "altitude", ratio: -0.0036 }], url: "images/instruments/tenthousandhand.png", anchor: { x: 8, y: 0 }, size: { x: 16, y: 91 }, position: { x: 0, y: 0 } },
                 { animations: [{ type: "rotate", value: "altitude", ratio: -0.036 }], url: "images/instruments/small-hand.png", anchor: { x: 10, y: 28 }, size: { x: 20, y: 87 }, position: { x: 0, y: 0 } },
                 { animations: [{ type: "rotate", value: "altitude", ratio: -0.36 }], url: "images/instruments/airspeed-hand.png", anchor: { x: 10, y: 34 }, size: { x: 20, y: 120 }, position: { x: 0, y: 0 } },
-                { url: "images/instruments/altitude2/shine.png", size: { x: 200, y: 200 }, anchor: { x: 100, y: 100 }, position: { x: 0, y: 0 } },
             ],
         },
     },
     vario: {
+        container: ".geofs-instruments-container",
         stackX: !0,
         overlay: {
-            url: "images/instruments/vario.png",
+            url: "images/instruments/background.png",
+            class: "geofs-instrument-background",
             size: { x: 200, y: 200 },
             anchor: { x: 100, y: 100 },
             position: { x: 0, y: 110 },
             rescale: !0,
             rescalePosition: !0,
             overlays: [
+                { url: "images/instruments/vario.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 } },
                 {
-                    animations: [{ type: "rotate", value: "climbrate", ratio: -0.09, max: 1900, min: -1900, offset: 90 }],
+                    animations: [{ type: "rotate", value: "verticalSpeed", ratio: -0.09, max: 1900, min: -1900, offset: 90 }],
                     url: "images/instruments/airspeed-hand.png",
                     anchor: { x: 10, y: 34 },
                     size: { x: 20, y: 120 },
@@ -17430,17 +18185,20 @@ instruments.definitions = {
         },
     },
     varioJet: {
+        container: ".geofs-instruments-container",
         stackX: !0,
         overlay: {
-            url: "images/instruments/vario-high.png",
+            url: "images/instruments/background.png",
+            class: "geofs-instrument-background",
             size: { x: 200, y: 200 },
             anchor: { x: 100, y: 100 },
             position: { x: 0, y: 110 },
             rescale: !0,
             rescalePosition: !0,
             overlays: [
+                { url: "images/instruments/vario-high.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 } },
                 {
-                    animations: [{ type: "rotate", value: "climbrate", ratio: -0.025, max: 6e3, min: -6e3, offset: 90 }],
+                    animations: [{ type: "rotate", value: "verticalSpeed", ratio: -0.025, max: 6e3, min: -6e3, offset: 90 }],
                     url: "images/instruments/airspeed-hand.png",
                     anchor: { x: 10, y: 34 },
                     size: { x: 20, y: 120 },
@@ -17450,24 +18208,11 @@ instruments.definitions = {
         },
     },
     compass: {
+        container: ".geofs-instruments-container",
         stackX: !0,
         overlay: {
-            url: "images/instruments/compass.png",
-            size: { x: 200, y: 200 },
-            anchor: { x: 100, y: 100 },
-            position: { x: 0, y: 110 },
-            rescale: !0,
-            rescalePosition: !0,
-            overlays: [
-                { animations: [{ type: "rotate", value: "heading", ratio: 1 }], url: "images/instruments/compass-grad.png", anchor: { x: 90, y: 90 }, size: { x: 181, y: 181 }, position: { x: 0, y: 0 } },
-                { url: "images/instruments/compass-hand.png", anchor: { x: 25, y: 26 }, size: { x: 50, y: 109 }, position: { x: 0, y: 0 } },
-            ],
-        },
-    },
-    attitude: {
-        stackX: !0,
-        overlay: {
-            url: "images/instruments/attitude.png",
+            url: "images/instruments/background.png",
+            class: "geofs-instrument-background",
             size: { x: 200, y: 200 },
             anchor: { x: 100, y: 100 },
             position: { x: 0, y: 110 },
@@ -17475,25 +18220,92 @@ instruments.definitions = {
             rescalePosition: !0,
             overlays: [
                 {
+                    animations: [{ type: "rotate", value: "heading", ratio: 1 }],
+                    url: "images/instruments/compass-grad.png",
+                    anchor: { x: 90, y: 90 },
+                    size: { x: 181, y: 181 },
+                    position: { x: 0, y: 0 },
+                    overlays: [{ animations: [{ type: "rotate", value: "navHDG", ratio: -1 }], url: "images/instruments/hdg-bug.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 }, position: { x: 0, y: 0 } }],
+                },
+                { url: "images/instruments/compass-hand.png", anchor: { x: 25, y: 26 }, size: { x: 50, y: 109 }, position: { x: 0, y: 0 } },
+                {
+                    url: "images/instruments/hdg-knob.png",
+                    class: "geofs-overlay-moreTransparence",
+                    drawOrder: 100,
+                    anchor: { x: 22, y: 22 },
+                    size: { x: 44, y: 44 },
+                    position: { x: 80, y: -80 },
+                    iconFrame: { x: 44, y: 44 },
+                    manipulator: function (a, b) {
+                        instruments.manipulators.setHDG(a, b);
+                    },
+                    animations: [{ type: "rotate", value: "navHDG", ratio: -2 }],
+                },
+            ],
+        },
+    },
+    attitude: {
+        container: ".geofs-instruments-container",
+        stackX: !0,
+        overlay: {
+            url: "images/instruments/background.png",
+            class: "geofs-instrument-background",
+            size: { x: 200, y: 200 },
+            anchor: { x: 100, y: 100 },
+            position: { x: 0, y: 110 },
+            rescale: !0,
+            rescalePosition: !0,
+            overlays: [
+                { url: "images/instruments/attitude.png", class: "geofs-instrument-background", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 } },
+                {
                     animations: [
                         { type: "rotate", value: "aroll", name: "attitude", ratio: -1, min: -50, max: 50 },
-                        { type: "translateY", value: "atilt", ratio: -2, offset: 75, min: -25, max: 25 },
+                        { type: "translateY", value: "atilt", ratio: -2, offset: 50, min: -25, max: 25 },
                     ],
                     url: "images/instruments/attitude-hand.png",
-                    anchor: { x: 100, y: 75 },
+                    maskUrl: "images/instruments/attitude-mask.png",
+                    class: "geofs-overlay-moreTransparence",
+                    anchor: { x: 100, y: 100 },
                     size: { x: 200, y: 300 },
                     position: { x: 0, y: 0 },
-                    iconFrame: { x: 200, y: 150 },
+                    iconFrame: { x: 200, y: 200 },
                 },
-                { animations: [{ type: "rotate", value: "aroll", ratio: -1, min: -60, max: 60 }], url: "images/instruments/attitude-grad.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 }, position: { x: 0, y: 0 } },
-                { url: "images/instruments/attitude-pointer.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 }, position: { x: 0, y: 0 } },
+                {
+                    animations: [{ type: "rotate", value: "aroll", ratio: -1, min: -60, max: 60 }],
+                    url: "images/instruments/attitude-grad.png",
+                    class: "geofs-overlay-moreTransparence",
+                    anchor: { x: 100, y: 100 },
+                    size: { x: 200, y: 200 },
+                    position: { x: 0, y: 0 },
+                },
+                { url: "images/instruments/attitude-pointer.png", class: "geofs-overlay-keepOpaque", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 }, position: { x: 0, y: 0 } },
+            ],
+        },
+    },
+    turncoordinator: {
+        container: ".geofs-instruments-container",
+        stackX: !0,
+        overlay: {
+            url: "images/instruments/turncoordinator/background.png",
+            class: "geofs-instrument-background",
+            size: { x: 200, y: 200 },
+            anchor: { x: 100, y: 100 },
+            position: { x: 0, y: 110 },
+            rescale: !0,
+            rescalePosition: !0,
+            overlays: [
+                { animations: [{ type: "rotate", value: "slipball", ratio: -4, fmin: -10, fmax: 10 }], url: "images/instruments/turncoordinator/ball.png", anchor: { x: 100, y: 300 }, size: { x: 200, y: 200 }, position: { x: 0, y: 200 } },
+                { animations: [{ type: "rotate", value: "turnrate", ratio: -0.11, fmin: -40, fmax: 40 }], url: "images/instruments/turncoordinator/hand.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 }, position: { x: 0, y: 0 } },
+                { url: "images/instruments/turncoordinator/markings.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 } },
             ],
         },
     },
     attitudeJet: {
+        container: ".geofs-instruments-container",
         stackX: !0,
         overlay: {
-            url: "images/instruments/attitude-jet.png",
+            url: "images/instruments/background.png",
+            class: "geofs-instrument-background",
             size: { x: 200, y: 200 },
             anchor: { x: 100, y: 100 },
             position: { x: 0, y: 110 },
@@ -17503,49 +18315,271 @@ instruments.definitions = {
                 {
                     animations: [
                         { type: "rotate", value: "aroll", ratio: -1, min: -180, max: 180 },
-                        { type: "translateY", value: "atilt", ratio: -2, offset: 330, min: -90, max: 90 },
+                        { type: "translateY", value: "atilt", ratio: -2, offset: 300, min: -90, max: 90 },
                     ],
                     url: "images/instruments/attitude-jet-hand.png",
-                    anchor: { x: 100, y: 70 },
+                    maskUrl: "images/instruments/attitude-jet-mask.png",
+                    class: "geofs-overlay-moreTransparence",
+                    anchor: { x: 100, y: 100 },
                     size: { x: 200, y: 800 },
                     position: { x: 0, y: 0 },
-                    iconFrame: { x: 200, y: 140 },
+                    iconFrame: { x: 200, y: 200 },
                 },
+                { url: "images/instruments/attitude-jet.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 } },
                 { animations: [{ type: "rotate", value: "aroll", ratio: -1, min: -60, max: 60 }], url: "images/instruments/attitude-jet-pointer.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 }, position: { x: 0, y: 0 } },
-                { url: "images/instruments/attitude-jet.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 }, position: { x: 0, y: 0 } },
             ],
         },
     },
     rpmJet: {
+        container: ".geofs-instruments-container",
         stackX: !0,
         overlay: {
-            url: "images/instruments/jet-rpm.png",
+            url: "images/instruments/background.png",
+            class: "geofs-instrument-background",
             size: { x: 200, y: 200 },
             anchor: { x: 100, y: 100 },
             position: { x: 0, y: 110 },
             rescale: !0,
             rescalePosition: !0,
             overlays: [
+                { url: "images/instruments/jet-rpm.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 } },
                 { animations: [{ type: "rotate", value: "rpm", ratio: -0.036, offset: 0 }], url: "images/instruments/jet-rpm-hand.png", anchor: { x: 6, y: 15 }, size: { x: 14, y: 34 }, position: { x: -38, y: 45 } },
                 { animations: [{ type: "rotate", value: "rpm", ratio: -0.027, offset: 0 }], url: "images/instruments/airspeed-hand.png", anchor: { x: 10, y: 34 }, size: { x: 20, y: 120 }, position: { x: 0, y: 0 } },
             ],
         },
     },
     rpm: {
+        container: ".geofs-instruments-container",
+        stackX: !0,
+        position: { x: -100, y: 100 },
+        overlay: {
+            url: "images/instruments/background.png",
+            class: "geofs-instrument-background",
+            size: { x: 100, y: 100 },
+            anchor: { x: 100, y: 100 },
+            position: { x: -50, y: 110 },
+            rescale: !0,
+            rescalePosition: !0,
+            overlays: [
+                { url: "images/instruments/rpm.png", anchor: { x: 100, y: 100 }, size: { x: 100, y: 100 } },
+                { animations: [{ type: "rotate", value: "rpm", ratio: -0.03, offset: 120 }], url: "images/instruments/rpm-hand.png", anchor: { x: 14, y: 14 }, size: { x: 28, y: 55 }, position: { x: 0, y: 0 } },
+            ],
+        },
+    },
+    adf: {
+        container: ".geofs-instruments-container",
         stackX: !0,
         overlay: {
-            url: "images/instruments/rpm.png",
-            size: { x: 100, y: 100 },
-            anchor: { x: 50, y: 50 },
+            url: "images/instruments/background.png",
+            class: "geofs-instrument-background",
+            size: { x: 200, y: 200 },
+            anchor: { x: 100, y: 100 },
             position: { x: 0, y: 110 },
             rescale: !0,
             rescalePosition: !0,
-            overlays: [{ animations: [{ type: "rotate", value: "rpm", ratio: -0.03, offset: 120 }], url: "images/instruments/rpm-hand.png", anchor: { x: 14, y: 14 }, size: { x: 28, y: 55 }, position: { x: 0, y: 0 } }],
+            overlays: [
+                { url: "images/instruments/cdi/background.png", class: "geofs-instrument-background", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 } },
+                {
+                    url: "images/instruments/adf/needle.png",
+                    anchor: { x: 100, y: 100 },
+                    size: { x: 200, y: 200 },
+                    position: { x: 0, y: 0 },
+                    iconFrame: { x: 200, y: 200 },
+                    offset: { x: 0, y: 0 },
+                    animations: [{ type: "rotate", value: "ADFBearingToStation", ratio: 1 }],
+                },
+                { url: "images/instruments/cdi/compass.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 }, position: { x: 0, y: 0 }, animations: [{ type: "rotate", value: "ADFCourse", ratio: 1 }] },
+                { url: "images/instruments/adf/cover.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 }, position: { x: 0, y: 0 } },
+                {
+                    url: "images/instruments/adf/VARKnob.png",
+                    class: "geofs-overlay-moreTransparence",
+                    drawOrder: 100,
+                    anchor: { x: 22, y: 22 },
+                    size: { x: 44, y: 44 },
+                    position: { x: -80, y: -80 },
+                    iconFrame: { x: 44, y: 44 },
+                    manipulator: function (a, b) {
+                        instruments.manipulators.setADFCourse(a, b);
+                    },
+                    animations: [{ type: "rotate", value: "ADFCourse", ratio: -2 }],
+                },
+            ],
+        },
+    },
+    cdi: {
+        container: ".geofs-instruments-container",
+        stackX: !0,
+        overlay: {
+            url: "images/instruments/background.png",
+            class: "geofs-instrument-background",
+            size: { x: 200, y: 200 },
+            anchor: { x: 100, y: 100 },
+            position: { x: 0, y: 110 },
+            rescale: !0,
+            rescalePosition: !0,
+            overlays: [
+                { url: "images/instruments/cdi/background.png", class: "geofs-instrument-background", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 } },
+                { url: "images/instruments/cdi/cross.png", class: "geofs-instrument-background", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 } },
+                { url: "images/instruments/cdi/grads.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 } },
+                { url: "images/instruments/cdi/to.png", size: { x: 30, y: 13 }, position: { x: 17, y: 27 }, animations: [{ type: "show", value: "NAV1Direction", eq: "to" }] },
+                { url: "images/instruments/cdi/from.png", size: { x: 44, y: 13 }, position: { x: 17, y: 12 }, animations: [{ type: "show", value: "NAV1Direction", eq: "from" }] },
+                {
+                    url: "images/instruments/cdi/coursedeviationneedle.png",
+                    anchor: { x: 1, y: 100 },
+                    size: { x: 6, y: 129 },
+                    position: { x: -100, y: -25 },
+                    iconFrame: { x: 200, y: 200 },
+                    offset: { x: 100, y: 0 },
+                    animations: [{ type: "translateX", value: "NAV1CourseDeviation", ratio: 5, fmin: -50, fmax: 50 }],
+                },
+                {
+                    url: "images/instruments/cdi/glideslopeneedle.png",
+                    anchor: { x: 100, y: 1 },
+                    size: { x: 125, y: 6 },
+                    position: { x: 25, y: -100 },
+                    iconFrame: { x: 200, y: 200 },
+                    offset: { x: 0, y: -100 },
+                    animations: [{ type: "translateY", value: "NAV1GlideAngleDeviation", ratio: -60, fmin: -60, fmax: 60 }],
+                },
+                { url: "images/instruments/cdi/compass.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 }, position: { x: 0, y: 0 }, animations: [{ type: "rotate", value: "NAV1OBS", ratio: 1 }] },
+                { url: "images/instruments/cdi/cover.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 }, position: { x: 0, y: 0 } },
+                {
+                    url: "images/instruments/cdi/obs.png",
+                    class: "geofs-overlay-moreTransparence",
+                    drawOrder: 100,
+                    anchor: { x: 22, y: 22 },
+                    size: { x: 44, y: 44 },
+                    position: { x: -80, y: -80 },
+                    iconFrame: { x: 44, y: 44 },
+                    manipulator: function (a, b) {
+                        instruments.manipulators.setNAV1OBS(a, b);
+                    },
+                    animations: [{ type: "rotate", value: "NAV1OBS", ratio: -2 }],
+                },
+            ],
+        },
+    },
+    hsi: {
+        container: ".geofs-instruments-container",
+        stackX: !0,
+        overlay: {
+            url: "images/instruments/hsi/background.png",
+            class: "geofs-instrument-background",
+            size: { x: 200, y: 200 },
+            anchor: { x: 100, y: 100 },
+            position: { x: 0, y: 110 },
+            rescale: !0,
+            rescalePosition: !0,
+            overlays: [
+                { url: "images/instruments/hsi/glideslopegrades.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 }, position: { x: 0, y: 0 }, iconFrame: { x: 200, y: 200 } },
+                {
+                    url: "images/instruments/hsi/glideslopeindicators.png",
+                    anchor: { x: 100, y: 100 },
+                    size: { x: 182, y: 13 },
+                    position: { x: 0, y: 0 },
+                    iconFrame: { x: 200, y: 200 },
+                    offset: { x: 9, y: -94 },
+                    animations: [{ type: "translateY", value: "NAV1GlideAngleDeviation", ratio: -60, fmin: -40, fmax: 40 }],
+                },
+                {
+                    url: "images/instruments/hsi/compass.png",
+                    anchor: { x: 100, y: 100 },
+                    size: { x: 200, y: 200 },
+                    position: { x: 0, y: 0 },
+                    animations: [{ type: "rotate", value: "heading", ratio: 1 }],
+                    overlays: [
+                        { url: "images/instruments/hsi/bar.png", class: "geofs-instrument-background", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 }, animations: [{ type: "rotate", value: "NAV1OBS", ratio: 1 }] },
+                        { url: "images/instruments/hsi/grads.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 }, animations: [{ type: "rotate", value: "NAV1OBS", ratio: 1 }] },
+                        {
+                            url: "images/instruments/hsi/to.png",
+                            anchor: { x: 100, y: 100 },
+                            size: { x: 15, y: 14 },
+                            position: { x: 0, y: 0 },
+                            iconFrame: { x: 200, y: 200 },
+                            offset: { x: 110, y: 69 },
+                            animations: [
+                                { type: "show", value: "NAV1Direction", eq: "to" },
+                                { type: "rotate", value: "NAV1OBS", ratio: 1 },
+                            ],
+                        },
+                        {
+                            url: "images/instruments/hsi/from.png",
+                            anchor: { x: 100, y: 100 },
+                            size: { x: 15, y: 14 },
+                            position: { x: 0, y: 0 },
+                            iconFrame: { x: 200, y: 200 },
+                            offset: { x: 110, y: 115 },
+                            animations: [
+                                { type: "show", value: "NAV1Direction", eq: "from" },
+                                { type: "rotate", value: "NAV1OBS", ratio: 1 },
+                            ],
+                        },
+                        {
+                            url: "images/instruments/hsi/white-needle.png",
+                            anchor: { x: 100, y: 100 },
+                            size: { x: 200, y: 200 },
+                            position: { x: 0, y: 0 },
+                            iconFrame: { x: 200, y: 200 },
+                            offset: { x: 0, y: 0 },
+                            animations: [{ type: "rotate", value: "NAV1OBS", ratio: 1 }],
+                        },
+                        {
+                            url: "images/instruments/hsi/yellowbar.png",
+                            anchor: { x: 100, y: 100 },
+                            size: { x: 4, y: 80 },
+                            position: { x: 0, y: 0 },
+                            iconFrame: { x: 200, y: 200 },
+                            offset: { x: 98, y: 60 },
+                            animations: [
+                                { type: "translateX", value: "NAV1CourseDeviation", ratio: 5, fmin: -50, fmax: 50 },
+                                { type: "rotate", value: "NAV1OBS", ratio: 1 },
+                            ],
+                        },
+                        {
+                            url: "images/instruments/hsi/bug.png",
+                            anchor: { x: 100, y: 100 },
+                            size: { x: 20, y: 16 },
+                            position: { x: 0, y: 0 },
+                            iconFrame: { x: 200, y: 200 },
+                            offset: { x: 90, y: 21 },
+                            animations: [{ type: "rotate", value: "navHDG", ratio: -1 }],
+                        },
+                    ],
+                },
+                {
+                    url: "images/instruments/hsi/courseknob.png",
+                    class: "geofs-overlay-moreTransparence",
+                    drawOrder: 100,
+                    anchor: { x: 22, y: 22 },
+                    size: { x: 44, y: 44 },
+                    position: { x: -80, y: -80 },
+                    iconFrame: { x: 44, y: 44 },
+                    manipulator: function (a, b) {
+                        instruments.manipulators.setNAV1OBS(a, b);
+                    },
+                    animations: [{ type: "rotate", value: "NAV1OBS", ratio: -2 }],
+                },
+                {
+                    url: "images/instruments/hsi/headingknob.png",
+                    class: "geofs-overlay-moreTransparence",
+                    drawOrder: 100,
+                    anchor: { x: 22, y: 22 },
+                    size: { x: 44, y: 44 },
+                    position: { x: 80, y: -80 },
+                    iconFrame: { x: 44, y: 44 },
+                    manipulator: function (a, b) {
+                        instruments.manipulators.setHDG(a, b);
+                    },
+                    animations: [{ type: "rotate", value: "navHDG", ratio: -2 }],
+                },
+                { url: "images/instruments/hsi/plane.png", anchor: { x: 21, y: 23 }, size: { x: 42, y: 46 }, position: { x: 0, y: -7 } },
+            ],
         },
     },
     jetfuel: {
+        container: ".geofs-instruments-container",
         overlay: {
-            class: "geofs-authenticated",
+            class: "geofs-authenticated geofs-instrument-background",
             url: "images/instruments/jet-fuel-gauge.png",
             opacity: 1,
             alignment: { x: "right", y: "bottom" },
@@ -17577,6 +18611,7 @@ instruments.definitions = {
         },
     },
     wind: {
+        container: ".geofs-indicators-container",
         overlay: {
             url: "images/instruments/wind-body.png",
             opacity: 0.5,
@@ -17593,38 +18628,27 @@ instruments.definitions = {
             ],
         },
     },
-    spoilers: {
+    flaps: {
+        container: ".geofs-indicators-container",
         overlay: {
-            url: "images/instruments/spoilers.png",
-            visibility: !0,
-            anchor: { x: 85, y: 0 },
+            url: "images/instruments/flaps.png",
+            anchor: { x: 74, y: 0 },
             alignment: { x: "right", y: "bottom" },
-            position: { x: 20, y: 195 },
-            size: { x: 85, y: 21 },
+            position: { x: 20, y: 200 },
+            size: { x: 74, y: 23 },
+            class: "flaps-overlay",
             rescale: !0,
             rescalePosition: !0,
-            animations: [{ value: "airbrakesPosition", type: "show", gt: 0.1 }],
-        },
-    },
-    brakes: {
-        overlay: {
-            url: "images/instruments/brakes.png",
-            visibility: !0,
-            anchor: { x: 73, y: 0 },
-            alignment: { x: "right", y: "bottom" },
-            position: { x: 20, y: 170 },
-            size: { x: 73, y: 19 },
-            rescale: !0,
-            rescalePosition: !0,
-            animations: [{ value: "brakes", type: "show", gt: 0.5 }],
+            overlays: [{ animations: [{ type: "rotate", value: "flapsValue", ratio: -90 }], url: "images/instruments/flaps-hand.png", anchor: { x: 0, y: 5 }, size: { x: 17, y: 6 }, position: { x: -23, y: 25 } }],
         },
     },
     gear: {
+        container: ".geofs-indicators-container",
         overlay: {
             url: "images/instruments/gear.png",
             anchor: { x: 60, y: 0 },
             alignment: { x: "right", y: "bottom" },
-            position: { x: 30, y: 230 },
+            position: { x: 30, y: 170 },
             size: { x: 46, y: 16 },
             class: "gear-overlay",
             rescale: !0,
@@ -17636,17 +18660,32 @@ instruments.definitions = {
             ],
         },
     },
-    flaps: {
+    spoilers: {
+        container: ".geofs-indicators-container",
         overlay: {
-            url: "images/instruments/flaps.png",
-            anchor: { x: 74, y: 0 },
+            url: "images/instruments/spoilers.png",
+            visibility: !0,
+            anchor: { x: 85, y: 0 },
             alignment: { x: "right", y: "bottom" },
-            position: { x: 20, y: 260 },
-            size: { x: 74, y: 23 },
-            class: "flaps-overlay",
+            position: { x: 20, y: 130 },
+            size: { x: 85, y: 21 },
             rescale: !0,
             rescalePosition: !0,
-            overlays: [{ animations: [{ type: "rotate", value: "flapsValue", ratio: -90 }], url: "images/instruments/flaps-hand.png", anchor: { x: 0, y: 5 }, size: { x: 17, y: 6 }, position: { x: -23, y: 25 } }],
+            animations: [{ value: "airbrakesPosition", type: "show", gt: 0.1 }],
+        },
+    },
+    brakes: {
+        container: ".geofs-indicators-container",
+        overlay: {
+            url: "images/instruments/brakes.png",
+            visibility: !0,
+            anchor: { x: 73, y: 0 },
+            alignment: { x: "right", y: "bottom" },
+            position: { x: 20, y: 100 },
+            size: { x: 73, y: 19 },
+            rescale: !0,
+            rescalePosition: !0,
+            animations: [{ value: "brakes", type: "show", gt: 0.5 }],
         },
     },
 };
@@ -17866,7 +18905,42 @@ instruments.includesDefinitions = {
         { name: "handoilpressure", node: "handoilpressure", animations: [{ type: "rotate", axis: "Y", value: "rpm", ratio: -0.3, offset: 0, fmin: -120 }] },
         { name: "handoiltemp", node: "handoiltemp", animations: [{ type: "rotate", axis: "Y", value: "rpm", ratio: -0.1, offset: 0, fmin: -120 }] },
     ],
+    "3d-cdi": [
+        { model: "models/gauges/cdi/cdi.gltf" },
+        {
+            name: "obsKnob",
+            node: "obsKnob",
+            manipulator: function (a, b) {
+                instruments.manipulators.setNAV1OBS(a, b);
+            },
+            animations: [{ type: "rotate", axis: "Y", value: "NAV1OBS", ratio: -1 }],
+        },
+        { name: "compass", node: "compass", animations: [{ type: "rotate", axis: "Y", value: "NAV1OBS", ratio: 1 }] },
+        { name: "courseDeviation", node: "courseDeviation", animations: [{ type: "translate", axis: "X", value: "NAV1CourseDeviation", ratio: 0.0015, fmin: -0.02, fmax: 0.02 }] },
+        { name: "glideSlope", node: "glideSlope", animations: [{ type: "translate", axis: "Z", value: "NAV1GlideAngleDeviation", ratio: 0.015, fmin: -0.02, fmax: 0.02 }] },
+        { name: "toMask", node: "toMask", animations: [{ type: "show", value: "NAV1Direction", eq: "from" }] },
+        { name: "fromMask", node: "fromMask", animations: [{ type: "show", value: "NAV1Direction", eq: "to" }] },
+    ],
+    "3d-hsi": [
+        { model: "models/gauges/hsi/hsi.gltf" },
+        { name: "course", node: "course", animations: [{ type: "rotate", axis: "Y", value: "NAV1OBS", ratio: -1 }] },
+        { name: "compass", node: "compass", animations: [{ type: "rotate", axis: "Y", value: "heading", ratio: 1 }] },
+        { name: "bug", node: "bug", animations: [{ type: "rotate", axis: "Y", value: "navHDG", ratio: -1 }] },
+        { name: "deviation", node: "deviation", animations: [{ type: "translate", axis: "X", value: "NAV1CourseDeviation", ratio: 5e-4, fmin: -0.005, fmax: 0.005 }] },
+        { name: "direction", node: "direction", animations: [{ type: "rotate", axis: "X", value: "NAV1Direction", eq: "from", ratio: 180 }] },
+    ],
     "3d-PFD": [{}],
+};
+instruments.manipulators = {
+    setNAV1OBS: function (a, b) {
+        geofs.nav.setOBS("NAV1", null, b);
+    },
+    setHDG: function (a, b) {
+        geofs.nav.setHDG(null, b, !0);
+    },
+    setADFCourse: function (a, b) {
+        geofs.nav.setADFCourse(null, b);
+    },
 };
 instruments.init = function (a) {
     geofs.api.isMobile()
@@ -17875,15 +18949,17 @@ instruments.init = function (a) {
           (instruments.stackPosition = { x: 120, y: 100 }))
         : (instruments.stackPosition = { x: 110, y: 100 });
     geofs.includes = Object.assign(geofs.includes, instruments.includesDefinitions);
-    (a && "default" != a) || (a = { airspeed: "", altitude2: "", altitude: "", vario: "", compass: "", rpm: "", brakes: "" });
-    "jet" == a && (a = { airspeedJet: "", attitudeJet: "", altitude2: { center: !0 }, varioJet: "", compass: "", rpmJet: "", brakes: "" });
+    (a && "default" != a) || (a = { compass: "", airspeed: "", attitude: "", altitude2: "", vario: "", rpm: "", brakes: "" });
+    "jet" == a && (a = { compass: "", airspeedJet: "", attitudeJet: "", altitude2: "", varioJet: "", rpmJet: "", brakes: "" });
     for (var b in instruments.list) instruments.list[b].destroy();
     instruments.list = {};
     instruments.groups = {};
+    instruments.containers = {};
     for (b in a) {
         var c = $.extend(!0, {}, instruments.definitions[b], a[b]);
         c &&
-            (c.overlay
+            (c.container && (instruments.containers[c.container] = instruments.containers[c.container] || $(c.container)[0]),
+            c.overlay
                 ? ((instruments.list[b] = new Indicator(c)), (c = c.group || "all"), (instruments.groups[c] = instruments.groups[c] || {}), (instruments.groups[c][b] = instruments.list[b]))
                 : c.include && (geofs.aircraft.instance.addParts([c]), geofs.aircraft.instance.parts[c.name].animations.push({ value: "overlaysVisibility", type: "hide", eq: "hidden" })));
     }
@@ -17893,6 +18969,7 @@ instruments.init = function (a) {
             instruments.updateScreenPositions();
         }));
 };
+instruments.reset = function () {};
 instruments.toggle = function () {
     instruments.visible ? instruments.hide() : instruments.show();
 };
@@ -17913,6 +18990,9 @@ instruments.show = function (a) {
     (a && "3doverlays" != a) || (geofs.animation.values.overlaysVisibility = "visible");
     instruments.visible = !0;
 };
+instruments.setOpacity = function (a) {
+    for (var b in instruments.list) instruments.list[b].overlay.setOpacity(a);
+};
 instruments.rescale = function () {
     for (var a in instruments.list) instruments.list[a].scale();
     instruments.updateCockpitPositions();
@@ -17925,13 +19005,23 @@ instruments.updateCockpitPositions = function () {
     instruments.update(!0);
 };
 instruments.updateScreenPositions = function () {
-    for (var a in instruments.list) {
-        var b = instruments.list[a];
-        "cockpit" == geofs.camera.currentModeName && b.definition.cockpit ? b.updateCockpitPosition() : b.overlay && ((b.overlay.rotation = 0), b.overlay.scaleAndPlace());
+    var a = {};
+    for (c in instruments.list) {
+        var b = instruments.list[c];
+        "cockpit" == geofs.camera.currentModeName && b.definition.cockpit
+            ? b.updateCockpitPosition()
+            : b.overlay &&
+              ((b.overlay.rotation = 0),
+              b.overlay.scaleAndPlace(),
+              b.definition.container &&
+                  ((a[b.definition.container] = a[b.definition.container] || { x: 0, y: 0 }),
+                  (a[b.definition.container].x = Math.max(a[b.definition.container].x, b.overlay.position.x + b.overlay.size.x - b.overlay.anchor.x)),
+                  (a[b.definition.container].y = Math.max(a[b.definition.container].y, b.overlay.position.y + b.overlay.size.y - b.overlay.anchor.y))));
     }
+    for (c in instruments.containers) (instruments.containers[c].style.width = a[c].x + "px"), (instruments.containers[c].style.height = a[c].y + "px");
     a = clamp(geofs.viewportWidth / VIEWPORT_REFERENCE_WIDTH, 0.3, 1);
-    b = clamp(geofs.viewportHeight / VIEWPORT_REFERENCE_HEIGHT, 0.3, 1);
-    a = Math.min(a, b);
+    var c = clamp(geofs.viewportHeight / VIEWPORT_REFERENCE_HEIGHT, 0.3, 1);
+    a = Math.min(a, c);
     instruments.gaugeOverlayPosition[0] = instruments.gaugeOverlayOrigin[0] * a;
     instruments.gaugeOverlayPosition[1] = geofs.viewportHeight - instruments.gaugeOverlayOrigin[1] * a;
     instruments.gaugeOverlayPosition[2] = instruments.gaugeOverlayOrigin[2];
@@ -17950,7 +19040,7 @@ var Indicator = function (a) {
     a.stackY && ((a = b.position.y), (b.position.y = instruments.stackPosition.y + b.size.y / 2 + a), (instruments.stackPosition.y += b.size.y + instruments.defaultMargin + a));
     b.position.y = b.alignment && "top" == b.alignment.y ? b.position.y + instruments.margins[0] : b.position.y + instruments.margins[2];
     b.position.x = b.alignment && "right" == b.alignment.x ? b.position.x + instruments.margins[1] : b.position.x + instruments.margins[3];
-    this.overlay = new Overlay(b);
+    this.overlay = new Overlay(b, null, this.definition.container);
     this.setVisibility(this.visibility);
     return this;
 };
@@ -17987,7 +19077,7 @@ Indicator.prototype.updateCockpitPosition = function () {
             (this.overlay.scale = { x: a * geofs.fovScale, y: a * geofs.fovScale }),
             (this.overlay.position = { x: b, y: geofs.viewportHeight - c }),
             (this.overlay.rotation = 0.3 * fixAngle(geofs.camera.currentDefinition.orientations.current[0])),
-            this.overlay.scaleAndPlace(this.overlay.scale, this.overlay.position, !0));
+            this.overlay.scaleAndPlace(this.overlay.scale, this.overlay.position, null, !0));
     }
 };
 Indicator.prototype.update = function (a) {
@@ -17996,6 +19086,8 @@ Indicator.prototype.update = function (a) {
         for (a = 0; a < this.definition.animations.length; a++) {
             var b = this.definition.animations[a],
                 c = geofs.animation.filter(b);
+            if (b.lastValue == c) break;
+            b.lastValue = c;
             switch (b.type) {
                 case "show":
                     this.visibility && this.overlay.setVisibility(c);
@@ -18004,7 +19096,6 @@ Indicator.prototype.update = function (a) {
 };
 Indicator.prototype.destroy = function () {
     this.overlay && this.overlay.destroy();
-    for (var a = 0; a < this.overlay.children.length; a++) this.overlay.children[a].destroy();
 };
 geofs.GlassPanel = function (a) {
     this.canvas = new geofs.api.Canvas({ height: 100, width: 100 });
@@ -18612,18 +19703,18 @@ multiplayer.startMapUpdate = function () {
     var a = function (b) {
         multiplayer.setNbUsers(b.userCount);
         if (b && b.users) {
-            b.users.sort(function (n, z) {
-                n = n.cs.toLowerCase();
-                z = z.cs.toLowerCase();
-                return n > z ? 1 : n < z ? -1 : 0;
+            b.users.sort(function (v, t) {
+                v = v.cs.toLowerCase();
+                t = t.cs.toLowerCase();
+                return v > t ? 1 : v < t ? -1 : 0;
             });
             for (var c = $(".geofs-player-list"), d = c.is(":visible"), e = 0, f = "", g = 0, k = b.users.length; g < k; g++) {
                 var m = b.users[g],
-                    r = m.id;
-                if (multiplayer.myId != r) {
-                    var u = multiplayer.users[r] || new multiplayer.User(m);
+                    q = m.id;
+                if (multiplayer.myId != q) {
+                    var u = multiplayer.users[q] || new multiplayer.User(m);
                     u.update(m, !0);
-                    d && ("Foo" == u.callsign ? e++ : (f += '<li data-player="' + r + '">' + u.callsign + " (" + u.aircraftName + ")</li>"));
+                    d && ("Foo" == u.callsign ? e++ : (f += '<li data-player="' + q + '">' + u.callsign + " (" + u.aircraftName + ")</li>"));
                 }
             }
             d && (0 < e && (f += "<li>    ...and " + e + " Foos</li>"), c.html(f));
@@ -18725,7 +19816,7 @@ multiplayer.User = function (a) {
     this.id = b;
     this.acid = a.acid;
     this.callsign = geofs.userRecord.muteList && !geofs.userRecord.muteList[this.id] ? a.cs : "";
-    ui.mapInstance && ui.mapInstance.addPlayerMarker(b, a.ad ? "traffic" : null, this.callsign);
+    geofs.map && geofs.map.addPlayerMarker(b, a.ad ? "traffic" : null, this.callsign);
     this.aircraft = null;
     this.lod = 0;
     this.model = this.lastUpdate = null;
@@ -18768,7 +19859,7 @@ multiplayer.User.prototype = {
             else return;
         if (!(0 >= a.ti - this.lastUpdate.ti) || d)
             if (
-                (ui.mapInstance && ui.mapInstance.mapActive && ui.mapInstance.updatePlayerMarker(a.id, a.co, this.callsign, a.ad ? "traffic" : null, this.aircraftName, this.lastUpdate.st.as),
+                (geofs.map && geofs.map.mapActive && geofs.map.updatePlayerMarker(a.id, a.co, this.callsign, a.ad ? "traffic" : null, this.aircraftName, this.lastUpdate.st.as),
                 this.isPeer && ((multiplayer.visibleUsers[this.id] = this), multiplayer.flightSharing.peerUpdate(a)),
                 (this.updated = !0),
                 !b)
@@ -18869,7 +19960,7 @@ multiplayer.User.prototype = {
         clearTimeout(this.heartBeatTimeout);
         this.removeModels();
         this.contrailEmitter && (this.contrailEmitter.destroy(), (this.contrailEmitter = null));
-        ui.mapInstance && ui.mapInstance.deletePlayerMarker(this.id);
+        geofs.map && geofs.map.deletePlayerMarker(this.id);
         delete multiplayer.visibleUsers[this.id];
         delete multiplayer.users[this.id];
     },
@@ -19029,14 +20120,14 @@ geofs.debug.drawAtmosphere = function (a) {
                 var m = clamp(g[2], 0.5, 10);
                 k = Cesium.Color.fromHsl(clamp(0.7 - 0.5 * k[2], 0, 0.9), clamp(0.5 + 0.5 * g[2], 0, 1), 0.5);
                 g = V3.scale(g, 15);
-                var r = Cesium.Cartesian3.fromDegrees(f[1], f[0], f[2]);
+                var q = Cesium.Cartesian3.fromDegrees(f[1], f[0], f[2]);
                 f = V3.add(f, xyz2lla(g, f));
                 f = Cesium.Cartesian3.fromDegrees(f[1], f[0], f[2]);
                 g = new Cesium.PolylineGraphics();
                 g.material = new Cesium.ColorMaterialProperty(k);
                 g.width = new Cesium.ConstantProperty(m);
                 g.arcType = new Cesium.ConstantProperty(Cesium.ArcType.NONE);
-                g.positions = new Cesium.ConstantProperty([r, f]);
+                g.positions = new Cesium.ConstantProperty([q, f]);
                 m = new Cesium.Entity({ show: !0, polyline: g });
                 geofs.debug.dataSource.entities.add(m);
             }
