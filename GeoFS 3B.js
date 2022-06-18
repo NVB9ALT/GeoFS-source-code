@@ -1,11 +1,4 @@
-//weather stuff at line 16560
-//control setters at line 15736
-//condensation effects at line 12800
-//aircraft stuff at line 14741
-//aircraft loading function at line 14835
-//cockpit loading function at line 14908
-//geofs.runways at line 8750
-
+//GeoFS 3.3 beta (last update was reworked PFDs and HUDs)
 /* @preserve
  * Leaflet 1.8.0, a JS library for interactive maps. https://leafletjs.com
  * (c) 2010-2022 Vladimir Agafonkin, (c) 2010-2011 CloudMade
@@ -6872,8 +6865,10 @@ geofs["atmosphereCommon.glsl"] =
     "\n" +
     "#elif defined QUALITY_5\n" +
     "\n" +
-    "#define PRIMARY_STEPS 12\n" +
-    "#define LIGHT_STEPS 4\n" +
+    "//#define PRIMARY_STEPS 12\n" +
+    "//#define LIGHT_STEPS 4\n" +
+    "#define PRIMARY_STEPS 9\n" +
+    "#define LIGHT_STEPS 3\n" +
     "\n" +
     "#define CLOUDS_MAX_LOD 3\n" +
     "#define MAXIMUM_CLOUDS_STEPS 70\n" +
@@ -7169,7 +7164,7 @@ geofs["atmosphereCommon.glsl"] =
     "vec3 sphericalNormal = normalize(p);\n" +
     "vec2 positionSurfaceC = czm_ellipsoidWgs84TextureCoordinates(sphericalNormal);\n" +
     "float sampledValue = texture2D(coverageTexture, positionSurfaceC).r;\n" +
-    "lastLiveCoverageValue = clamp((sampledValue - 0.3) * 2.0, 0.0, 1.0);\n" +
+    "lastLiveCoverageValue = clamp((sampledValue - 0.3) * 10.0, 0.0, 1.0);\n" +
     "//            }\n" +
     "\n" +
     "//float colpos = float(lastLiveCoverageValue);\n" +
@@ -7236,7 +7231,7 @@ geofs["atmosphereOnlyFS.glsl"] =
     "\n" +
     "// lousy mobile GPU detection\n" +
     "//#if !defined(GL_EXT_frag_depth)\n" +
-    "float depth = rawDepthColor.r; // depth packing algo appears to be buggy on mobile so only use the most significant element for now\n" +
+    "float depth = rawDepthColor.r;// depth packing algo appears to be buggy on mobile so only use the most significant element for now\n" +
     "//#else\n" +
     "//    float depth = czm_unpackDepth(rawDepthColor);\n" +
     "//#endif\n" +
@@ -7254,6 +7249,7 @@ geofs["atmosphereOnlyFS.glsl"] =
     "//float sundisk = 0.0;\n" +
     "\n" +
     "#ifdef RETRO\n" +
+    "\n" +
     "// preserve retro sun\n" +
     "if (depth >= 0.9) {\n" +
     "\n" +
@@ -7305,7 +7301,7 @@ geofs["atmosphereOnlyFS.glsl"] =
     "vec3 position = vWorldPosition + (-lightDirection * toClouds.x);\n" +
     "\n" +
     "float dens = cloudDensity(position, wind, 1);\n" +
-    "mask = clamp(1.0 - dens, 0.6, 1.0);\n" +
+    "mask = clamp(1.0 - dens, 0.4, 1.0);\n" +
     "color *= mask;\n" +
     "}\n" +
     "#endif\n" +
@@ -7320,6 +7316,12 @@ geofs["atmosphereOnlyFS.glsl"] =
     "distance,\n" +
     "lightDirection\n" +
     ");\n" +
+    "/*\n" +
+    "if (color.r < 0.5 && color.g > 0.5 && color.b < 0.5) {\n" +
+    "color = (atmosphereColor * (1.0 - color.g)) + color;\n" +
+    "}\n" +
+    "else {\n" +
+    "*/\n" +
     "\n" +
     "color = atmosphereColor + color * (1.0 - atmosphereColor.a);\n" +
     "\n" +
@@ -7334,7 +7336,7 @@ geofs["atmosphereOnlyFS.glsl"] =
     "#ifdef VOLUMETRIC_CLOUDS\n" +
     "// mix in scene+atmosphere and clouds\n" +
     "vec4 clouds = texture2D(volumetricCloudsTexture, v_textureCoordinates);\n" +
-    "color = mix(color, clouds, clouds.a * clouds.a * clamp((depth - depthMaskDistance) * 10.0, 0.0, 1.0));\n" +
+    "color = mix(color, clouds, clouds.a * clouds.a * clamp((depth - depthMaskDistance) * 100.0, 0.0, 1.0));\n" +
     "#endif\n" +
     "\n" +
     "// background fog (used for precipitation)\n" +
@@ -7360,7 +7362,7 @@ geofs["volumetricCloudsFS.glsl"] =
     "* https://blog.uhawkvr.com/rendering/rendering-volumetric-clouds-using-signed-distance-fields/\n" +
     "* https://shaderbits.com/blog/creating-volumetric-ray-marcher\n" +
     "*/\n" +
-    "vec3 cloudDark = vec3(0.2,0.3,0.4); //vec3(0.25,0.3,0.35)\n" +
+    "vec3 cloudDark = vec3(0.4,0.6,0.8); //vec3(0.25,0.3,0.35)\n" +
     "vec3 cloudBright = vec3(0.9, 0.95, 1.0); //vec3(1.0,0.95,0.8)\n" +
     "float distanceQualityR = 0.00005; // LOD/quality ratio\n" +
     "float minDistance = 10.0; // avoid cloud in cockpit\n" +
@@ -7488,8 +7490,16 @@ geofs["volumetricCloudsFS.glsl"] =
     "vec4 densColor = vec4(mix(cloudDark, cloudBright, dens), dens);\n" +
     "densColor.xyz *= lightColor;\n" +
     "#else\n" +
+    "/*\n" +
+    "// An attempt at continuous surface normal integration\n" +
+    "float lighting = 0.8 - clamp((dens - lastDensity) * 10.0, 0.0, 1.0) * dot(dir, light_dir);\n" +
+    "//vec4 densColor = vec4(lighting, 0.0, 0.0, 1.0);\n" +
+    "vec4 densColor = vec4(mix(cloudDark, cloudBright, lighting), dens);\n" +
+    "lastDensity = dens;\n" +
+    "*/\n" +
+    "\n" +
     "// unlit\n" +
-    "vec4 densColor = vec4(mix(cloudDark, cloudBright, dens), dens);\n" +
+    "vec4 densColor = vec4(mix(cloudDark + czm_lightColor, cloudBright, dens), dens);\n" +
     "#endif\n" +
     "\n" +
     "//vec4 atmosphereToCloud = mix(vec4(0.0), atmosphereAtDistance, distance / 250000.0);\n" +
@@ -7500,7 +7510,7 @@ geofs["volumetricCloudsFS.glsl"] =
     "\n" +
     "densColor.rgb *= densColor.a;\n" +
     "cloud.rgb += densColor.rgb * cloud.a;\n" +
-    "cloud.a *= 1.0 - densColor.a;\n" +
+    "cloud.a *= 1.05 - densColor.a;\n" +
     "\n" +
     "/*\n" +
     "Phys based integration\n" +
@@ -7637,7 +7647,7 @@ geofs["oceanFS.glsl"] =
     "vec4 layerColor = materialInput.layerColor;\n" +
     "\n" +
     "// city lights\n" +
-    "/*\n" +
+    "\n" +
     "if (layerColor.r > 0.46 && layerColor.r < 0.54 && czm_lightColor.z < 0.09) {\n" +
     "\n" +
     "positionMC = (czm_inverseModelView * vec4(-materialInput.positionToEyeEC, 1.0)).xyz;\n" +
@@ -7648,7 +7658,6 @@ geofs["oceanFS.glsl"] =
     "material.diffuse = texture2D(lightsTexture, fract(positionSurfaceC)).rgb * 1.5;\n" +
     "material.alpha = material.diffuse.r * layerColor.r;\n" +
     "}\n" +
-    "*/\n" +
     "\n" +
     "if (layerColor.b > 0.0) {\n" +
     "\n" +
@@ -7845,10 +7854,10 @@ $jscomp.polyfillIsolated = function (a, b, c, d) {
     a = 1 === e.length;
     d = e[0];
     d = !a && d in $jscomp.polyfills ? $jscomp.polyfills : $jscomp.global;
-    for (var f = 0; f < e.length - 1; f++) {
-        var g = e[f];
-        if (!(g in d)) return;
-        d = d[g];
+    for (var g = 0; g < e.length - 1; g++) {
+        var f = e[g];
+        if (!(f in d)) return;
+        d = d[f];
     }
     e = e[e.length - 1];
     c = $jscomp.IS_SYMBOL_NATIVE && "es6" === c ? d[e] : null;
@@ -8029,8 +8038,8 @@ $jscomp.generator.Engine_.prototype.yieldAllStep_ = function (a, b, c) {
         $jscomp.generator.ensureIteratorResultIsObject_(d);
         if (!d.done) return this.context_.stop_(), d;
         var e = d.value;
-    } catch (f) {
-        return (this.context_.yieldAllIterator_ = null), this.context_.throw_(f), this.nextStep_();
+    } catch (g) {
+        return (this.context_.yieldAllIterator_ = null), this.context_.throw_(g), this.nextStep_();
     }
     this.context_.yieldAllIterator_ = null;
     c.call(this.context_, e);
@@ -8080,10 +8089,10 @@ $jscomp.asyncExecutePromiseGenerator = function (a) {
         return a.throw(d);
     }
     return new Promise(function (d, e) {
-        function f(g) {
-            g.done ? d(g.value) : Promise.resolve(g.value).then(b, c).then(f, e);
+        function g(f) {
+            f.done ? d(f.value) : Promise.resolve(f.value).then(b, c).then(g, e);
         }
-        f(a.next());
+        g(a.next());
     });
 };
 $jscomp.asyncExecutePromiseGeneratorFunction = function (a) {
@@ -8246,6 +8255,15 @@ V2 = {
     scale: function (a, b) {
         return [a[0] * b, a[1] * b];
     },
+    parseInt: function (a) {
+        return [parseInt(a[0]), parseInt(a[1])];
+    },
+    round: function (a) {
+        return [Math.round(a[0]), Math.round(a[1])];
+    },
+    div: function (a, b) {
+        return [a[0] / b[0], a[1] / b[1]];
+    },
 };
 V3 = {
     isValid: function (a) {
@@ -8271,9 +8289,9 @@ V3 = {
             d = a[1];
         a = a[2];
         var e = b[0],
-            f = b[1];
+            g = b[1];
         b = b[2];
-        return [d * b - a * f, a * e - c * b, c * f - d * e];
+        return [d * b - a * g, a * e - c * b, c * g - d * e];
     },
     dot: function (a, b) {
         return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
@@ -8383,33 +8401,33 @@ M33 = {
             d = b[1];
         b = b[2];
         var e = a[0],
-            f = a[1];
+            g = a[1];
         a = a[2];
-        return [e[0] * c + e[1] * d + e[2] * b, f[0] * c + f[1] * d + f[2] * b, a[0] * c + a[1] * d + a[2] * b];
+        return [e[0] * c + e[1] * d + e[2] * b, g[0] * c + g[1] * d + g[2] * b, a[0] * c + a[1] * d + a[2] * b];
     },
     multiply: function (a, b) {
         var c = a[0][0],
             d = a[0][1],
             e = a[0][2],
-            f = a[1][0],
-            g = a[1][1],
+            g = a[1][0],
+            f = a[1][1],
             k = a[1][2],
             m = a[2][0],
-            q = a[2][1];
+            p = a[2][1];
         a = a[2][2];
-        var u = b[0][0],
-            v = b[0][1],
+        var n = b[0][0],
+            r = b[0][1],
             t = b[0][2],
-            n = b[1][0],
-            p = b[1][1],
-            A = b[1][2],
-            H = b[2][0],
-            C = b[2][1];
+            A = b[1][0],
+            q = b[1][1],
+            u = b[1][2],
+            G = b[2][0],
+            D = b[2][1];
         b = b[2][2];
         return [
-            [c * u + f * v + m * t, d * u + g * v + q * t, e * u + k * v + a * t],
-            [c * n + f * p + m * A, d * n + g * p + q * A, e * n + k * p + a * A],
-            [c * H + f * C + m * b, d * H + g * C + q * b, e * H + k * C + a * b],
+            [c * n + g * r + m * t, d * n + f * r + p * t, e * n + k * r + a * t],
+            [c * A + g * q + m * u, d * A + f * q + p * u, e * A + k * q + a * u],
+            [c * G + g * D + m * b, d * G + f * D + p * b, e * G + k * D + a * b],
         ];
     },
     scaled: function (a, b) {
@@ -8424,9 +8442,9 @@ M33 = {
             d = a[1];
         a = a[2];
         var e = b[0],
-            f = b[1];
+            g = b[1];
         b = b[2];
-        return [c[0] * e + d[0] * f + a[0] * b, c[1] * e + d[1] * f + a[1] * b, c[2] * e + d[2] * f + a[2] * b];
+        return [c[0] * e + d[0] * g + a[0] * b, c[1] * e + d[1] * g + a[1] * b, c[2] * e + d[2] * g + a[2] * b];
     },
     rotationXYZ: function (a, b) {
         b = M33.setFromEuler(b);
@@ -8499,13 +8517,13 @@ M33 = {
         var d = b[0],
             e = b[1];
         b = b[2];
-        var f = Math.cos(c),
-            g = 1 - f;
+        var g = Math.cos(c),
+            f = 1 - g;
         c = Math.sin(c);
         return M33.multiply(a, [
-            [d * d * g + f, e * d * g + b * c, b * d * g - e * c],
-            [d * e * g - b * c, e * e * g + f, e * b * g + d * c],
-            [d * b * g + e * c, e * b * g - d * c, b * b * g + f],
+            [d * d * f + g, e * d * f + b * c, b * d * f - e * c],
+            [d * e * f - b * c, e * e * f + g, e * b * f + d * c],
+            [d * b * f + e * c, e * b * f - d * c, b * b * f + g],
         ]);
     },
     transformByTranspose: function (a, b) {
@@ -8522,12 +8540,12 @@ M33 = {
             c = Math.sin(a[0]),
             d = Math.cos(a[1]),
             e = Math.sin(a[1]),
-            f = Math.cos(a[2]);
+            g = Math.cos(a[2]);
         a = Math.sin(a[2]);
         return [
-            [f * d + a * c * e, -a * d + f * c * e, b * e],
-            [a * b, f * b, -c],
-            [f * -e + a * c * d, -a * -e + f * c * d, b * d],
+            [g * d + a * c * e, -a * d + g * c * e, b * e],
+            [a * b, g * b, -c],
+            [g * -e + a * c * d, -a * -e + g * c * d, b * d],
         ];
     },
     getOrientation: function (a) {
@@ -8593,26 +8611,26 @@ function intersect_RayTriangle(a, b) {
     var c = b.u;
     var d = b.v;
     var e = b.n;
-    var f = V3.sub(a[1], a[0]);
-    var g = V3.sub(a[0], b[0]);
-    g = -V3.dot(e, g);
-    e = V3.dot(e, f);
+    var g = V3.sub(a[1], a[0]);
+    var f = V3.sub(a[0], b[0]);
+    f = -V3.dot(e, f);
+    e = V3.dot(e, g);
     if (Math.abs(e) < SMALL_NUM) return null;
-    e = g / e;
+    e = f / e;
     if (0 > e || 1 < e) return null;
-    f = V3.scale(f, e);
-    a = V3.add(a[0], f);
-    f = V3.dot(c, c);
+    g = V3.scale(g, e);
+    a = V3.add(a[0], g);
+    g = V3.dot(c, c);
     e = V3.dot(c, d);
-    g = V3.dot(d, d);
+    f = V3.dot(d, d);
     b = V3.sub(a, b[0]);
     c = V3.dot(b, c);
     d = V3.dot(b, d);
-    b = e * e - f * g;
-    g = (e * d - g * c) / b;
-    if (0 > g || 1 < g) return null;
-    d = (e * c - f * d) / b;
-    return 0 > d || 1 < g + d ? null : { point: a };
+    b = e * e - g * f;
+    f = (e * d - f * c) / b;
+    if (0 > f || 1 < f) return null;
+    d = (e * c - g * d) / b;
+    return 0 > d || 1 < f + d ? null : { point: a };
 }
 S2 = {
     identity: function () {
@@ -8910,8 +8928,8 @@ Object3D.prototype = {
     },
     propagateToTree: function (a, b) {
         for (var c = this._children, d = 0, e = c.length; d < e; d++) {
-            var f = c[d];
-            f[a].apply(f, b);
+            var g = c[d];
+            g[a].apply(g, b);
         }
     },
     destroy: function () {
@@ -8966,21 +8984,21 @@ geofs.runways = {
     getNearestRunway: function (a) {
         var b = 1;
         do var c = geofs.runways.getNearRunways(a, 1, b++);
-        while (!c.length && 5 > b);
+        while (!c.length && 10 > b);
         return c[0] ? ((a = c[0]), (b = geofs.runways.generateRunwayId(a)), geofs.runways.nearRunways[b] || (geofs.runways.nearRunways[b] = new geofs.runways.runway(a, b)), geofs.runways.nearRunways[b]) : null;
     },
     getNearRunways: function (a, b, c) {
         c = c || 1;
         b = b || geofs.runways.runwayNumberLimit;
-        for (var d = parseInt(a[0]), e = parseInt(a[1]), f = [], g, k = -c; k <= c; k++) {
-            g = geofs.majorRunwayGrid[e + k] || {};
-            for (var m = -c; m <= c; m++) g[d + m] && (f = f.concat(g[d + m]));
+        for (var d = parseInt(a[0]), e = parseInt(a[1]), g = [], f, k = -c; k <= c; k++) {
+            f = geofs.majorRunwayGrid[e + k] || {};
+            for (var m = -c; m <= c; m++) f[d + m] && (g = g.concat(f[d + m]));
         }
-        geofs.runways.setRunwayDistance(a, f);
-        f.sort(function (q, u) {
-            return q.distance - u.distance;
+        geofs.runways.setRunwayDistance(a, g);
+        g.sort(function (p, n) {
+            return p.distance - n.distance;
         });
-        return f.slice(0, b);
+        return g.slice(0, b);
     },
     setRunwayDistance: function (a, b) {
         for (var c = 0, d = b.length; c < d; c++) {
@@ -9020,7 +9038,7 @@ geofs.runways = {
         return geofs.runways.env[a].promise;
     },
     asyncSetImageLayerRotationPosition: function (a, b, c, d) {
-        var e, f, g;
+        var e, g, f;
         return $jscomp.asyncExecutePromiseGeneratorProgram(function (k) {
             if (1 == k.nextAddress) return k.yield(geofs.runways.getRotationCanvas(a), 2);
             e = k.yieldResult;
@@ -9028,14 +9046,14 @@ geofs.runways = {
             e.context.save();
             e.context.rotate(b);
             e.context.drawImage(e.image, -e.image.width / 2, -(e.image.height / 2));
-            f = { rectangle: c, alpha: geofs.runways.imageryOpacity, minimumTerrainLevel: 12 };
+            g = { rectangle: c, alpha: geofs.runways.imageryOpacity, minimumTerrainLevel: 12 };
             e.canvas.toBlob
                 ? e.canvas.toBlob(function (m) {
-                      m = new Cesium.ImageryLayer(new Cesium.SingleTileImageryProvider({ url: URL.createObjectURL(m), rectangle: c }), f);
+                      m = new Cesium.ImageryLayer(new Cesium.SingleTileImageryProvider({ url: URL.createObjectURL(m), rectangle: c }), g);
                       geofs.api.viewer.imageryLayers.add(m);
                       d.imageryLayers.push(m);
                   })
-                : ((g = new Cesium.ImageryLayer(new Cesium.SingleTileImageryProvider({ url: e.canvas.toDataURL(), rectangle: c }), f)), geofs.api.viewer.imageryLayers.add(g), d.imageryLayers.push(g));
+                : ((f = new Cesium.ImageryLayer(new Cesium.SingleTileImageryProvider({ url: e.canvas.toDataURL(), rectangle: c }), g)), geofs.api.viewer.imageryLayers.add(f), d.imageryLayers.push(f));
             e.context.restore();
             k.jumpToEnd();
         });
@@ -9144,7 +9162,7 @@ geofs.runways.runway.prototype = {
                 d = Math.floor((this.lengthMeters - 2 * geofs.runways.thresholdLength * a) / (geofs.runways.tileLength * a));
                 a = V2.scale(this.meterlla, geofs.runways.tileLength * a);
                 e = [this.threshold1[0] + e[0], this.threshold1[1] + e[1]];
-                for (var f = 0; f <= d; f++)
+                for (var g = 0; g <= d; g++)
                     (c = geofs.api.viewer.entities.add({
                         polygon: {
                             hierarchy: {
@@ -9347,10 +9365,10 @@ geofs.api.setHD = function (a) {
     }
 };
 geofs.api.setImageryProvider = function (a, b, c, d, e) {
-    var f = geofs.api.viewer.imageryLayers,
-        g = f.get(0);
-    f.remove(g);
-    a = f.addImageryProvider(a, 0);
+    var g = geofs.api.viewer.imageryLayers,
+        f = g.get(0);
+    g.remove(f);
+    a = g.addImageryProvider(a, 0);
     geofs.runways.setRunwayModelVisibility(b);
     geofs.api.setImageryColorModifier("multiplier", { brightness: c || 1, contrast: d || 1, saturation: e || 1 });
     geofs.preferences && geofs.preferences.graphics && geofs.api.enhanceColors(geofs.preferences.graphics.enhanceColors);
@@ -9508,7 +9526,6 @@ geofs.api.renderingQualityLevels = {
         scatteringQuality: 0,
         shadowMapSize: 1024,
         vegetationQuality: 1,
-        advancedAtmosphere: !0,
         viewingDistance: 1,
         degradedCollisions: !1,
         lowResRunways: !1,
@@ -9526,7 +9543,6 @@ geofs.api.renderingQualityLevels = {
         scatteringQuality: 0,
         shadowMapSize: 1024,
         vegetationQuality: 1,
-        advancedAtmosphere: !1,
         viewingDistance: 0.1,
         degradedCollisions: !0,
         lowResRunways: !0,
@@ -9544,7 +9560,6 @@ geofs.api.renderingQualityLevels = {
         scatteringQuality: 1,
         shadowMapSize: 1024,
         vegetationQuality: 1,
-        advancedAtmosphere: !0,
         viewingDistance: 0.2,
         degradedCollisions: !0,
         lowResRunways: !0,
@@ -9562,7 +9577,6 @@ geofs.api.renderingQualityLevels = {
         scatteringQuality: 2,
         shadowMapSize: 1024,
         vegetationQuality: 2,
-        advancedAtmosphere: !0,
         viewingDistance: 0.3,
         degradedCollisions: !0,
         lowResRunways: !0,
@@ -9580,9 +9594,8 @@ geofs.api.renderingQualityLevels = {
         scatteringQuality: 3,
         shadowMapSize: 2048,
         vegetationQuality: 2,
-        advancedAtmosphere: !0,
         viewingDistance: 0.5,
-        degradedCollisions: !0,
+        degradedCollisions: !1,
         lowResRunways: !1,
     },
     5: {
@@ -9598,9 +9611,8 @@ geofs.api.renderingQualityLevels = {
         scatteringQuality: 4,
         shadowMapSize: 2048,
         vegetationQuality: 3,
-        advancedAtmosphere: !0,
         viewingDistance: 0.7,
-        degradedCollisions: !0,
+        degradedCollisions: !1,
         lowResRunways: !1,
     },
     6: {
@@ -9616,9 +9628,8 @@ geofs.api.renderingQualityLevels = {
         scatteringQuality: 5,
         shadowMapSize: 4096,
         vegetationQuality: 4,
-        advancedAtmosphere: !0,
         viewingDistance: 0.9,
-        degradedCollisions: !0,
+        degradedCollisions: !1,
         lowResRunways: !1,
     },
 };
@@ -9642,7 +9653,7 @@ geofs.api.renderingQuality = function (a, b) {
     geofs.api.renderingSettings.fogScreenSpaceErrorFactor = geofs.api.renderingQualityLevels[a].fogScreenSpaceErrorFactor;
     geofs.api.renderingSettings.fogDensity = geofs.api.renderingQualityLevels[a].fogDensity;
     geofs.api.renderingSettings.shadowMapSize = geofs.api.renderingQualityLevels[a].shadowMapSize;
-    geofs.api.renderingSettings.advancedAtmosphere = geofs.preferences.graphics.advancedAtmosphere && geofs.api.renderingQualityLevels[a].advancedAtmosphere;
+    geofs.api.renderingSettings.advancedAtmosphere = geofs.preferences.graphics.advancedAtmosphere;
     geofs.api.renderingSettings.scatteringQuality = geofs.api.renderingQualityLevels[a].scatteringQuality;
     geofs.api.renderingSettings.vegetationQuality = geofs.api.renderingQualityLevels[a].vegetationQuality;
     geofs.api.renderingSettings.volumetricClouds = geofs.preferences.graphics.volumetricClouds && geofs.api.renderingSettings.advancedAtmosphere;
@@ -9842,6 +9853,9 @@ geofs.api.Model.prototype.setShadows = function (a) {
 geofs.api.Model.prototype.setCssColor = function (a) {
     this._model.color = Cesium.Color.fromCssColorString(a);
 };
+geofs.api.Model.prototype.setTextureFromCanvas = function (a, b) {
+    return geofs.api.setModelTextureFromCanvas(this._model, a, b);
+};
 geofs.api.Model.prototype.changeTexture = function (a, b) {
     return geofs.api.changeModelTexture(this._model, a, b);
 };
@@ -9891,6 +9905,9 @@ geofs.api.destroyInstanceCollection = function (a) {
     delete geofs.api.instanceCollections[a];
     delete geofs.api.modelInstances[a];
 };
+geofs.api.setModelTextureFromCanvas = function (a, b, c) {
+    a && (a = a._rendererResources.textures[c || 0]) && (a.copyFrom({ source: b }), a.generateMipmap());
+};
 geofs.api.changeModelTexture = function (a, b, c) {
     if (a) {
         var d = a._rendererResources.textures[c || 0];
@@ -9930,7 +9947,7 @@ geofs.api.getModelFromScreenCoords = function (a, b) {
     return geofs.api.viewer.scene.pick(new Cesium.Cartesian2(a, b));
 };
 geofs.api.getNodeNameFromScreenCoords = function (a, b) {
-    return (a = geofs.api.getModelFromScreenCoords(a, b)) ? a.node.name : null;
+    return (a = geofs.api.getModelFromScreenCoords(a, b)) && a.node ? a.node.name : null;
 };
 geofs.fromHeadingPitchRoll = function (a, b, c) {
     b = Cesium.Quaternion.fromAxisAngle(Cesium.Cartesian3.UNIT_X, -b);
@@ -9958,8 +9975,8 @@ geofs.api.setModelPositionOrientationAndScale = function (a, b, c, d) {
                     var e = Cesium.Cartesian3.fromDegrees(b[1], b[0], b[2]);
                     if (a.entity) {
                         a.entity.position = e;
-                        var f = new Cesium.HeadingPitchRoll(c[0] * DEGREES_TO_RAD, c[1] * DEGREES_TO_RAD, c[2] * DEGREES_TO_RAD);
-                        a.entity.orientation = Cesium.Transforms.headingPitchRollQuaternion(e, f);
+                        var g = new Cesium.HeadingPitchRoll(c[0] * DEGREES_TO_RAD, c[1] * DEGREES_TO_RAD, c[2] * DEGREES_TO_RAD);
+                        a.entity.orientation = Cesium.Transforms.headingPitchRollQuaternion(e, g);
                     } else a.modelMatrix = geofs.headingPitchRollScaleToFixedFrame(e, c[0] * DEGREES_TO_RAD, c[1] * DEGREES_TO_RAD, c[2] * DEGREES_TO_RAD, d);
                     a._apiScale = d;
                     a._apiHtr = c;
@@ -9987,8 +10004,8 @@ geofs.api.setModelRotationPosition = function (a, b, c) {
 geofs.api.setNodeRotationTranslationScale = function (a, b, c, d) {
     a.originalTranform || (a.originalTranform = a.matrix.clone(a.originalTranform));
     if (b) var e = Cesium.Matrix3.fromColumnMajorArray(M33.toArray(b));
-    if (c) var f = new Cesium.Cartesian3(c[0], c[1], c[2]);
-    b = Cesium.Matrix4.fromRotationTranslation(e, f);
+    if (c) var g = new Cesium.Cartesian3(c[0], c[1], c[2]);
+    b = Cesium.Matrix4.fromRotationTranslation(e, g);
     if ((d && 1 != d[0]) || 1 != d[1] || 1 != d[2]) (d = Cesium.Matrix4.fromScale(new Cesium.Cartesian3(d[0], d[1], d[2]))), (b = Cesium.Matrix4.multiply(b, d, b));
     a.matrix = Cesium.Matrix4.multiply(a.originalTranform, b, a.matrix);
 };
@@ -10333,8 +10350,8 @@ geofs.api.postMessage = function (a) {
 };
 geofs.api.Canvas = function (a) {
     this.canvas = document.createElement("canvas");
-    this.canvas.width = a.width;
-    this.canvas.height = a.height;
+    this.width = this.canvas.width = a.width;
+    this.height = this.canvas.height = a.height;
     this.context = this.canvas.getContext("2d");
     a.color = a.color || "#000000";
     this._options = a;
@@ -10356,10 +10373,10 @@ geofs.api.Canvas.prototype = {
         return new Promise(function (c) {
             a.forEach(function (d, e) {
                 b._imageElements[e] || (b._imageElements[e] = b.makeImageElement());
-                b._imageElements[e].onload = function (f) {
+                b._imageElements[e].onload = function (g) {
                     ++b.imagesLoaded == b.imagesToLoad && b.paintAndResolve(c);
                 };
-                b._imageElements[e].onerror = function (f) {
+                b._imageElements[e].onerror = function (g) {
                     ++b.imagesLoaded == b.imagesToLoad && b.paintAndResolve(c);
                 };
                 b._imageElements[e].src = d;
@@ -10372,9 +10389,36 @@ geofs.api.Canvas.prototype = {
         this._imageElements.forEach(function (d, e) {
             try {
                 b.context.drawImage(d, (e % c) * b.patchSize, b.patchSize * Math.floor(e / c), b.patchSize, b.patchSize);
-            } catch (f) {}
+            } catch (g) {}
         });
         a(this.canvas);
+    },
+    clear: function (a) {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        a && ((this.context.fillStyle = a), this.context.fillRect(0, 0, this.canvas.width, this.canvas.height));
+    },
+    drawRotatedSprite: function (a) {
+        if (a.image.complete) {
+            var b = this.context;
+            a.sprite = a.sprite || a.size;
+            b.save();
+            b.translate(a.destination[0], a.destination[1]);
+            b.rotate(a.rotation);
+            a.translation = a.translation || [0, 0];
+            a.center = V2.parseInt(V2.add(a.center, a.translation));
+            b.drawImage(a.image, a.origin[0], a.origin[1], a.sprite[0], a.sprite[1], -a.center[0], -a.center[1], a.size[0], a.size[1]);
+            b.restore();
+        }
+    },
+    drawSprite: function (a) {
+        if (a.image.complete) {
+            var b = this.context;
+            a.sprite = a.sprite || a.size;
+            a.center = a.center || [0, 0];
+            a.translation = a.translation || [0, 0];
+            a.destination = V2.add(V2.sub(a.destination, a.center), a.translation);
+            b.drawImage(a.image, a.origin[0], a.origin[1], a.sprite[0], a.sprite[1], a.destination[0], a.destination[1], a.size[0], a.size[1]);
+        }
     },
     makeImageElement: function () {
         var a = document.createElement("img");
@@ -10400,17 +10444,17 @@ window.Cesium &&
     (Cesium.sampleTerrainMostDetailed = function (a, b) {
         return a.readyPromise.then(function () {
             for (var c = [], d = a.availability, e = 0; e < b.length; ++e) {
-                var f = b[e],
-                    g = a.maximumLevel;
-                d && (g = d.computeMaximumLevelAtPosition(f));
-                g = Math.min(g, a.maximumLevel);
-                var k = c[g];
-                k || (c[g] = k = []);
-                k.push(f);
+                var g = b[e],
+                    f = a.maximumLevel;
+                d && (f = d.computeMaximumLevelAtPosition(g));
+                f = Math.min(f, a.maximumLevel);
+                var k = c[f];
+                k || (c[f] = k = []);
+                k.push(g);
             }
             return Promise.all(
-                c.map(function (m, q) {
-                    if (m) return Cesium.sampleTerrain(a, q, m);
+                c.map(function (m, p) {
+                    if (m) return Cesium.sampleTerrain(a, p, m);
                 })
             ).then(function () {
                 return b;
@@ -10495,49 +10539,49 @@ geofs.api.FlatRunwayTerrainProvider.prototype = {
     requestTileGeometry: function (a, b, c, d) {
         if (c >= this.minFlatteningLevel && this.flatten) {
             var e = this.baseProvider.tilingScheme.tileXYToRectangle(a, b, c),
-                f;
-            for (f in this.regions) if (void 0 !== Cesium.Rectangle.intersection(this.regions[f].rec, e)) return (a = this.baseProvider.requestTileGeometry(a, b, c, d)), void 0 === a ? void 0 : this.getPromise(a, e, this.regions[f]);
+                g;
+            for (g in this.regions) if (void 0 !== Cesium.Rectangle.intersection(this.regions[g].rec, e)) return (a = this.baseProvider.requestTileGeometry(a, b, c, d)), void 0 === a ? void 0 : this.getPromise(a, e, this.regions[g]);
         }
         return this.baseProvider.requestTileGeometry(a, b, c, d);
     },
     getPromise: function (a, b, c) {
         var d = this;
         if (void 0 !== a) {
-            var e = new Promise(function (f, g) {
+            var e = new Promise(function (g, f) {
                 c.referenceElevation
-                    ? f(c.referenceElevation)
+                    ? g(c.referenceElevation)
                     : (c.coord || (c.coord = [c.runways[0].threshold1[0], c.runways[0].threshold1[1]]),
                       Cesium.sampleTerrain(d.baseProvider, d.maximumLevel, [Cesium.Cartographic.fromDegrees(c.coord[1], c.coord[0])]).then(function (k) {
-                          k[0] && k[0].height ? ((c.referenceElevation = k[0].height), f(c.referenceElevation)) : g("no value");
+                          k[0] && k[0].height ? ((c.referenceElevation = k[0].height), g(c.referenceElevation)) : f("no value");
                       }));
             });
-            return Promise.all([e, a]).then(function (f) {
+            return Promise.all([e, a]).then(function (g) {
                 try {
-                    var g = f[0],
-                        k = f[1];
-                    for (f = 0; f < c.runways.length; f++) {
-                        var m = c.runways[f],
-                            q = !1;
+                    var f = g[0],
+                        k = g[1];
+                    for (g = 0; g < c.runways.length; g++) {
+                        var m = c.runways[g],
+                            p = !1;
                         k._oldMinimumHeight = k._minimumHeight;
                         k._oldMaximumHeight = k._maximumHeight;
-                        var u = 32767 / (k._oldMaximumHeight - k._oldMinimumHeight);
-                        g > k._maximumHeight && ((k._maximumHeight = g), (q = !0));
-                        g < k._minimumHeight && ((k._minimumHeight = g), (q = !0));
-                        for (var v = k._oldMinimumHeight - k._minimumHeight, t = 32767 / (k._maximumHeight - k._minimumHeight), n = (g - k._minimumHeight) * t, p = 0; p < k._heightValues.length; p++) {
-                            var A = b.south + (k._quantizedVertices[k._heightValues.length + p] / 32767) * b.height,
-                                H = b.west + (k._quantizedVertices[p] / 32767) * b.width;
-                            if (Cesium.Rectangle.contains(c.rec, new Cesium.Cartographic(H, A, 0))) {
-                                var C = Cesium.Cartesian3.fromRadians(H, A);
-                                Cesium.Cartesian3.subtract(m.threshold1Cartesian, C, C);
-                                var W = Cesium.Cartesian3.magnitude(C),
-                                    X = Cesium.Cartesian3.multiplyByScalar(m.direction, Cesium.Cartesian3.dot(C, m.direction) / Cesium.Cartesian3.dot(m.direction, m.direction), new Cesium.Cartesian3()),
-                                    Y = Cesium.Cartesian3.subtract(C, X, new Cesium.Cartesian3());
-                                if (Math.sqrt(Cesium.Cartesian3.dot(Y, Y)) < m.padding && W < m.lengthMeters + m.padding) {
-                                    k._heightValues[p] = n;
+                        var n = 32767 / (k._oldMaximumHeight - k._oldMinimumHeight);
+                        f > k._maximumHeight && ((k._maximumHeight = f), (p = !0));
+                        f < k._minimumHeight && ((k._minimumHeight = f), (p = !0));
+                        for (var r = k._oldMinimumHeight - k._minimumHeight, t = 32767 / (k._maximumHeight - k._minimumHeight), A = (f - k._minimumHeight) * t, q = 0; q < k._heightValues.length; q++) {
+                            var u = b.south + (k._quantizedVertices[k._heightValues.length + q] / 32767) * b.height,
+                                G = b.west + (k._quantizedVertices[q] / 32767) * b.width;
+                            if (Cesium.Rectangle.contains(c.rec, new Cesium.Cartographic(G, u, 0))) {
+                                var D = Cesium.Cartesian3.fromRadians(G, u);
+                                Cesium.Cartesian3.subtract(m.threshold1Cartesian, D, D);
+                                var X = Cesium.Cartesian3.magnitude(D),
+                                    Y = Cesium.Cartesian3.multiplyByScalar(m.direction, Cesium.Cartesian3.dot(D, m.direction) / Cesium.Cartesian3.dot(m.direction, m.direction), new Cesium.Cartesian3()),
+                                    S = Cesium.Cartesian3.subtract(D, Y, new Cesium.Cartesian3());
+                                if (Math.sqrt(Cesium.Cartesian3.dot(S, S)) < m.padding && X < m.lengthMeters + m.padding) {
+                                    k._heightValues[q] = A;
                                     continue;
                                 }
                             }
-                            q && (k._heightValues[p] = (k._heightValues[p] / u + v) * t);
+                            p && (k._heightValues[q] = (k._heightValues[q] / n + r) * t);
                         }
                     }
                     return k;
@@ -10623,8 +10667,8 @@ geofs.api.map = {
             d._map.getZoom();
             d.updateMarkerVisibility();
             for (var e in ui.playerMarkers) {
-                var f = ui.playerMarkers[e]._marker;
-                f._icon && (f._icon.style.transform += " rotate(" + f._geofsRotation + "deg)");
+                var g = ui.playerMarkers[e]._marker;
+                g._icon && (g._icon.style.transform += " rotate(" + g._geofsRotation + "deg)");
             }
             d.updateMarkerLayers();
         });
@@ -10634,7 +10678,7 @@ geofs.api.map = {
         this._map.on("mouseup", controls.mouseUpHandler);
         $(document)
             .on("click", ".geofs-createPath", function () {
-                geofs.api.map.flightPathOn ? geofs.api.map.stopCreatePath(d) : geofs.api.map.createPath(d);
+                geofs.api.map.flightPathOn ? geofs.api.map.stopCreatePath(d) : geofs.api.map.createPath();
             })
             .on("click", ".geofs-clearPath", function () {
                 geofs.api.map.clearPath(d);
@@ -10667,10 +10711,10 @@ geofs.api.map = {
             d = a.getSouthWest().wrap();
         a = Math.floor(d.lng / b);
         var e = Math.floor(d.lat / b),
-            f = (parseInt((c.lng - d.lng) / b) || 1) + 2;
+            g = (parseInt((c.lng - d.lng) / b) || 1) + 2;
         b = (parseInt((c.lat - d.lat) / b) || 1) + 2;
         c = {};
-        for (d = a; d < a + f; d++) for (var g = e; g < e + b; g++) c[g + "/" + d] = !0;
+        for (d = a; d < a + g; d++) for (var f = e; f < e + b; f++) c[f + "/" + d] = !0;
         return c;
     },
     showTile: function (a, b) {
@@ -10765,10 +10809,10 @@ geofs.api.map = {
     setTooltipVisibility: function (a) {
         geofs.api.mapTooltipOptions.permanent = a;
     },
-    addImageLayer: function (a, b) {
+    addImageLayer: function (a, b, c) {
         return L.imageOverlay(
             a,
-            [
+            c || [
                 [90, -180],
                 [-90, 180],
             ],
@@ -10877,7 +10921,7 @@ geofs.api.doRetro = function () {
             geofs.useSimpleShadow(!0);
             var a = Cesium.Color.fromCssColorString("#2caecf"),
                 b = Cesium.Color.fromCssColorString("#0b2740");
-            geofs.fx.water.material = new Cesium.Material({ fabric: { type: "retrowire", source: geofs["wireFS.glsl"], uniforms: { windVector: new Cesium.Cartesian3(0, 0, 0), wireframeColor: a, backgroundColor: b } } });
+            geofs.fx.water.material = new Cesium.Material({ fabric: { type: "retrowire", source: geofs["wireFS.glsl"], uniforms: { windSpeed: 0, geofsTime: 0, wireframeColor: a, backgroundColor: b } } });
             geofs.api.viewer.scene.globe.material = geofs.fx.water.material;
             var c = geofs.api.viewer.entities.add({
                 position: Cesium.Cartesian3.fromDegrees(0, 0, 1e6),
@@ -10931,11 +10975,11 @@ geofs.animation.getRampRatio = function (a, b) {
     var c = a.length - 1,
         d = 1 / c,
         e = Math.ceil(b / d),
-        f = clamp(e - 1, 0, c - 1);
+        g = clamp(e - 1, 0, c - 1);
     e = clamp(e, 1, c);
-    c = a[f];
+    c = a[g];
     a = a[e];
-    return a > c ? c + ((b - f * d) / d) * (a - c) : a + ((d - (b - f * d)) / d) * (c - a);
+    return a > c ? c + ((b - g * d) / d) * (a - c) : a + ((d - (b - g * d)) / d) * (c - a);
 };
 geofs.animation.getRampValue = function (a, b) {
     var c = 0;
@@ -10958,7 +11002,7 @@ geofs.animation.filter = function (a, b) {
         if (((b = 0), !geofs.aircraft.instance.aircraftRecord.isCommunity))
             try {
                 b = Function(a["function"])();
-            } catch (f) {
+            } catch (g) {
                 b = 0;
             }
     } else b = a.text ? a.text : b || geofs.animation.values[a.value] || 0;
@@ -11013,8 +11057,8 @@ geofs.animation.filter = function (a, b) {
     a.fmax && b > a.fmax && (b = a.fmax);
     a.concat &&
         (Array.isArray(a.concat) || (a.concat = [a.concat]),
-        a.concat.forEach(function (f) {
-            b += geofs.animation.values[f] || f;
+        a.concat.forEach(function (g) {
+            b += geofs.animation.values[g] || g;
         }));
     return b;
 };
@@ -11028,6 +11072,12 @@ geofs.utils.fastNow = function () {
 geofs.utils.now = function () {
     geofs.utils.lastNow = geofs.utils.timeProvider.now();
     return geofs.utils.lastNow;
+};
+geofs.utils.updateTime = function (a, b) {
+    return geofs.utils.lastNow - (a.lastNow || 0) > b ? ((a.lastNow = geofs.utils.lastNow), !0) : !1;
+};
+geofs.utils.hourStamp = function () {
+    return Math.round(Date.now() / 36e5);
 };
 geofs.utils.llaDistanceInMeters = function (a, b, c) {
     return V2.length(ll2xy(V3.sub(a, b), c || a));
@@ -11055,13 +11105,21 @@ geofs.utils.hashCode = function (a) {
 geofs.utils.displayAltitude = function (a) {
     return (a = 18e3 < a ? "FL" + 5 * Math.round(a / 500) : a + "ft.");
 };
+geofs.utils.stickyRounding = function (a, b) {
+    var c = Math.trunc(a);
+    a = Math.abs(a - c);
+    var d = 0;
+    a > 1 - 2 * b && (d = a - (1 - 2 * b));
+    0 > a && (d = -(b - a));
+    return c + (0.5 / b) * d;
+};
 geofs.utils.sortLocationByDistance = function (a, b) {
     for (var c = 0, d = b.length; c < d; c++) {
         var e = b[c];
         e.distance = geofs.utils.distanceBetweenLocations(a, e.coords || [e.lat, e.lon]);
     }
-    b.sort(function (f, g) {
-        return f.distance - g.distance;
+    b.sort(function (g, f) {
+        return g.distance - f.distance;
     });
     return b;
 };
@@ -11296,10 +11354,10 @@ function Overlay(a, b, c) {
     this.overlay.setClass(this.definition.class);
     this.overlay.setStyle(this.definition.style);
     this.overlay.setDrawOrder(this.definition.drawOrder || 0);
-    $(this.overlay).one("load", function (f) {
-        var g = d.definition.size.x / f.currentTarget.naturalSize.x;
-        d.definition.size = f.currentTarget.naturalSize;
-        d._sizeScale = g;
+    $(this.overlay).one("load", function (g) {
+        var f = d.definition.size.x / g.currentTarget.naturalSize.x;
+        d.definition.size = g.currentTarget.naturalSize;
+        d._sizeScale = f;
         d.scaleAndPlace();
     });
     this.overlay.setVisibility(this.definition.visibility);
@@ -11311,13 +11369,13 @@ function Overlay(a, b, c) {
         }
     this.definition.manipulator &&
         $(this.overlay._$element)
-            .on("mousedown", function (f) {
-                f.which = 4;
-                controls.mouseDownHandler(f);
+            .on("mousedown", function (g) {
+                g.which = 4;
+                controls.mouseDownHandler(g);
                 controls.manipulator = d.definition.manipulator;
-                f.preventDefault();
+                g.preventDefault();
             })
-            .on("mouseup", function (f) {
+            .on("mouseup", function (g) {
                 controls.manipulator = null;
             })
             .css({ cursor: "ns-resize" });
@@ -11463,11 +11521,11 @@ geofs.ajax.post = function (a, b, c, d) {
         data: b,
         dataType: "json",
         success: c,
-        error: function (e, f, g) {
+        error: function (e, g, f) {
             try {
-                d(e, f, g);
+                d(e, g, f);
             } catch (k) {}
-            geofs.debug.error(g, "geofs.ajax.post. POST failed" + f + " - " + g);
+            geofs.debug.error(f, "geofs.ajax.post. POST failed" + g + " - " + f);
         },
     });
 };
@@ -11648,7 +11706,7 @@ geofs.coord2tileGrid = function (a, b, c, d, e) {
     b = [];
     for (c = -a; c < a; c++) {
         d = 0 > c ? Math.abs(c) : c + 1;
-        for (var f = -a; f < a; f++) b.push({ x: e.x + f, y: e.y + c, r: Math.max(0 > f ? Math.abs(f) : f + 1, d) });
+        for (var g = -a; g < a; g++) b.push({ x: e.x + g, y: e.y + c, r: Math.max(0 > g ? Math.abs(g) : g + 1, d) });
     }
     return b;
 };
@@ -11675,17 +11733,17 @@ geofs.perlin = {
         b = Math.abs(b * c) % geofs.perlin.size;
         var d = parseInt(a),
             e = d + 1,
-            f = parseInt(b),
-            g = f + 1,
+            g = parseInt(b),
+            f = g + 1,
             k = a - d;
-        c = b - f;
-        var m = geofs.perlin.dotGridGradient(d, f, a, b);
-        var q = geofs.perlin.dotGridGradient(e, f, a, b);
-        f = geofs.perlin.lerp(m, q, k);
-        m = geofs.perlin.dotGridGradient(d, g, a, b);
-        q = geofs.perlin.dotGridGradient(e, g, a, b);
-        a = geofs.perlin.lerp(m, q, k);
-        a = geofs.perlin.lerp(f, a, c);
+        c = b - g;
+        var m = geofs.perlin.dotGridGradient(d, g, a, b);
+        var p = geofs.perlin.dotGridGradient(e, g, a, b);
+        g = geofs.perlin.lerp(m, p, k);
+        m = geofs.perlin.dotGridGradient(d, f, a, b);
+        p = geofs.perlin.dotGridGradient(e, f, a, b);
+        a = geofs.perlin.lerp(m, p, k);
+        a = geofs.perlin.lerp(g, a, c);
         return geofs.perlin.normalizationRatio * a;
     },
 };
@@ -11751,7 +11809,7 @@ geofs.tileManager.prototype = {
             if (((a = Math.round((a - this.originAtZoom[c].x) * this.tileSizeAtZoom[c] + d)), (b = Math.round((b - this.originAtZoom[c].y) * this.tileSizeAtZoom[c] + e)), this.useDataView))
                 try {
                     return this.dataView.getUint32(4 * (a + b * this.canvasAPI.canvas.width));
-                } catch (f) {
+                } catch (g) {
                     return null;
                 }
             else return this.canvasAPI.context.getImageData(a, b, 1, 1).data;
@@ -11760,7 +11818,7 @@ geofs.tileManager.prototype = {
         if (this.ready)
             return this.canvasAPI.context.getImageData((a - this.originAtZoom[c].x) * this.tileSizeAtZoom[c] + d / this.tileSizeAtZoom[c], (b - this.originAtZoom[c].y) * this.tileSizeAtZoom[c] + e / this.tileSizeAtZoom[c], 1, 1);
     },
-    getTileImageData: function (a, b, c, d, e, f, g) {
+    getTileImageData: function (a, b, c, d, e, g, f) {
         if (this.ready)
             return this.canvasAPI.context.getImageData(
                 (a - this.originAtZoom[c].x) * this.tileSizeAtZoom[c] + d / this.tileSizeAtZoom[c],
@@ -11790,6 +11848,7 @@ geofs.waveHeight = 0;
 geofs.waveVerticalSpeed = 0;
 geofs.groundIsWater = !1;
 geofs.waterIsSea = !1;
+geofs.frameNumber = 0;
 geofs.init = function () {
     geofs.PRODUCTION = geofs.PRODUCTION || !1;
     geofs.PRODUCTION || ((geofs.killCache = "?kc=" + Date.now()), geofs.debug.init());
@@ -11824,8 +11883,8 @@ geofs.init = function () {
 geofs.start = function (a, b) {
     try {
         geofs.world = geofs.api.initWorld("geofs-ui-3dview");
-    } catch (f) {
-        geofs.debug.error(f);
+    } catch (g) {
+        geofs.debug.error(g);
     }
     window.fireBasicEvent("geofsStarted");
     geofs.api.renderingQuality(geofs.preferences.graphics.quality);
@@ -11926,26 +11985,27 @@ geofs.undoPause = function (a) {
         }
 };
 geofs.frameCallback = function (a) {
+    geofs.frameNumber++;
     var b = a - geofs.lastTime;
     geofs.lastTime = a;
     0 >= b && (b = 1);
     1e3 < b && (b = 100);
-    a = b / 1e3;
+    var c = b / 1e3;
     geofs.pause ||
         (flight.terrainElevationManagement(),
-        controls.update(a),
-        geofs.autopilot.UI.update(a),
-        flight.tick(a, b),
+        controls.update(c),
+        geofs.autopilot.UI.update(c),
+        flight.tick(c, b, a),
         multiplayer.update(b),
         geofs.debug.update(b),
-        geofs.nav.update(a),
-        geofs.radio.update(a),
+        geofs.nav.update(c),
+        geofs.radio.update(c),
         instruments.update(),
         audio.update(),
         geofs.fx.update(b),
         geofs.map.updateMap(geofs.aircraft.instance.llaLocation),
         geofs.objects.update(geofs.camera.lla));
-    3 > geofs.pauseLevel && (geofs.camera.update(a), weather.update(a), geofs.fx.atmosphere.update(geofs.camera.lla), geofs.preferences.graphics.waterEffect && geofs.fx.water.update(geofs.camera.lla), geofs.api.triggerExplicitRendering());
+    3 > geofs.pauseLevel && (geofs.camera.update(c), weather.update(c), geofs.fx.atmosphere.update(geofs.camera.lla), geofs.preferences.graphics.waterEffect && geofs.fx.water.update(geofs.camera.lla), geofs.api.triggerExplicitRendering());
 };
 geofs.flyTo = function (a, b) {
     if (a) {
@@ -11960,11 +12020,11 @@ geofs.flyTo = function (a, b) {
         geofs.lastFlightCoordinates = a;
         var d = a[0],
             e = a[1],
-            f = a[2],
-            g = [0, 0, 0];
-        g[0] = a[3];
-        var k = 0 == f;
-        c.llaLocation = [d, e, f];
+            g = a[2],
+            f = [0, 0, 0];
+        f[0] = a[3];
+        var k = 0 == g;
+        c.llaLocation = [d, e, g];
         b ? geofs.camera.set(geofs.camera.currentMode) : (geofs.probeTerrain(), geofs.camera.reset(), controls.reset(), weather.reset(), weather.refresh());
         geofs.api.waterDetection.reset();
         c.reset(k);
@@ -11981,9 +12041,9 @@ geofs.flyTo = function (a, b) {
             c.llaLocation[2] = c.startAltitude;
             flight.elevationAtPreviousLocation = m;
             k
-                ? ((g[1] = c.definition.startTilt || 0), (c.startOnGround = !0), (c.groundContact = !0), c.place(c.llaLocation, g), c.object3d.compute(c.llaLocation), c.render())
+                ? ((f[1] = c.definition.startTilt || 0), (c.startOnGround = !0), (c.groundContact = !0), c.place(c.llaLocation, f), c.object3d.compute(c.llaLocation), c.render())
                 : ((c.startOnGround = !1),
-                  c.place(c.llaLocation, g),
+                  c.place(c.llaLocation, f),
                   c.object3d.compute(c.llaLocation),
                   (m = (c.definition.minimumSpeed / 1.94) * c.definition.mass),
                   c.rigidBody.applyCentralImpulse(V3.scale(c.object3d.getWorldFrame()[1], m)));
@@ -12067,7 +12127,7 @@ geofs.preferencesDefault = {
         quality: 3,
         enhanceColors: 0.7,
         volumetricClouds: !1,
-        advancedAtmosphere: !0,
+        advancedAtmosphere: !1,
         waterEffect: !1,
         vegetation: !1,
         contrails: !1,
@@ -12155,29 +12215,23 @@ geofs.savePreferences = function () {
     }
     $(document).trigger("preferenceSaved");
 };
-geofs.resetPreferences = function () {
+geofs.resetPreferences = function (a) {
     geofs.preferences = clone(geofs.preferencesDefault);
     geofs.preferences.version = geofs.version;
     geofs.savePreferences();
     geofs.preferenceInitialized = !1;
-    geofs.initializePreferencesPanel();
+    a && ((geofs.preferenceInitialized = !1), geofs.initializePreferencesPanel());
 };
 geofs.readPreferences = function (a) {
     var b = {};
     try {
-        (b = JSON.parse(geofs.localStorage.getItem("settings"))) &&
-            !b.version &&
-            (geofs.debug.error(null, "geofs.readPreferences - !savedPreferences.version"), geofs.api.notify("Unable to read saved preferences. Preferences are reset to default."), geofs.resetPreferences());
+        (b = JSON.parse(geofs.localStorage.getItem("settings"))),
+            geofs.forcePreferenceResetOnVersionChange && b.version != geofs.version && (geofs.resetPreferences(), geofs.api.notify("Preferences are reset to default after version change.")),
+            b && !b.version && (geofs.debug.error(null, "geofs.readPreferences - !savedPreferences.version"), geofs.api.notify("Unable to read saved preferences. Preferences are reset to default."), geofs.resetPreferences());
     } catch (d) {
         geofs.debug.error(d, "geofs.readPreferences - Unable to read saved preferences. Preferences are reset to default."),
             geofs.api.notify("Error while reading saved preferences. Preferences are reset to default."),
             geofs.resetPreferences();
-    }
-    if (geofs.localStorage.getItem("preferences")) {
-        try {
-            (b = eval(geofs.localStorage.getItem("preferences"))), (b = b[0]);
-        } catch (d) {}
-        geofs.localStorage.removeItem("preferences");
     }
     geofs.preferences = $.extend(!0, {}, geofs.preferencesDefault, b);
     geofs.preferences.version = geofs.version;
@@ -12254,25 +12308,25 @@ geofs.populateKeyAssignments = function () {
     a.html(b);
     componentHandler.upgradeDom();
     a.on("click focus", ".geofs-preferences-key-detect", function (e) {
-        $(".geofs-preference-key-detecting", a).each(function (f, g) {
-            g.value = g._originalValue;
-            $(g).removeClass("geofs-preference-key-detecting");
+        $(".geofs-preference-key-detecting", a).each(function (g, f) {
+            f.value = f._originalValue;
+            $(f).removeClass("geofs-preference-key-detecting");
         });
         e.currentTarget._originalValue = e.currentTarget.value;
         e.currentTarget.value = "";
         $(e.currentTarget).addClass("geofs-preference-key-detecting");
     })
         .on("keyup", ".geofs-preferences-key-detect", function (e) {
-            var f = e.currentTarget;
-            if ($(f).hasClass("geofs-preference-key-detecting")) {
+            var g = e.currentTarget;
+            if ($(g).hasClass("geofs-preference-key-detecting")) {
                 if (27 != e.which) {
-                    var g = geofs.preferencesKeycodeLookup[e.which] ? geofs.preferencesKeycodeLookup[e.which] : f.value.toUpperCase();
-                    f.value = g;
-                    f.setAttribute("keycode", e.which);
-                    geofs.setPreferenceFromInput(f);
-                } else f.value = f._originalValue;
-                $(f).removeClass("geofs-preference-key-detecting");
-                $(f).blur();
+                    var f = geofs.preferencesKeycodeLookup[e.which] ? geofs.preferencesKeycodeLookup[e.which] : g.value.toUpperCase();
+                    g.value = f;
+                    g.setAttribute("keycode", e.which);
+                    geofs.setPreferenceFromInput(g);
+                } else g.value = g._originalValue;
+                $(g).removeClass("geofs-preference-key-detecting");
+                $(g).blur();
                 e.stopPropagation();
                 e.preventDefault();
             }
@@ -12366,14 +12420,14 @@ geofs.setPreferenceValues = function (a, b) {
         .find("[data-gespref]")
         .each(function (c, d) {
             var e = $(d),
-                f = d.getAttribute("data-type") || d.getAttribute("type");
-            "SELECT" == d.nodeName && (f = "select");
-            f = f.toLowerCase();
-            var g = d.getAttribute("data-gespref").split("."),
+                g = d.getAttribute("data-type") || d.getAttribute("type");
+            "SELECT" == d.nodeName && (g = "select");
+            g = g.toLowerCase();
+            var f = d.getAttribute("data-gespref").split("."),
                 k = window;
-            for (c = 0; c < g.length - 1; c++) k = k[g[c]];
-            c = k[g[c]];
-            switch (f) {
+            for (c = 0; c < f.length - 1; c++) k = k[f[c]];
+            c = k[f[c]];
+            switch (g) {
                 case "slider":
                     e.slider("value", c, b ? "none" : null);
                     break;
@@ -12407,7 +12461,7 @@ geofs.setInputHandlers = function (a) {
             switch (d) {
                 case "slider":
                     b.handlerSet ||
-                        (b.on("change", function (e, f) {
+                        (b.on("change", function (e, g) {
                             geofs.setPreferenceFromInput(e.currentTarget);
                         }),
                         (b.handlerSet = !0));
@@ -12460,39 +12514,39 @@ geofs.setPreferenceFromInput = function (a) {
                     $(a).is(".is-checked") && (b[d[e]] = a.getAttribute("data-matchvalue"));
                     break;
                 case "checkbox":
-                    var f = a.getAttribute("data-matchvalue");
-                    var g = a.checked;
-                    f ? g && (b[d[e]] = f) : (b[d[e]] = g);
+                    var g = a.getAttribute("data-matchvalue");
+                    var f = a.checked;
+                    g ? f && (b[d[e]] = g) : (b[d[e]] = f);
                     break;
                 case "radio":
-                    f = a.getAttribute("data-matchvalue");
-                    g = a.checked;
-                    f ? g && (g = b[d[e]] = f) : (b[d[e]] = g);
+                    g = a.getAttribute("data-matchvalue");
+                    f = a.checked;
+                    g ? f && (f = b[d[e]] = g) : (b[d[e]] = f);
                     break;
                 case "slider":
-                    g = parseFloat($(a).slider("value"));
-                    b[d[e]] = g;
+                    f = parseFloat($(a).slider("value"));
+                    b[d[e]] = f;
                     break;
                 case "keydetect":
-                    g = a.value;
+                    f = a.value;
                     b[d[e]].keycode = parseInt(a.getAttribute("keycode"));
-                    b[d[e]].label = g;
+                    b[d[e]].label = f;
                     break;
                 default:
-                    (g = a.value), (b[d[e]] = g);
+                    (f = a.value), (b[d[e]] = f);
             }
             var k = a.getAttribute("data-update");
             if (k) {
                 var m = new Function("value", k);
                 try {
-                    m.call(a, g);
-                } catch (q) {
-                    geofs.debug.error(q, "setPreferenceFromInput updateFunction.call");
+                    m.call(a, f);
+                } catch (p) {
+                    geofs.debug.error(p, "setPreferenceFromInput updateFunction.call");
                 }
             }
         }
-    } catch (q) {
-        geofs.debug.error(q, "geofs.setPreferenceFromInput");
+    } catch (p) {
+        geofs.debug.error(p, "geofs.setPreferenceFromInput");
     }
 };
 geofs.savePreferencesPanel = function () {
@@ -12672,14 +12726,14 @@ ui.panel = {
     hide: function (a, b) {
         var c = !0,
             d = $(a || ".geofs-toggle-panel.geofs-visible");
-        $(d).each(function (e, f) {
-            e = $(f);
+        $(d).each(function (e, g) {
+            e = $(g);
             if (!a && e.attr("data-modal")) return (c = !1);
             e.removeClass("geofs-visible");
             try {
                 Function(e.attr("data-onhide"))();
-            } catch (g) {
-                geofs.debug.throw(g);
+            } catch (f) {
+                geofs.debug.throw(f);
             }
         });
         d.length && b && ui.collapseLeft(a);
@@ -13114,10 +13168,10 @@ geofs.runwaysLights.prototype = {
                 c = b[1];
             b = -c;
             for (var d = a, e = geofs.fx.thresholdLightTemplate.length; d < e; d++) {
-                var f = geofs.fx.thresholdLightTemplate[d];
-                a = f[0];
-                var g = b;
-                for (f = b + f[1]; g < f; g++) this.addRow(this.runway.threshold1, a, -g), b++;
+                var g = geofs.fx.thresholdLightTemplate[d];
+                a = g[0];
+                var f = b;
+                for (g = b + g[1]; f < g; f++) this.addRow(this.runway.threshold1, a, -f), b++;
             }
             d = V2.add(this.runway.threshold1, V2.scale(this.stepY, c));
             c = (this.runway.lengthMeters - this.localStepYm * c) / this.localStepYm;
@@ -13128,7 +13182,7 @@ geofs.runwaysLights.prototype = {
             c = b[1];
             b = -c;
             d = a;
-            for (e = geofs.fx.thresholdLightTemplate.length; d < e; d++) for (f = geofs.fx.thresholdLightTemplate[d], a = f[0], g = b, f = b + f[1]; g < f; g++) this.addRow(this.runway.threshold2, a, g), b++;
+            for (e = geofs.fx.thresholdLightTemplate.length; d < e; d++) for (g = geofs.fx.thresholdLightTemplate[d], a = g[0], f = b, g = b + g[1]; f < g; f++) this.addRow(this.runway.threshold2, a, f), b++;
             this.on = !0;
         }
     },
@@ -13145,8 +13199,8 @@ geofs.runwaysLights.prototype = {
         for (var d = b.length; c < d; c++) {
             var e = b[c];
             if (e) {
-                var f = V2.add(a, V3.scale(this.stepX, c - geofs.fx.templateCenter[0]));
-                this.addLight(f, e);
+                var g = V2.add(a, V3.scale(this.stepX, c - geofs.fx.templateCenter[0]));
+                this.addLight(g, e);
             }
         }
     },
@@ -13274,8 +13328,10 @@ geofs.fx.atmosphere = {
     nightColor: Cesium.Color.fromCssColorString("#e0773dff"),
     brightness: 1,
     globeLoaded: !1,
+    updatePeriod: 1e4,
+    cloudsUpdatePeriod: 6e5,
     create: function (a, b, c, d, e) {
-        var f = this;
+        var g = this;
         this.advancedAtmosphere != a && this.destroy();
         this.volumetricClouds != c && this.destroy();
         this.quality != b && this.destroy();
@@ -13283,12 +13339,12 @@ geofs.fx.atmosphere = {
         this.retro != e && this.destroy();
         if (!geofs.fx.atmosphere.postProcessingStages) {
             this.reset();
-            var g = a ? "#define ADVANCED_ATMOSPHERE\n" : "",
+            var f = a ? "#define ADVANCED_ATMOSPHERE\n" : "",
                 k = "#define QUALITY_" + b + "\n",
                 m = c ? "#define VOLUMETRIC_CLOUDS\n" : "",
-                q = d ? "#define REALTIME_CLOUDS\n" : "",
-                u = e ? "#define RETRO\n" : "",
-                v = 0.01 * weather.definition.cloudCover;
+                p = d ? "#define REALTIME_CLOUDS\n" : "",
+                n = e ? "#define RETRO\n" : "",
+                r = 0.01 * weather.definition.cloudCover;
             this.quality = b;
             this.advancedAtmosphere = a;
             this.volumetricClouds = c && a;
@@ -13296,26 +13352,26 @@ geofs.fx.atmosphere = {
             this.retro = e;
             geofs.api.useNativeAtmosphere(!this.advancedAtmosphere);
             geofs.fx.atmosphere.atmospherePostProcessStage = new Cesium.PostProcessStage({
-                fragmentShader: g + u + q + m + k + geofs["atmosphereCommon.glsl"] + geofs["atmosphereOnlyFS.glsl"],
+                fragmentShader: f + n + p + m + k + geofs["atmosphereCommon.glsl"] + geofs["atmosphereOnlyFS.glsl"],
                 uniforms: { planetRadius: 6361e3, backgroundFogDensity: 0, backgroundFogColor: geofs.fx.atmosphere.color, volumetricFogDensity: 0, volumetricFogBottom: 0, volumetricFogTop: 0 },
             });
             c
                 ? ((geofs.fx.atmosphere.atmospherePostProcessStage.uniforms.volumetricCloudsTexture = "volumetricClouds"),
                   (geofs.fx.atmosphere.atmospherePostProcessStage.uniforms.windVector = weather.currentWindVectorWC),
-                  (geofs.fx.atmosphere.atmospherePostProcessStage.uniforms.cloudCover = v),
+                  (geofs.fx.atmosphere.atmospherePostProcessStage.uniforms.cloudCover = r),
                   (geofs.fx.atmosphere.atmospherePostProcessStage.uniforms.cloudBase = weather.definition.cloudBase),
                   (geofs.fx.atmosphere.atmospherePostProcessStage.uniforms.cloudTop = weather.definition.cloudTop),
                   (geofs.fx.atmosphere.cloudsPostProcessStage = new Cesium.PostProcessStage({
                       textureScale: clamp(0.1 * b, 0.25, 1),
-                      fragmentShader: g + u + q + m + k + geofs["atmosphereCommon.glsl"] + geofs["volumetricCloudsFS.glsl"],
-                      uniforms: { planetRadius: 6361e3, windVector: weather.currentWindVectorWC, cloudCover: v, cloudBase: weather.definition.cloudBase, cloudTop: weather.definition.cloudTop, noiseTexture: "/shaders/noise/bluenoise.png" },
+                      fragmentShader: f + n + p + m + k + geofs["atmosphereCommon.glsl"] + geofs["volumetricCloudsFS.glsl"],
+                      uniforms: { planetRadius: 6361e3, windVector: weather.currentWindVectorWC, cloudCover: r, cloudBase: weather.definition.cloudBase, cloudTop: weather.definition.cloudTop, noiseTexture: "/shaders/noise/bluenoise.png" },
                   })),
                   d &&
-                      ((v = 1),
-                      (geofs.fx.atmosphere.atmospherePostProcessStage.uniforms.coverageTexture = weather.realTimeCloudTexture),
-                      (geofs.fx.atmosphere.atmospherePostProcessStage.uniforms.cloudCover = v),
-                      (geofs.fx.atmosphere.cloudsPostProcessStage.uniforms.coverageTexture = weather.realTimeCloudTexture),
-                      (geofs.fx.atmosphere.cloudsPostProcessStage.uniforms.cloudCover = v)),
+                      ((r = 1),
+                      (geofs.fx.atmosphere.atmospherePostProcessStage.uniforms.coverageTexture = weather.realTimeCloudTexture + "?t=" + geofs.utils.hourStamp()),
+                      (geofs.fx.atmosphere.atmospherePostProcessStage.uniforms.cloudCover = r),
+                      (geofs.fx.atmosphere.cloudsPostProcessStage.uniforms.coverageTexture = weather.realTimeCloudTexture + "?t=" + geofs.utils.hourStamp()),
+                      (geofs.fx.atmosphere.cloudsPostProcessStage.uniforms.cloudCover = r)),
                   (geofs.fx.atmosphere.blurStage = Cesium.PostProcessStageLibrary.createBlurStage()),
                   (geofs.fx.atmosphere.blurStage.uniforms.delta = 1),
                   (geofs.fx.atmosphere.blurStage.uniforms.sigma = 2),
@@ -13329,14 +13385,14 @@ geofs.fx.atmosphere = {
                   })))
                 : (geofs.fx.atmosphere.postProcessingStages = geofs.fx.atmosphere.atmospherePostProcessStage);
             $(document).on("terrainProviderWillUpdate", function () {
-                f.destroy();
-                f.globeLoaded = !1;
+                g.globeLoaded = !1;
+                g.destroy();
             });
             (function () {
-                if (f.globeLoaded) geofs.api.viewer.scene.postProcessStages.add(geofs.fx.atmosphere.postProcessingStages);
+                if (g.globeLoaded) geofs.api.viewer.scene.postProcessStages.add(geofs.fx.atmosphere.postProcessingStages);
                 else
-                    var t = geofs.api.viewer.scene.globe.tileLoadProgressEvent.addEventListener(function (n) {
-                        2 < n && ((f.globeLoaded = !0), geofs.api.viewer.scene.postProcessStages.add(geofs.fx.atmosphere.postProcessingStages), t());
+                    var t = geofs.api.viewer.scene.globe.tileLoadProgressEvent.addEventListener(function (A) {
+                        2 < A && ((g.globeLoaded = !0), geofs.api.viewer.scene.postProcessStages.add(geofs.fx.atmosphere.postProcessingStages), t());
                     });
             })();
         }
@@ -13346,12 +13402,15 @@ geofs.fx.atmosphere = {
     },
     update: function (a) {
         geofs.fx.atmosphere.postProcessingStages &&
+            geofs.utils.updateTime(this, this.updatePeriod) &&
             ((a = geofs.api.viewer.scene.globe.ellipsoid.cartographicToCartesian(new Cesium.Cartographic(a[1] * DEGREES_TO_RAD, a[0] * DEGREES_TO_RAD, 0))),
             (a = Cesium.Cartesian3.magnitude(a)),
-            10 > Math.abs(a - geofs.fx.atmosphere.earthRadius) ||
-                ((geofs.fx.atmosphere.earthRadius = a),
-                (geofs.fx.atmosphere.atmospherePostProcessStage.uniforms.planetRadius = a - 1e4),
-                geofs.fx.atmosphere.cloudsPostProcessStage && (geofs.fx.atmosphere.cloudsPostProcessStage.uniforms.planetRadius = a - 1e4)));
+            (geofs.fx.atmosphere.atmospherePostProcessStage.uniforms.planetRadius = a - 1e4),
+            geofs.fx.atmosphere.cloudsPostProcessStage && (geofs.fx.atmosphere.cloudsPostProcessStage.uniforms.planetRadius = a - 1e4),
+            this.realTimeClouds &&
+                geofs.utils.updateTime(this, this.cloudsUpdatePeriod) &&
+                ((geofs.fx.atmosphere.atmospherePostProcessStage.uniforms.coverageTexture = weather.realTimeCloudTexture + "?t=" + geofs.utils.hourStamp()),
+                geofs.fx.atmosphere.cloudsPostProcessStage && (geofs.fx.atmosphere.cloudsPostProcessStage.uniforms.coverageTexture = weather.realTimeCloudTexture + "?t=" + geofs.utils.hourStamp())));
     },
     setConditions: function (a, b, c, d) {
         geofs.fx.atmosphere.postProcessingStages &&
@@ -13478,7 +13537,7 @@ geofs.fx.cloudManager = {
             a && b && c ? (this.cloudColor = Cesium.Color.fromBytes(a, b, c)) : e ? (this.cloudColor = e) : this.cloudColor || (this.cloudColor = Cesium.Color.fromBytes(255, 255, 255));
             this.brightness = d || this.brightness || 1;
             e = this.cloudColor.darken(1 - this.brightness, new Cesium.Color());
-            for (var f in geofs.fx.cloudManager.instance.clouds) geofs.fx.cloudManager.instance.clouds[f].setColor(e);
+            for (var g in geofs.fx.cloudManager.instance.clouds) geofs.fx.cloudManager.instance.clouds[g].setColor(e);
             this.fullCover && this.fullCover.setColor(e);
             geofs.fx.atmosphere.setFogColor();
             geofs.fx.setParticlesColor(e);
@@ -13994,9 +14053,9 @@ geofs.fx.vegetation = {
             (this.tileManager = this.tileManager || new geofs.tileManager({ server: geofs.landuseServer, zoomLevel: this.zoomLevel, sizeInTiles: this.sizeInTiles, useDataView: !0 })),
             (this.lods = {}),
             geofs.fx.treeTileLODS[this.quality].forEach(function (d, e) {
-                var f = Math.pow(2, d.zoomLevel - c.zoomLevel);
-                d.tileSize = Math.round(c.tileSize / f);
-                d.samplingResolution = d.samplingResolution || Math.round(c.samplingResolution / f);
+                var g = Math.pow(2, d.zoomLevel - c.zoomLevel);
+                d.tileSize = Math.round(c.tileSize / g);
+                d.samplingResolution = d.samplingResolution || Math.round(c.samplingResolution / g);
                 d.randomDisplacement = d.randomDisplacement || Math.round(d.samplingResolution / 2);
                 d.thicketNumber = d.thicketNumber || Math.pow((d.tileSize * d.size) / d.samplingResolution, 2) - Math.pow((d.tileSize * d.radius) / d.samplingResolution, 2);
                 d.radius = d.radius || 0;
@@ -14005,8 +14064,8 @@ geofs.fx.vegetation = {
                 d.id = e;
                 d.collectionId = "trees" + e;
                 d.pixelColorInts = [];
-                d.pixelColors.forEach(function (g) {
-                    d.pixelColorInts.push(parseInt("0x" + g.substring(1) + "FF"));
+                d.pixelColors.forEach(function (f) {
+                    d.pixelColorInts.push(parseInt("0x" + f.substring(1) + "FF"));
                 });
                 c.lods[e] = d;
                 for (e = 0; e < d.thicketNumber; e++) d.availableThickets.push(e), new geofs.api.Model(null, { url: d.url, asCesiumInstance: !0, collectionId: d.collectionId, location: c.collectionBaseLocation, rotation: [0, 0, 0] });
@@ -14041,8 +14100,8 @@ geofs.fx.vegetation = {
             this.initialized &&
             (1e5 < geofs.utils.llaDistanceInMeters(a, this.collectionBaseLocation) && this.reset([a[0], a[1], -1e3]),
             geofs.fx.treeTileLODS[this.quality].forEach(function (e) {
-                var f = {},
-                    g = {},
+                var g = {},
+                    f = {},
                     k = geofs.coord2CenterTile(c, d, e.zoomLevel),
                     m = k.x + "-" + k.y;
                 if (e.lastCenterTileId != m && !e.updating) {
@@ -14050,27 +14109,27 @@ geofs.fx.vegetation = {
                     e.lastCenterTileId = m;
                     e.thickets = [];
                     e.positions = [];
-                    geofs.coord2tileGrid(c, d, e.zoomLevel, e.size, k).forEach(function (u) {
-                        if (!(u.r < e.radius)) {
-                            var v = u.x + "-" + u.y;
-                            e.tiles[v] ? (g[v] = e.tiles[v]) : ((f[v] = b.createTreeTile(v, u, e)), (g[v] = f[v]));
+                    geofs.coord2tileGrid(c, d, e.zoomLevel, e.size, k).forEach(function (n) {
+                        if (!(n.r < e.radius)) {
+                            var r = n.x + "-" + n.y;
+                            e.tiles[r] ? (f[r] = e.tiles[r]) : ((g[r] = b.createTreeTile(r, n, e)), (f[r] = g[r]));
                         }
                     });
-                    Cesium.sampleTerrain(geofs.api.viewer.terrainProvider, e.elevationLevel, e.positions).then(function (u) {
-                        for (var v in f)
-                            for (var t = f[v], n = t.positionPointerStart; n < t.positionPointerEnd - 1; n++) {
-                                var p = [e.thickets[n].lla[0], e.thickets[n].lla[1], u[n].height + (e.offsetHeight || 0)],
-                                    A = e.thickets[n].htr;
-                                p = Cesium.Cartesian3.fromDegrees(p[1], p[0], p[2]);
-                                A = geofs.headingPitchRollScaleToFixedFrame(p, A[0] * DEGREES_TO_RAD, A[1] * DEGREES_TO_RAD, A[2] * DEGREES_TO_RAD, [1, 1, 1]);
-                                p = e.availableThickets.shift();
-                                e.availableThickets.push(p);
-                                geofs.api.instanceCollections[e.collectionId]._instances[p].modelMatrix = A;
+                    Cesium.sampleTerrain(geofs.api.viewer.terrainProvider, e.elevationLevel, e.positions).then(function (n) {
+                        for (var r in g)
+                            for (var t = g[r], A = t.positionPointerStart; A < t.positionPointerEnd - 1; A++) {
+                                var q = [e.thickets[A].lla[0], e.thickets[A].lla[1], n[A].height + (e.offsetHeight || 0)],
+                                    u = e.thickets[A].htr;
+                                q = Cesium.Cartesian3.fromDegrees(q[1], q[0], q[2]);
+                                u = geofs.headingPitchRollScaleToFixedFrame(q, u[0] * DEGREES_TO_RAD, u[1] * DEGREES_TO_RAD, u[2] * DEGREES_TO_RAD, [1, 1, 1]);
+                                q = e.availableThickets.shift();
+                                e.availableThickets.push(q);
+                                geofs.api.instanceCollections[e.collectionId]._instances[q].modelMatrix = u;
                             }
                         e.updating = !1;
                     });
-                    for (var q in e.tiles) g[q] || b.destroyTreeTile(q, e);
-                    e.tiles = g;
+                    for (var p in e.tiles) f[p] || b.destroyTreeTile(p, e);
+                    e.tiles = f;
                 }
             }));
     },
@@ -14080,23 +14139,23 @@ geofs.fx.vegetation = {
             var d = geofs.tile2coord(b.x, b.y, c.zoomLevel),
                 e = geofs.tile2coord(b.x + 1, b.y + 1, c.zoomLevel);
             a.centerCoord = [d.lat + (e.lat - d.lat) / 2, d.lon + (e.lon - d.lon) / 2, 0];
-            var f = (e.lat - d.lat) / c.tileSize;
+            var g = (e.lat - d.lat) / c.tileSize;
             e = (e.lon - d.lon) / c.tileSize;
             a.positionPointerStart = c.positions.length;
-            for (var g = 0; g < c.tileSize; g += c.samplingResolution)
-                for (var k = {}, m = 0; m < c.tileSize; k = { $jscomp$loop$prop$thicketLla$22: k.$jscomp$loop$prop$thicketLla$22 }, m += c.samplingResolution) {
-                    k.$jscomp$loop$prop$thicketLla$22 = [0, 0, 0];
-                    var q = m + c.randomDisplacement * Math.random(),
-                        u = g + c.randomDisplacement * Math.random();
-                    k.$jscomp$loop$prop$thicketLla$22[0] = d.lat + f * u;
-                    k.$jscomp$loop$prop$thicketLla$22[1] = d.lon + e * q;
-                    var v = this.tileManager.getSubTilePixel(b.x, b.y, c.zoomLevel, q, u);
+            for (var f = 0; f < c.tileSize; f += c.samplingResolution)
+                for (var k = {}, m = 0; m < c.tileSize; k = { $jscomp$loop$prop$thicketLla$21: k.$jscomp$loop$prop$thicketLla$21 }, m += c.samplingResolution) {
+                    k.$jscomp$loop$prop$thicketLla$21 = [0, 0, 0];
+                    var p = m + c.randomDisplacement * Math.random(),
+                        n = f + c.randomDisplacement * Math.random();
+                    k.$jscomp$loop$prop$thicketLla$21[0] = d.lat + g * n;
+                    k.$jscomp$loop$prop$thicketLla$21[1] = d.lon + e * p;
+                    var r = this.tileManager.getSubTilePixel(b.x, b.y, c.zoomLevel, p, n);
                     c.pixelColorInts.forEach(
                         (function (t) {
-                            return function (n) {
-                                n == v &&
-                                    (c.positions.push(Cesium.Cartographic.fromDegrees(t.$jscomp$loop$prop$thicketLla$22[1], t.$jscomp$loop$prop$thicketLla$22[0])),
-                                    c.thickets.push({ lla: [t.$jscomp$loop$prop$thicketLla$22[0], t.$jscomp$loop$prop$thicketLla$22[1], 0], htr: [360 * Math.random(), 0, 0] }));
+                            return function (A) {
+                                A == r &&
+                                    (c.positions.push(Cesium.Cartographic.fromDegrees(t.$jscomp$loop$prop$thicketLla$21[1], t.$jscomp$loop$prop$thicketLla$21[0])),
+                                    c.thickets.push({ lla: [t.$jscomp$loop$prop$thicketLla$21[0], t.$jscomp$loop$prop$thicketLla$21[1], 0], htr: [360 * Math.random(), 0, 0] }));
                             };
                         })(k)
                     );
@@ -14139,60 +14198,60 @@ flight.arrestingHookDiscardVelocity = 0.1;
 flight.arrestingHookDiscardLength = 100;
 flight.currentAltitudeTestContext = {};
 flight.pastAltitudeTestContext = {};
-flight.tick = function (a, b) {
-    var c = clamp(Math.floor(b / (geofs.PHYSICS_DELTA_MS || 10)), 1, 10),
-        d = a / c,
-        e = 1 / a,
+flight.tick = function (a, b, c) {
+    var d = clamp(Math.floor(b / (geofs.PHYSICS_DELTA_MS || 10)), 1, 10),
+        e = a / d,
+        g = 1 / a,
         f = geofs.aircraft.instance,
-        g = geofs.animation.values;
+        k = geofs.animation.values;
     f.totalThrust = 0;
-    var k = 1,
-        m = 1,
-        q = f.definition.zeroThrustAltitude,
-        u = f.definition.zeroRPMAltitude;
-    q ? (k = clamp(q - g.altitude, 0, q) / q) : u && (m = clamp(u - g.altitude, 0, u) / u);
-    for (var v = geofs.aircraft.instance.engines, t = v.length, n = 0; n < t; n++) {
-        var p = v[n],
-            A = controls.throttle,
-            H = 1,
-            C = p.animations;
-        if (C)
-            for (var W = 0; W < C.length; W++) {
-                var X = C[W];
-                switch (X.type) {
+    var m = 1,
+        p = 1,
+        n = f.definition.zeroThrustAltitude,
+        r = f.definition.zeroRPMAltitude;
+    n ? (m = clamp(n - k.altitude, 0, n) / n) : r && (p = clamp(r - k.altitude, 0, r) / r);
+    for (var t = geofs.aircraft.instance.engines, A = t.length, q = 0; q < A; q++) {
+        var u = t[q],
+            G = controls.throttle,
+            D = 1,
+            X = u.animations;
+        if (X)
+            for (var Y = 0; Y < X.length; Y++) {
+                var S = X[Y];
+                switch (S.type) {
                     case "throttle":
-                        A = geofs.animation.filter(X);
+                        G = geofs.animation.filter(S);
                         break;
                     case "pitch":
-                        H = geofs.animation.filter(X);
+                        D = geofs.animation.filter(S);
                 }
             }
         if (f.engine.on) {
-            var Y = (f.definition.maxRPM - f.definition.minRPM) * A + f.definition.minRPM;
-            Y *= m;
-            p.rpm += (Y - p.rpm) * f.definition.engineInertia * a;
+            var da = (f.definition.maxRPM - f.definition.minRPM) * G + f.definition.minRPM;
+            da *= p;
+            u.rpm += (da - u.rpm) * f.definition.engineInertia * a;
             geofs.aircraft.instance.definition.reverse &&
-                (p.rpm < f.definition.minRPM && 0 < p.rpm && !f.engine.startup && (p.rpm = -f.definition.minRPM), p.rpm > -f.definition.minRPM && 0 > p.rpm && !f.engine.startup && (p.rpm = f.definition.minRPM));
-            p.contrailEmitter && (geofs.preferences.graphics.contrails && f.llaLocation[2] > weather.contrailAltitude ? p.contrailEmitter.turnOn() : p.contrailEmitter.turnOff());
-        } else p.rpm = 1e-5 > p.rpm ? 0 : p.rpm - p.rpm * f.definition.engineInertia * a;
-        var da = Math.abs(p.rpm),
-            ma = p.thrust;
-        p.afterBurnerThrust && 0.9 < A && (ma = p.afterBurnerThrust);
-        0 > p.rpm && (ma = p.reverseThrust ? -p.reverseThrust : 0);
-        var ea = ma * clamp(da - f.definition.minRPM, 0, f.definition.maxRPM) * f.engine.invRPMRange;
-        ea *= k;
-        ea *= H;
-        p.currentThrust = ea;
+                (u.rpm < f.definition.minRPM && 0 < u.rpm && !f.engine.startup && (u.rpm = -f.definition.minRPM), u.rpm > -f.definition.minRPM && 0 > u.rpm && !f.engine.startup && (u.rpm = f.definition.minRPM));
+            u.contrailEmitter && (geofs.preferences.graphics.contrails && f.llaLocation[2] > weather.contrailAltitude ? u.contrailEmitter.turnOn() : u.contrailEmitter.turnOff());
+        } else u.rpm = 1e-5 > u.rpm ? 0 : u.rpm - u.rpm * f.definition.engineInertia * a;
+        var Da = Math.abs(u.rpm),
+            ma = u.thrust;
+        u.afterBurnerThrust && 0.9 < G && (ma = u.afterBurnerThrust);
+        0 > u.rpm && (ma = u.reverseThrust ? -u.reverseThrust : 0);
+        var ea = ma * clamp(Da - f.definition.minRPM, 0, f.definition.maxRPM) * f.engine.invRPMRange;
+        ea *= m;
+        ea *= D;
+        u.currentThrust = ea;
         f.totalThrust += ea;
     }
-    0 < t && (f.engine.rpm = parseInt(da));
+    0 < A && (f.engine.rpm = parseInt(Da));
     var I = 0;
-    n = 0;
-    for (var D = geofs.aircraft.instance.balloons.length; n < D; n++) {
-        var E = geofs.aircraft.instance.balloons[n],
-            eb = clamp(controls[E.controller.name] * E.controller.ratio || 0, 0, 1);
+    q = 0;
+    for (var C = geofs.aircraft.instance.balloons.length; q < C; q++) {
+        var E = geofs.aircraft.instance.balloons[q],
+            fb = clamp(controls[E.controller.name] * E.controller.ratio || 0, 0, 1);
         I = E.temperature;
-        I += eb * E.heatingSpeed * a;
+        I += fb * E.heatingSpeed * a;
         I -= E.coolingSpeed * (I - weather.atmosphere.airTempAtAltitude) * a;
         I = clamp(I, 0, 300);
         E.temperature = I;
@@ -14203,17 +14262,17 @@ flight.tick = function (a, b) {
     if (0 < geofs.waterDepth)
         if (((geofs.groundIsWater = !0), 0.1 > geofs.groundElevation)) {
             geofs.waterIsSea = !0;
-            var fb = geofs.fx.water.getWaveHeight(f.llaLocation[0], f.llaLocation[1], -1),
-                Da = geofs.fx.water.getWaveHeight(f.llaLocation[0], f.llaLocation[1], 0);
-            geofs.waveVerticalSpeed = (fb - Da) / a;
-            geofs.waveHeight = Da;
+            var gb = geofs.fx.water.getWaveHeight(f.llaLocation[0], f.llaLocation[1], -1),
+                Ea = geofs.fx.water.getWaveHeight(f.llaLocation[0], f.llaLocation[1], 0);
+            geofs.waveVerticalSpeed = (gb - Ea) / a;
+            geofs.waveHeight = Ea;
             geofs.debug.watch("waterDepth", geofs.waterDepth);
             geofs.debug.watch("waveHeight", geofs.waveHeight);
         } else (geofs.waterIsSea = !1), (geofs.waveHeight = 0);
     else (geofs.groundIsWater = !1), (geofs.waterIsSea = !1), (geofs.waveHeight = 0);
     weather.atmosphere.update(f.llaLocation[2]);
     ui.hud.stallAlarm(!1);
-    for (var Ea = 0; Ea < c; Ea++) {
+    for (var Fa = 0; Fa < d; Fa++) {
         f.velocity = f.rigidBody.v_linearVelocity;
         f.velocityDirection = V3.normalize(f.velocity);
         f.velocityScalar = V3.length(f.velocity);
@@ -14222,55 +14281,55 @@ flight.tick = function (a, b) {
         f.airVelocityDirection = V3.normalize(f.airVelocity);
         f.trueAirSpeed = V3.length(f.airVelocity);
         geofs.aircraft.instance.object3d.getWorldFrame();
-        n = 0;
-        for (D = f.balloons.length; n < D; n++) (E = f.balloons[n]), f.rigidBody.applyForce([0, 0, E.liftingForce], E.points.forceSourcePoint.worldPosition);
-        for (n = 0; n < f.engines.length; n++) {
-            p = f.engines[n];
-            var gb = p.object3d.getWorldFrame()[p.forceDirection];
-            f.rigidBody.applyForce(V3.scale(gb, p.currentThrust), p.points.forceSourcePoint.worldPosition);
+        q = 0;
+        for (C = f.balloons.length; q < C; q++) (E = f.balloons[q]), f.rigidBody.applyForce([0, 0, E.liftingForce], E.points.forceSourcePoint.worldPosition);
+        for (q = 0; q < f.engines.length; q++) {
+            u = f.engines[q];
+            var hb = u.object3d.getWorldFrame()[u.forceDirection];
+            f.rigidBody.applyForce(V3.scale(hb, u.currentThrust), u.points.forceSourcePoint.worldPosition);
         }
         if (0.01 < f.trueAirSpeed) {
-            var Fa = f.trueAirSpeed * f.trueAirSpeed,
+            var Ga = f.trueAirSpeed * f.trueAirSpeed,
                 Z = V3.scale(
                     f.airVelocityDirection,
-                    -(f.definition.dragCoefficient ? 0.5 * f.definition.dragCoefficient * weather.atmosphere.airDensityAtAltitude * Fa : f.definition.dragFactor * Fa * weather.atmosphere.airDensityAtAltitude)
+                    -(f.definition.dragCoefficient ? 0.5 * f.definition.dragCoefficient * weather.atmosphere.airDensityAtAltitude * Ga : f.definition.dragFactor * Ga * weather.atmosphere.airDensityAtAltitude)
                 );
             f.rigidBody.applyCentralForce(Z);
-            n = 0;
-            for (D = f.airfoils.length; n < D; n++) {
-                var x = f.airfoils[n],
+            q = 0;
+            for (C = f.airfoils.length; q < C; q++) {
+                var x = f.airfoils[q],
                     fa = x.points.forceSourcePoint,
-                    hb = x.object3d.getWorldFrame(),
+                    ib = x.object3d.getWorldFrame(),
                     F = f.rigidBody.getVelocityInLocalPoint(fa.worldPosition);
                 if (x.propwash) {
-                    var Ga = f.engine.rpm * x.propwash,
-                        ib = V3.dot(F, f.object3d.worldRotation[1]);
-                    F = V3.add(F, V3.scale(f.object3d.worldRotation[1], clamp(Ga - ib, 0, Ga)));
+                    var Ha = f.engine.rpm * x.propwash,
+                        jb = V3.dot(F, f.object3d.worldRotation[1]);
+                    F = V3.add(F, V3.scale(f.object3d.worldRotation[1], clamp(Ha - jb, 0, Ha)));
                 }
                 F = V3.sub(F, weather.currentWindVector);
                 F = V3.sub(F, weather.thermals.currentVector);
-                var jb = Object3D.utilities.getPointLla(fa, f.llaLocation);
-                F = V3.add(F, weather.getLocalTurbulence(jb));
+                var kb = Object3D.utilities.getPointLla(fa, f.llaLocation);
+                F = V3.add(F, weather.getLocalTurbulence(kb));
                 x.velocity = V3.length(F);
                 var na = V3.normalize(F),
                     ha = x.velocity * x.velocity,
-                    oa = hb[x.forceDirection],
+                    oa = ib[x.forceDirection],
                     O = -V3.dot(oa, na),
-                    kb = V3.cross(oa, na),
-                    lb = V3.rotate(oa, kb, O);
+                    lb = V3.cross(oa, na),
+                    mb = V3.rotate(oa, lb, O);
                 if (x.span) {
                     var pa = x.aspectRatio || x.span / x.chord,
-                        mb = x.span * x.chord,
+                        nb = x.span * x.chord,
                         ia = (pa / (pa + 2)) * TWO_PI * O,
-                        nb = (ia * ia) / (PI * pa * (x.efficiencyFactor || PLANFORM_EFFICIENCY_FACTOR));
+                        ob = (ia * ia) / (PI * pa * (x.efficiencyFactor || PLANFORM_EFFICIENCY_FACTOR));
                     if (1 == x.stalls) {
                         f.angleOfAttackDeg = O * RAD_TO_DEGREES;
                         var M = Math.abs(f.angleOfAttackDeg);
                         M > x.stallIncidence && (ui.hud.stallAlarm(!0), (ia *= 1 - clamp(M - x.stallIncidence, 0, 0.9 * x.zeroLiftIncidence) / x.zeroLiftIncidence));
                     }
-                    var Ha = 0.5 * weather.atmosphere.airDensityAtAltitude * ha * mb;
-                    Z = nb * Ha;
-                    var ja = ia * Ha;
+                    var Ia = 0.5 * weather.atmosphere.airDensityAtAltitude * ha * nb;
+                    Z = ob * Ia;
+                    var ja = ia * Ia;
                 } else if (x.area) {
                     var ka = O * TWO_PI;
                     1 == x.stalls &&
@@ -14280,18 +14339,18 @@ flight.tick = function (a, b) {
                     Z = 0.5 * ha * (MIN_DRAG_COEF + DRAG_CONSTANT * ka * ka) * weather.atmosphere.airDensityAtAltitude;
                     ja = weather.atmosphere.airDensityAtAltitude * ha * 0.5 * x.area * ka;
                 } else {
-                    var Ia = x.liftFactor,
-                        ob = x.dragFactor;
+                    var Ja = x.liftFactor,
+                        pb = x.dragFactor;
                     1 == x.stalls &&
                         ((f.angleOfAttackDeg = O * RAD_TO_DEGREES),
                         (M = Math.abs(f.angleOfAttackDeg)),
-                        M > x.stallIncidence && (ui.hud.stallAlarm(!0), (Ia *= 0.9 - clamp(M - x.stallIncidence, 0, x.zeroLiftIncidence) / x.zeroLiftIncidence)));
-                    var Ja = O * ha;
-                    ja = Ia * Ja * weather.atmosphere.airDensityAtAltitude;
-                    Z = ob * Math.abs(Ja) * weather.atmosphere.airDensityAtAltitude;
+                        M > x.stallIncidence && (ui.hud.stallAlarm(!0), (Ja *= 0.9 - clamp(M - x.stallIncidence, 0, x.zeroLiftIncidence) / x.zeroLiftIncidence)));
+                    var Ka = O * ha;
+                    ja = Ja * Ka * weather.atmosphere.airDensityAtAltitude;
+                    Z = pb * Math.abs(Ka) * weather.atmosphere.airDensityAtAltitude;
                 }
                 x.lift = ja;
-                f.rigidBody.applyForce(V3.scale(lb, ja), fa.worldPosition);
+                f.rigidBody.applyForce(V3.scale(mb, ja), fa.worldPosition);
                 f.rigidBody.applyForce(V3.scale(na, -Z), fa.worldPosition);
             }
         }
@@ -14300,182 +14359,186 @@ flight.tick = function (a, b) {
         f.waterContact = !1;
         f.rigidBody.applyForce(f.rigidBody.gravityForce, f.parts.root.points.centerOfMass.worldPosition);
         if (geofs.withinCollisionRange) {
-            var Ka = geofs.aircraft.instance.collisionPoints,
+            var La = geofs.aircraft.instance.collisionPoints,
                 P = [],
                 Q = 0;
-            n = 0;
-            for (D = Ka.length; n < D; n++) {
-                var z = Ka[n];
-                z.id = n;
-                var r = z.part;
-                r.contact = null;
-                var S = V3.add(f.llaLocation, xyz2lla(z.worldPosition, f.llaLocation));
+            q = 0;
+            for (C = La.length; q < C; q++) {
+                var z = La[q];
+                z.id = q;
+                var v = z.part;
+                v.contact = null;
+                var T = V3.add(f.llaLocation, xyz2lla(z.worldPosition, f.llaLocation));
                 f.rigidBody.getVelocityInLocalPoint(z.worldPosition);
-                var T = geofs.getCollisionResult(S, z.worldPosition, f.collResult, z),
-                    U = T.location[2],
-                    R = r.object3d.getWorldFrame(),
-                    G = f.collResult.normal;
-                if (0 < geofs.waterDepth && r.buoyancy && !T.object) {
-                    var ra = Math.min(U + geofs.waveHeight - S[2], 10);
+                var U = geofs.getCollisionResult(T, z.worldPosition, f.collResult, z),
+                    V = U.location[2],
+                    R = v.object3d.getWorldFrame(),
+                    H = f.collResult.normal;
+                if (0 < geofs.waterDepth && v.buoyancy && !U.object) {
+                    var ra = Math.min(V + geofs.waveHeight - T[2], 10);
                     if (0 < ra && !z.wrongAltitude) {
-                        var La = Math.min(ra, 1);
-                        var y = { collisionPoint: z, normal: [0, 0, 1], depth: ra, submersionRatio: La, force: La * r.buoyancy, type: "buoyancy" };
-                        r.contact = y;
+                        var Ma = Math.min(ra, 1);
+                        var y = { collisionPoint: z, normal: [0, 0, 1], depth: ra, submersionRatio: Ma, force: Ma * v.buoyancy, type: "buoyancy" };
+                        v.contact = y;
                         P.push(y);
                     }
-                    U -= geofs.waterDepth;
-                } else if (r.suspension) {
-                    var sa = r.points.suspensionOrigin,
-                        ta = r.suspension.restLength - (sa.worldPosition[2] + f.llaLocation[2] - U),
-                        ua = clamp(ta / r.suspension.restLength, 0, 1),
-                        pb = ua * r.suspension.restLength;
+                    V -= geofs.waterDepth;
+                } else if (v.suspension) {
+                    var sa = v.points.suspensionOrigin,
+                        ta = v.suspension.restLength - (sa.worldPosition[2] + f.llaLocation[2] - V),
+                        ua = clamp(ta / v.suspension.restLength, 0, 1),
+                        qb = ua * v.suspension.restLength;
                     if (0 < ua && sa.worldPosition[2] >= z.worldPosition[2] && !z.wrongAltitude) {
-                        var qb = V3.dot(G, R[2]);
-                        y = { collisionPoint: z, normal: G, force: r.suspension.stiffness * pb, type: "raycast", contactFwdDir: V3.cross(G, V3.normalize(R[0])), contactSideDir: V3.cross(G, V3.normalize(R[1])) };
-                        if (ua >= r.suspension.hardPoint || 0.4 > qb) (y.type = "hardpoint"), (y.penetration = U - (z.worldPosition[2] + f.llaLocation[2])), (Q = Math.max(Q, y.penetration));
-                        r.contact = y;
+                        var rb = V3.dot(H, R[2]);
+                        y = { collisionPoint: z, normal: H, force: v.suspension.stiffness * qb, type: "raycast", contactFwdDir: V3.cross(H, V3.normalize(R[0])), contactSideDir: V3.cross(H, V3.normalize(R[1])) };
+                        if (ua >= v.suspension.hardPoint || 0.4 > rb) (y.type = "hardpoint"), (y.penetration = V - (z.worldPosition[2] + f.llaLocation[2])), (Q = Math.max(Q, y.penetration));
+                        v.contact = y;
                         P.push(y);
                         sa[2] = -ta;
-                        var aa = r.name + "Suspension";
-                        g[aa] = ta;
-                        r.suspension.rest = !1;
-                    } else r.suspension.rest || ((aa = r.name + "Suspension"), (g[aa] = 0), (r.points.suspensionOrigin[2] = 0), (r.suspension.rest = !0));
-                    var Ma = {};
-                    Ma[r.name] = r;
-                    f.placeParts(Ma);
-                } else if (r.hook) {
-                    if (T.object && T.object.arrestingCable && !f.arrestingCableContact) {
-                        var ba = U - S[2];
-                        ba >= -T.object.arrestingCableHeight &&
-                            (f.arrestingCableContact = { collisionPoint: z, normal: G, type: "arrestingCable", object: T.object, contactFwdDir: V3.cross(G, V3.normalize(R[0])), contactSideDir: V3.cross(G, V3.normalize(R[1])) });
+                        var aa = v.name + "Suspension";
+                        k[aa] = ta;
+                        v.suspension.rest = !1;
+                    } else v.suspension.rest || ((aa = v.name + "Suspension"), (k[aa] = 0), (v.points.suspensionOrigin[2] = 0), (v.suspension.rest = !0));
+                    var Na = {};
+                    Na[v.name] = v;
+                    f.placeParts(Na);
+                } else if (v.hook) {
+                    if (U.object && U.object.arrestingCable && !f.arrestingCableContact) {
+                        var ba = V - T[2];
+                        ba >= -U.object.arrestingCableHeight &&
+                            (f.arrestingCableContact = { collisionPoint: z, normal: H, type: "arrestingCable", object: U.object, contactFwdDir: V3.cross(H, V3.normalize(R[0])), contactSideDir: V3.cross(H, V3.normalize(R[1])) });
                     }
                     if (f.arrestingCableContact) {
-                        var Na = geofs.utils.llaDistanceInMeters(S, f.arrestingCableContact.object.location);
-                        f.velocityScalar < flight.arrestingHookDiscardVelocity || Na > flight.arrestingHookDiscardLength
+                        var Oa = geofs.utils.llaDistanceInMeters(T, f.arrestingCableContact.object.location);
+                        f.velocityScalar < flight.arrestingHookDiscardVelocity || Oa > flight.arrestingHookDiscardLength
                             ? (f.arrestingCableContact.object.model.setPositionOrientationAndScale(f.arrestingCableContact.object.location, null, 1), (f.arrestingCableContact = null))
-                            : ((r.contact = f.arrestingCableContact), P.push(f.arrestingCableContact), f.arrestingCableContact.object.model.setPositionOrientationAndScale(S, null, [1.6 * Na, 1, 1]));
+                            : ((v.contact = f.arrestingCableContact), P.push(f.arrestingCableContact), f.arrestingCableContact.object.model.setPositionOrientationAndScale(T, null, [1.6 * Oa, 1, 1]));
                     }
                 } else
-                    (ba = U - S[2]),
+                    (ba = V - T[2]),
                         0 <= ba &&
                             !z.wrongAltitude &&
                             ((Q = Math.max(Q, ba)),
-                            (y = { collisionPoint: z, normal: G, penetration: ba, type: "standard", contactFwdDir: V3.cross(G, V3.normalize(R[0])), contactSideDir: V3.cross(G, V3.normalize(R[1])) }),
-                            (r.contact = y),
+                            (y = { collisionPoint: z, normal: H, penetration: ba, type: "standard", contactFwdDir: V3.cross(H, V3.normalize(R[0])), contactSideDir: V3.cross(H, V3.normalize(R[1])) }),
+                            (v.contact = y),
                             P.push(y));
             }
             if (P.length && ((f.groundContact = !0), !flight.skipCollisionResponse)) {
                 Q > flight.minPenetrationThreshold && !geofs.cautiousWithTerrain && ((f.llaLocation[2] += Q), (Q = 0));
                 var va = 0;
-                for (D = P.length; va < D; va++) {
+                for (C = P.length; va < C; va++) {
                     y = P[va];
                     z = y.collisionPoint;
-                    r = z.part;
+                    v = z.part;
                     var N = z.contactProperties,
                         J = f.rigidBody.getVelocityInLocalPoint(z.worldPosition);
                     J = V3.add(J, [0, 0, geofs.waveVerticalSpeed]);
-                    var V = V3.dot(y.normal, J);
-                    qa = Math.max(qa, Math.abs(V));
+                    var W = V3.dot(y.normal, J);
+                    qa = Math.max(qa, Math.abs(W));
                     var ca = 0;
                     if ("buoyancy" == y.type) {
-                        var rb = clamp(0.1 * y.force * V, 0, y.force);
-                        f.rigidBody.applyForce(V3.scale(y.normal, y.force - rb), z.worldPosition);
-                        var Oa = V3.normalize(J),
-                            Pa = V3.length(J),
-                            Qa = Pa * Pa * 0.5;
-                        if ("float" == r.type) {
-                            var Ra = r.object3d.getWorldFrame()[r.forceDirection],
-                                sb = -V3.dot(Ra, Oa) * TWO_PI;
-                            f.rigidBody.applyForce(V3.scale(Ra, WATER_DENSITY * Qa * r.area * sb * 0.01), z.worldPosition);
+                        var sb = clamp(0.1 * y.force * W, 0, y.force);
+                        f.rigidBody.applyForce(V3.scale(y.normal, y.force - sb), z.worldPosition);
+                        var Pa = V3.normalize(J),
+                            Qa = V3.length(J),
+                            Ra = Qa * Qa * 0.5;
+                        if ("float" == v.type) {
+                            var Sa = v.object3d.getWorldFrame()[v.forceDirection],
+                                tb = -V3.dot(Sa, Pa) * TWO_PI;
+                            f.rigidBody.applyForce(V3.scale(Sa, WATER_DENSITY * Ra * v.area * tb * 0.01), z.worldPosition);
                         }
-                        var tb = Qa * WATER_DENSITY * y.submersionRatio;
-                        geofs.aircraft.instance.object3d.setVectorWorldPosition(r.dragVector);
-                        var ub = V3.mult(Oa, V3.abs(r.dragVector.worldPosition)),
-                            vb = V3.scale(ub, -tb);
-                        f.rigidBody.applyForce(vb, z.worldPosition);
+                        var ub = Ra * WATER_DENSITY * y.submersionRatio;
+                        geofs.aircraft.instance.object3d.setVectorWorldPosition(v.dragVector);
+                        var vb = V3.mult(Pa, V3.abs(v.dragVector.worldPosition)),
+                            wb = V3.scale(vb, -ub);
+                        f.rigidBody.applyForce(wb, z.worldPosition);
                         f.waterContact = !0;
                     }
-                    if ("raycast" == y.type || "hardpoint" == y.type) (ca = (y.force - r.suspension.damping * V) * f.rigidBody.mass * d), 0 < ca && f.rigidBody.applyImpulse(V3.scale(y.normal, ca), z.worldPosition);
-                    "arrestingCable" == y.type && ((f.arrestingCableContact.force = V3.scale(J, -r.hook.strength)), f.rigidBody.applyForce(f.arrestingCableContact.force, z.worldPosition));
-                    if (("standard" == y.type || "hardpoint" == y.type) && 0 > V) {
-                        var Sa = f.rigidBody.computeJacobian(0, V, z.worldPosition, y.normal),
-                            wb = V3.scale(y.normal, Sa);
-                        f.rigidBody.applyImpulse(wb, z.worldPosition);
-                        ca = Sa;
+                    if ("raycast" == y.type || "hardpoint" == y.type) (ca = (y.force - v.suspension.damping * W) * f.rigidBody.mass * e), 0 < ca && f.rigidBody.applyImpulse(V3.scale(y.normal, ca), z.worldPosition);
+                    "arrestingCable" == y.type && ((f.arrestingCableContact.force = V3.scale(J, -v.hook.strength)), f.rigidBody.applyForce(f.arrestingCableContact.force, z.worldPosition));
+                    if (("standard" == y.type || "hardpoint" == y.type) && 0 > W) {
+                        var Ta = f.rigidBody.computeJacobian(0, W, z.worldPosition, y.normal),
+                            xb = V3.scale(y.normal, Ta);
+                        f.rigidBody.applyImpulse(xb, z.worldPosition);
+                        ca = Ta;
                     }
                     var K = ca * N.frictionCoef;
-                    K = clamp(K, K, 2 * f.rigidBody.mass * d * N.frictionCoef);
+                    K = clamp(K, K, 2 * f.rigidBody.mass * e * N.frictionCoef);
                     if ("buoyancy" != y.type)
-                        if ("wheel" == r.type) {
+                        if ("wheel" == v.type) {
                             var wa = y.contactFwdDir,
                                 xa = y.contactSideDir,
-                                Ta = V3.dot(xa, J),
+                                Ua = V3.dot(xa, J),
                                 ya = V3.dot(wa, J);
                             y.forwardProjVel = ya;
-                            y.sideProjVel = Ta;
-                            var Ua = f.rigidBody.computeJacobian(0, Ta, z.worldPosition, xa),
-                                Va = f.rigidBody.computeJacobian(0, ya, z.worldPosition, wa),
-                                za = Math.abs(Ua),
-                                Aa = Math.abs(Va),
-                                Wa = 1,
+                            y.sideProjVel = Ua;
+                            var Va = f.rigidBody.computeJacobian(0, Ua, z.worldPosition, xa),
+                                Wa = f.rigidBody.computeJacobian(0, ya, z.worldPosition, wa),
+                                za = Math.abs(Va),
+                                Aa = Math.abs(Wa),
+                                Xa = 1,
                                 la = 1;
                             Math.abs(ya) > N.lockSpeed && (la = N.rollingFriction);
-                            var Xa = r.brakesController;
-                            if (Xa && 0 < Aa) {
-                                var xb = clamp(g[Xa] * r.brakesControllerRatio, 0, 1);
-                                la = clamp(K / (Aa * N.frictionCoef), 0, 1) * xb;
+                            var Ya = v.brakesController;
+                            if (Ya && 0 < Aa) {
+                                var yb = clamp(k[Ya] * v.brakesControllerRatio, 0, 1);
+                                la = clamp(K / (Aa * N.frictionCoef), 0, 1) * yb;
                             }
-                            var yb = f.definition.brakeDamping || 3;
-                            0.05 < controls.brakes && (la = clamp((K / (Aa * N.frictionCoef * yb)) * controls.brakes, 0, 1));
+                            var zb = f.definition.brakeDamping || 3;
+                            0.05 < controls.brakes && (la = clamp((K / (Aa * N.frictionCoef * zb)) * controls.brakes, 0, 1));
                             if (za > K) {
                                 var Ba = K / (za * za);
-                                Wa = clamp(Ba, N.dynamicFriction, 1);
+                                Xa = clamp(Ba, N.dynamicFriction, 1);
                             }
-                            f.rigidBody.applyImpulse(V3.scale(xa, Ua * Wa), z.worldPosition);
-                            f.rigidBody.applyImpulse(V3.scale(wa, Va * la), z.worldPosition);
+                            f.rigidBody.applyImpulse(V3.scale(xa, Va * Xa), z.worldPosition);
+                            f.rigidBody.applyImpulse(V3.scale(wa, Wa * la), z.worldPosition);
                         } else {
-                            var Ya = V3.sub(J, V3.scale(y.normal, V)),
-                                Za = V3.normalize(Ya),
-                                $a = V3.length(Ya);
-                            if ($a) {
-                                var ab = f.rigidBody.computeJacobian(0, $a, z.worldPosition, Za),
-                                    Ca = Math.abs(ab),
-                                    bb = 1;
-                                Ca > K && ((Ba = K / (Ca * Ca)), (bb = clamp(Ba, N.dynamicFriction, 1)));
-                                f.rigidBody.applyImpulse(V3.scale(Za, bb * ab), z.worldPosition);
+                            var Za = V3.sub(J, V3.scale(y.normal, W)),
+                                $a = V3.normalize(Za),
+                                ab = V3.length(Za);
+                            if (ab) {
+                                var bb = f.rigidBody.computeJacobian(0, ab, z.worldPosition, $a),
+                                    Ca = Math.abs(bb),
+                                    cb = 1;
+                                Ca > K && ((Ba = K / (Ca * Ca)), (cb = clamp(Ba, N.dynamicFriction, 1)));
+                                f.rigidBody.applyImpulse(V3.scale($a, cb * bb), z.worldPosition);
                             }
                         }
                 }
             }
         } else
-            for (n = 0, D = geofs.aircraft.instance.suspensions.length; n < D; n++)
-                (r = geofs.aircraft.instance.suspensions[n]), r.suspension && !r.suspension.rest && ((aa = r.name + "Suspension"), (g[aa] = 0), (r.points.suspensionOrigin[2] = 0), (r.suspension.rest = !0));
+            for (q = 0, C = geofs.aircraft.instance.suspensions.length; q < C; q++)
+                (v = geofs.aircraft.instance.suspensions[q]), v.suspension && !v.suspension.rest && ((aa = v.name + "Suspension"), (k[aa] = 0), (v.points.suspensionOrigin[2] = 0), (v.suspension.rest = !0));
         flight.recorder.playing ||
             flight.sharing.on ||
-            (f.rigidBody.integrateVelocities(d),
-            f.rigidBody.integrateTransform(d),
+            (f.rigidBody.integrateVelocities(e),
+            f.rigidBody.integrateTransform(e),
             geofs.aircraft.instance.object3d.compute(f.llaLocation),
             (geofs.aircraft.instance.htr = geofs.aircraft.instance.object3d.htr),
-            flight.setAnimationValues(d),
-            geofs.autopilot.update(d),
+            flight.setAnimationValues(e, c),
+            geofs.autopilot.update(e),
             flight.recorder.record());
     }
-    1 == flight.recorder.playing ? (flight.recorder.play(b), flight.setAnimationValues(a)) : flight.sharing.on ? (flight.sharing.update(b), flight.setAnimationValues(a)) : (f.rigidBody.setCurrentAcceleration(e, a), f.placeParts());
+    1 == flight.recorder.playing
+        ? (flight.recorder.play(b), flight.setAnimationValues(a, flight.recorder.liveRecord))
+        : flight.sharing.on
+        ? (flight.sharing.update(b), flight.setAnimationValues(a, flight.recorder.liveRecord))
+        : (f.rigidBody.setCurrentAcceleration(g, a), f.placeParts());
     f.render();
     geofs.preferences.crashDetection && 10 < qa && !f.crashed && ((f.crashNotified = !0), ui.showCrashNotification(), f.crash());
     f.htrAngularSpeed = V3.sub(f.object3d.htr, f.htr);
     f.htrAngularSpeed = fixAngles(f.htrAngularSpeed);
     f.htrAngularSpeed = V3.scale(f.htrAngularSpeed, 1 / b);
     f.htr = f.object3d.htr;
-    n = f.maxAngularVRatio = 0;
-    for (D = f.wheels.length; n < D; n++) {
-        var B = f.wheels[n];
+    q = f.maxAngularVRatio = 0;
+    for (C = f.wheels.length; q < C; q++) {
+        var B = f.wheels[q];
         B.oldAngularVelocity = B.angularVelocity;
         if (B.contact) {
             B.angularVelocity = (B.contact.forwardProjVel * a) / B.arcDegree;
-            var cb = B.angularVelocity / B.oldAngularVelocity;
+            var db = B.angularVelocity / B.oldAngularVelocity;
             30 < B.contact.forwardProjVel &&
-                40 < cb &&
+                40 < db &&
                 new geofs.fx.ParticleEmitter({
                     anchor: B.contact.collisionPoint,
                     duration: 200,
@@ -14489,91 +14552,99 @@ flight.tick = function (a, b) {
                     endRotation: "random",
                     texture: "smoke",
                 });
-            f.maxAngularVRatio = Math.max(f.maxAngularVRatio, cb);
+            f.maxAngularVRatio = Math.max(f.maxAngularVRatio, db);
         } else 0.01 < B.angularVelocity && (B.angularVelocity *= 0.9);
-        var db = B.name + "Rotation";
-        g[db] = fixAngle360((g[db] || 0) + B.angularVelocity);
+        var eb = B.name + "Rotation";
+        k[eb] = fixAngle360((k[eb] || 0) + B.angularVelocity);
     }
 };
-flight.setAnimationValues = function (a) {
-    var b = geofs.aircraft.instance,
-        c = geofs.animation.values,
-        d = b.llaLocation[2] * METERS_TO_FEET,
-        e = (60 * (d - b.oldAltitude * METERS_TO_FEET)) / a;
-    b.oldAltitude = b.llaLocation[2];
-    var f = fixAngle(weather.currentWindDirection - b.htr[0]),
-        g = b.engine.rpm * b.definition.RPM2PropAS * a;
-    c.acceleration = M33.transform(M33.transpose(b.object3d._rotation), b.rigidBody.v_acceleration);
-    c.accX = c.acceleration[0];
-    c.accY = c.acceleration[1];
-    c.accZ = c.acceleration[2];
-    c.slipball = exponentialSmoothing("slipball", c.acceleration[0], 0.02);
-    c.ktas = b.trueAirSpeed * MS_TO_KNOTS;
-    c.kias = c.ktas;
-    c.groundSpeed = b.groundSpeed;
-    c.groundSpeedKnt = b.groundSpeed * MS_TO_KNOTS;
-    c.altitudeMeters = b.llaLocation[2];
-    c.altitude = d;
-    c.haglMeters = geofs.relativeAltitude;
-    c.haglFeet = geofs.relativeAltitude * METERS_TO_FEET;
-    c.verticalSpeed = e;
-    c.climbrate = e;
-    c.aoa = b.angleOfAttackDeg;
-    c.turnrate = (60 * fixAngle(b.htr[0] - c.heading)) / a;
-    c.heading = b.htr[0];
-    c.heading360 = fixAngle360(b.htr[0]);
-    c.atilt = b.htr[1];
-    c.aroll = b.htr[2];
-    c.enginesOn = b.engine.on;
-    c.engineVibration = 100 < b.engine.rpm ? Math.random() * clamp(1e3 / b.engine.rpm, 0, 1) : 0;
-    c.prop = fixAngle360(c.prop + g);
-    c.thrust = b.totalThrust;
-    c.rpm = b.engine.rpm;
-    c.throttle = controls.throttle;
-    c.pitch = controls.pitch;
-    c.rawPitch = controls.rawPitch;
-    c.roll = controls.roll;
-    c.yaw = controls.yaw;
-    c.rawYaw = controls.rawYaw;
-    c.trim = controls.elevatorTrim;
-    c.brakes = controls.brakes;
-    c.gearPosition = controls.gear.position;
-    c.invGearPosition = 1 - controls.gear.position;
-    c.gearTarget = controls.gear.target;
-    c.flapsValue = controls.flaps.position / controls.flaps.maxPosition;
-    c.accessoriesPosition = controls.accessories.position;
-    c.flapsPosition = controls.flaps.position;
-    c.flapsTarget = controls.flaps.target;
-    c.flapsPositionTarget = controls.flaps.positionTarget;
-    c.flapsMaxPosition = controls.flaps.maxPosition;
-    c.airbrakesPosition = controls.airbrakes.position;
-    c.optionalAnimatedPartPosition = controls.optionalAnimatedPart.position;
-    c.airbrakesTarget = controls.airbrakes.target;
-    c.parkingBrake = b.brakesOn;
-    c.groundContact = b.groundContact ? 1 : 0;
-    c.arrestingHookTension = b.arrestingCableContact ? V3.length(b.arrestingCableContact.force) : 0;
-    c.airTemp = weather.atmosphere.airTempAtAltitude;
-    c.mach = b.trueAirSpeed / (331.3 + 0.606 * weather.atmosphere.airTempAtAltitude);
-    c.machUnits = Math.floor(c.mach);
-    c.machTenth = Math.floor(10 * (c.mach % 1).toPrecision(2));
-    c.machHundredth = Math.floor(100 * (c.mach % 0.1).toPrecision(2));
-    c.altTenThousands = d % 1e5;
-    c.altThousands = d % 1e4;
-    c.altHundreds = d % 1e3;
-    c.altTens = d % 100;
-    c.altTensShift = Math.floor((d % 1e5) / 1e4);
-    c.altUnits = d % 10;
-    c.relativeWind = f;
-    c.windSpeed = weather.currentWindSpeed;
-    c.windSpeedLabel = parseInt(weather.currentWindSpeed) + " kts";
-    c.view = geofs.camera.currentView;
-    c.envelopeTemp = b.envelopeTemp;
-    c["aircraft.maxAngularVRatio"] = b.maxAngularVRatio;
-    c.rollingSpeed = b.groundContact ? b.velocityScalar : 0;
+flight.setAnimationValues = function (a, b) {
+    var c = geofs.aircraft.instance,
+        d = geofs.animation.values,
+        e = c.llaLocation[2] * METERS_TO_FEET,
+        g = (60 * (e - c.oldAltitude * METERS_TO_FEET)) / a;
+    c.oldAltitude = c.llaLocation[2];
+    var f = fixAngle(weather.currentWindDirection - c.htr[0]),
+        k = c.engine.rpm * c.definition.RPM2PropAS * a;
+    d.acceleration = M33.transform(M33.transpose(c.object3d._rotation), c.rigidBody.v_acceleration);
+    d.accX = d.acceleration[0];
+    d.accY = d.acceleration[1];
+    d.accZ = d.acceleration[2];
+    d.loadFactor = d.acceleration[2] / GRAVITY;
+    d.slipball = exponentialSmoothing("slipball", d.acceleration[0], 0.02);
+    d.ktas = c.trueAirSpeed * MS_TO_KNOTS;
+    d.kiasChangeRate = (d.kias - d.ktas) * a;
+    d.kias = d.ktas;
+    d.kiasUnits = d.ktas % 10;
+    d.kiasTens = d.ktas % 100;
+    d.kiasHundreds = d.ktas % 1e3;
+    d.kiasThousands = d.ktas % 1e4;
+    d.groundSpeed = c.groundSpeed;
+    d.groundSpeedKnt = c.groundSpeed * MS_TO_KNOTS;
+    d.altitudeMeters = c.llaLocation[2];
+    d.altitude = e;
+    d.haglMeters = geofs.relativeAltitude;
+    d.haglFeet = geofs.relativeAltitude * METERS_TO_FEET;
+    d.groundElevationFeet = geofs.groundElevation * METERS_TO_FEET;
+    d.verticalSpeed = g;
+    d.climbrate = g;
+    d.aoa = c.angleOfAttackDeg;
+    d.turnrate = (60 * fixAngle(c.htr[0] - d.heading)) / a;
+    d.heading = c.htr[0];
+    d.heading360 = fixAngle360(c.htr[0]);
+    d.atilt = c.htr[1];
+    d.aroll = c.htr[2];
+    d.enginesOn = c.engine.on;
+    d.engineVibration = 100 < c.engine.rpm ? Math.random() * clamp(1e3 / c.engine.rpm, 0, 1) : 0;
+    d.prop = fixAngle360(d.prop + k);
+    d.thrust = c.totalThrust;
+    d.rpm = c.engine.rpm;
+    d.throttle = controls.throttle;
+    d.pitch = controls.pitch;
+    d.rawPitch = controls.rawPitch;
+    d.roll = controls.roll;
+    d.yaw = controls.yaw;
+    d.rawYaw = controls.rawYaw;
+    d.trim = controls.elevatorTrim;
+    d.brakes = controls.brakes;
+    d.gearPosition = controls.gear.position;
+    d.invGearPosition = 1 - controls.gear.position;
+    d.gearTarget = controls.gear.target;
+    d.flapsValue = controls.flaps.position / controls.flaps.maxPosition;
+    d.accessoriesPosition = controls.accessories.position;
+    d.flapsPosition = controls.flaps.position;
+    d.flapsTarget = controls.flaps.target;
+    d.flapsPositionTarget = controls.flaps.positionTarget;
+    d.flapsMaxPosition = controls.flaps.maxPosition;
+    d.airbrakesPosition = controls.airbrakes.position;
+    d.optionalAnimatedPartPosition = controls.optionalAnimatedPart.position;
+    d.airbrakesTarget = controls.airbrakes.target;
+    d.parkingBrake = c.brakesOn;
+    d.groundContact = c.groundContact ? 1 : 0;
+    d.arrestingHookTension = c.arrestingCableContact ? V3.length(c.arrestingCableContact.force) : 0;
+    d.airTemp = weather.atmosphere.airTempAtAltitude;
+    d.mach = c.trueAirSpeed / (331.3 + 0.606 * weather.atmosphere.airTempAtAltitude);
+    d.machUnits = Math.floor(d.mach);
+    d.machTenth = Math.floor(10 * (d.mach % 1).toPrecision(2));
+    d.machHundredth = Math.floor(100 * (d.mach % 0.1).toPrecision(2));
+    d.altTenThousands = e % 1e5;
+    d.altThousands = e % 1e4;
+    d.altHundreds = e % 1e3;
+    d.altTens = e % 100;
+    d.altTensShift = Math.floor((e % 1e5) / 1e4);
+    d.altUnits = e % 10;
+    d.relativeWind = f;
+    d.windSpeed = weather.currentWindSpeed;
+    d.windSpeedLabel = parseInt(weather.currentWindSpeed) + " kts";
+    d.view = geofs.camera.currentView;
+    d.envelopeTemp = c.envelopeTemp;
+    d["aircraft.maxAngularVRatio"] = c.maxAngularVRatio;
+    d.rollingSpeed = c.groundContact ? c.velocityScalar : 0;
     "free" == geofs.camera.currentModeName || "chase" == geofs.camera.currentModeName
-        ? ((b = geofs.utils.llaDistanceInMeters(geofs.camera.lla, b.llaLocation)), (c.cameraAircraftSpeed = (c.cameraAircraftDistance - b) / a), (c.cameraAircraftDistance = b))
-        : ((c.cameraAircraftSpeed = 0), (c.cameraAircraftDistance = 0));
-    geofs.api.postMessage({ animationValues: c });
+        ? ((c = geofs.utils.llaDistanceInMeters(geofs.camera.lla, c.llaLocation)), (d.cameraAircraftSpeed = (d.cameraAircraftDistance - c) / a), (d.cameraAircraftDistance = c))
+        : ((d.cameraAircraftSpeed = 0), (d.cameraAircraftDistance = 0));
+    d.geofsTime = b;
+    geofs.api.postMessage({ animationValues: d });
 };
 $(".geofs-recordPlayer-slider")
     .on("userchange", function (a, b) {
@@ -14986,28 +15057,28 @@ geofs.aircraft.Aircraft.prototype.loadWithLivery = function (a, b, c) {
 };
 geofs.aircraft.Aircraft.prototype.load = function (a, b, c, d) {
     var e = this,
-        f = geofs.aircraftList[a] && geofs.aircraftList[a].local ? geofs.aircraftList[a].path + "aircraft.json" : geofs.url + "/models/aircraft/load.php";
-    return new Promise(function (g, k) {
+        g = geofs.aircraftList[a] && geofs.aircraftList[a].local ? geofs.aircraftList[a].path + "aircraft.json" : geofs.url + "/models/aircraft/load.php";
+    return new Promise(function (f, k) {
         e.id != a || c
             ? (geofs.doPause(1),
               e.unloadAircraft(),
-              $.ajax(f, {
+              $.ajax(g, {
                   data: { id: a, kc: geofs.killCache },
                   dataType: "text",
-                  success: function (m, q, u) {
-                      if ("error" != q) {
+                  success: function (m, p, n) {
+                      if ("error" != p) {
                           geofs.aircraftList[a] && geofs.aircraftList[a].local && (m = JSON.stringify({ id: a, name: geofs.aircraftList[a].name, fullPath: geofs.aircraftList[a].path, isPremium: !1, isCommunity: !1, definition: btoa(m) }));
-                          var v = e.parseRecord(m);
+                          var r = e.parseRecord(m);
                       }
-                      v ? (geofs.aircraftList[a] && !geofs.aircraftList[a].local && (e.fullPath = geofs.url + e.aircraftRecord.fullPath), (e.id = a), e.init(v, b, c, d)) : e.loadDefault("Could not load aircraft file");
-                      g();
+                      r ? (geofs.aircraftList[a] && !geofs.aircraftList[a].local && (e.fullPath = geofs.url + e.aircraftRecord.fullPath), (e.id = a), e.init(r, b, c, d)) : e.loadDefault("Could not load aircraft file");
+                      f();
                   },
-                  error: function (m, q, u) {
-                      a != geofs.aircraft.default && e.loadDefault("Could not load aircraft file" + u);
+                  error: function (m, p, n) {
+                      a != geofs.aircraft.default && e.loadDefault("Could not load aircraft file" + n);
                       k();
                   },
               }))
-            : g();
+            : f();
     });
 };
 geofs.aircraft.Aircraft.prototype.init = function (a, b, c, d) {
@@ -15061,20 +15132,20 @@ geofs.aircraft.Aircraft.prototype.loadCockpit = function () {
     var a = this,
         b = geofs.aircraft.instance.aircraftRecord.id,
         c = geofs.aircraftList[b] && geofs.aircraftList[b].local ? geofs.aircraftList[b].path + "cockpit/cockpit.json" : geofs.url + "/models/aircraft/load.php",
-        d = new Promise(function (e, f) {
+        d = new Promise(function (e, g) {
             a._cockpitLoaded
                 ? e()
                 : geofs.aircraft.instance.definition.cockpitModel
                 ? $.ajax(c, {
                       data: { id: b, kc: geofs.killCache, cockpit: !0 },
                       dataType: "text",
-                      success: function (g, k) {
-                          geofs.aircraftList[b] && geofs.aircraftList[b].local && (g = JSON.stringify({ id: b, name: geofs.aircraftList[b].name, fullPath: geofs.aircraftList[b].path, isPremium: !1, isCommunity: !1, definition: btoa(g) }));
-                          if ((g = a.parseRecord(g)))
-                              (a.cockpitSetup = g),
+                      success: function (f, k) {
+                          geofs.aircraftList[b] && geofs.aircraftList[b].local && (f = JSON.stringify({ id: b, name: geofs.aircraftList[b].name, fullPath: geofs.aircraftList[b].path, isPremium: !1, isCommunity: !1, definition: btoa(f) }));
+                          if ((f = a.parseRecord(f)))
+                              (a.cockpitSetup = f),
                                   (a._cockpitLoaded = !0),
                                   geofs.aircraftList[b].local || (a.aircraftRecord.fullPath = geofs.url + a.aircraftRecord.fullPath),
-                                  a.addParts(g.parts, a.aircraftRecord.fullPath + "cockpit/", a.cockpitSetup.scale),
+                                  a.addParts(f.parts, a.aircraftRecord.fullPath + "cockpit/", a.cockpitSetup.scale),
                                   instruments.rescale(),
                                   a.definition.cockpitScaleFix && a.fixCockpitScale(a.definition.cockpitScaleFix),
                                   a.object3d.compute(a.llaLocation),
@@ -15082,11 +15153,11 @@ geofs.aircraft.Aircraft.prototype.loadCockpit = function () {
                                   a.render();
                           e();
                       },
-                      error: function (g, k) {
-                          f();
+                      error: function (f, k) {
+                          g();
                       },
                   })
-                : ((geofs.aircraft.instance._cockpitLoaded = !0), f());
+                : ((geofs.aircraft.instance._cockpitLoaded = !0), g());
         });
     d.then(function () {
         a.loadLivery(a.liveryId);
@@ -15098,16 +15169,16 @@ geofs.aircraft.Aircraft.prototype.addParts = function (a, b, c) {
     for (var d = 0; d < a.length; d++) {
         var e = a[d];
         if (e.include) {
-            var f = geofs.includes[e.include];
-            e = Object.assign(e, f[0]);
-            for (var g = 1; g < f.length; g++) {
-                var k = Object.assign({}, f[g], { parent: e.name });
+            var g = geofs.includes[e.include];
+            e = Object.assign(e, g[0]);
+            for (var f = 1; f < g.length; f++) {
+                var k = Object.assign({}, g[f], { parent: e.name });
                 k.name = e.name + k.name;
                 a.push(k);
             }
         }
         if (e.indices && 0 < e.indices) {
-            for (g = 2; g <= e.indices; g++) (k = Object.assign({}, e, { indices: null })), (k.name = e.name + g), (k.node += g), a.push(k);
+            for (f = 2; f <= e.indices; f++) (k = Object.assign({}, e, { indices: null })), (k.name = e.name + f), (k.node += f), a.push(k);
             e.name += "1";
             e.node += "1";
         }
@@ -15125,31 +15196,35 @@ geofs.aircraft.Aircraft.prototype.addParts = function (a, b, c) {
         e.scale = e.scale || [1, 1, 1];
         e.scale = V3.scale(e.scale, c);
         e.originalScale = e.scale;
-        e.model && ((f = e.model), b && "/" != e.model[0] && !e.include && (f = b + e.model), (e["3dmodel"] = new geofs.api.Model(f, { shadows: e.shadows ? window[e.shadows] : SHADOWS_ALL, incrementallyLoadTextures: !1 })));
+        e.model &&
+            ((g = e.model),
+            b && "/" != e.model[0] && !e.include && (g = b + e.model),
+            (e["3dmodel"] = new geofs.api.Model(g, { shadows: e.shadows ? window[e.shadows] : SHADOWS_ALL, incrementallyLoadTextures: !1 })),
+            e.renderer && (e.rendererInstance = new instruments.Renderer(e.renderer)));
         e.light && ((e.lightBillboard = new geofs.fx.light(null, e.light, { scale: 0.2 })), geofs.aircraft.instance.lights.push(e));
         e.object3d = new Object3D(e);
         e.suspension &&
             (e.suspension.length
-                ? ((e.suspension.origin = [e.collisionPoints[0][0], e.collisionPoints[0][1], e.collisionPoints[0][2] + e.suspension.length]), (f = e.suspension.length))
-                : ((e.suspension.origin = [e.collisionPoints[0][0], e.collisionPoints[0][1], 0]), (f = -e.collisionPoints[0][2])),
-            (e.suspension.restLength = f),
+                ? ((e.suspension.origin = [e.collisionPoints[0][0], e.collisionPoints[0][1], e.collisionPoints[0][2] + e.suspension.length]), (g = e.suspension.length))
+                : ((e.suspension.origin = [e.collisionPoints[0][0], e.collisionPoints[0][1], 0]), (g = -e.collisionPoints[0][2])),
+            (e.suspension.restLength = g),
             "rotation" == e.suspension.motion
-                ? ((f = V3.length(e.collisionPoints[0])),
-                  (f = Math.atan2(e.collisionPoints[0][0] / f, e.collisionPoints[0][2] / f)),
-                  (f = { type: "rotate", axis: e.suspension.axis || "Y", value: e.name + "Suspension", ratio: (0 > f ? f + HALF_PI : f - HALF_PI) * RAD_TO_DEGREES * (e.suspension.ratio || 1) }))
-                : (f = { type: "translate", axis: e.suspension.axis || "Z", value: e.name + "Suspension", ratio: e.suspension.ratio || 1 }),
-            e.animations.push(f),
+                ? ((g = V3.length(e.collisionPoints[0])),
+                  (g = Math.atan2(e.collisionPoints[0][0] / g, e.collisionPoints[0][2] / g)),
+                  (g = { type: "rotate", axis: e.suspension.axis || "Y", value: e.name + "Suspension", ratio: (0 > g ? g + HALF_PI : g - HALF_PI) * RAD_TO_DEGREES * (e.suspension.ratio || 1) }))
+                : (g = { type: "translate", axis: e.suspension.axis || "Z", value: e.name + "Suspension", ratio: e.suspension.ratio || 1 }),
+            e.animations.push(g),
             (e.suspension.hardPoint = e.suspension.hardPoint || 0.5),
             (e.points.suspensionOrigin = V3.dup(e.suspension.origin)),
             geofs.aircraft.instance.suspensions.push(e));
-        for (g = 0; g < e.animations.length; g++)
-            (f = e.animations[g]),
-                (f.ratio = f.ratio || 1),
-                (f.offset = f.offset || 0),
-                (f.currentValue = null),
-                f.delay && (f.ratio /= 1 - Math.abs(f.delay)),
-                "rotate" == f.type && ((k = f.method || "rotate"), "parent" == f.frame && (k = "rotateParentFrame"), (f.rotationMethod = e.object3d[k + f.axis])),
-                "translate" == f.type && (geofs.isArray(f.axis) || (f.axis = AXIS_TO_VECTOR[f.axis]));
+        for (f = 0; f < e.animations.length; f++)
+            (g = e.animations[f]),
+                (g.ratio = g.ratio || 1),
+                (g.offset = g.offset || 0),
+                (g.currentValue = null),
+                g.delay && (g.ratio /= 1 - Math.abs(g.delay)),
+                "rotate" == g.type && ((k = g.method || "rotate"), "parent" == g.frame && (k = "rotateParentFrame"), (g.rotationMethod = e.object3d[k + g.axis])),
+                "translate" == g.type && (geofs.isArray(g.axis) || (g.axis = AXIS_TO_VECTOR[g.axis]));
         "wheel" == e.type && ((e.radius = e.radius || 1), (e.arcDegree = (e.radius * TWO_PI) / 360), (e.angularVelocity = 0), geofs.aircraft.instance.wheels.push(e));
         "airfoil" == e.type &&
             ((e.lift = 0),
@@ -15182,12 +15257,12 @@ geofs.aircraft.Aircraft.prototype.addParts = function (a, b, c) {
                 })));
         "balloon" == e.type && ((e.temperature = e.initialTemperature || 0), (e.coolingSpeed = e.coolingSpeed || 0), geofs.aircraft.instance.balloons.push(e));
         if (e.collisionPoints) {
-            f = e.collisionPoints;
-            g = geofs.aircraft.instance.definition.contactProperties[e.contactType || e.type];
-            for (k = 0; k < f.length; k++) (f[k].part = e), (f[k].contactProperties = g), geofs.aircraft.instance.collisionPoints.push(f[k]);
-            e.volume || e.buoyancy || ((e.volume = "airfoil" == e.type ? this.definition.mass / (400 * f.length) : 0.1), (e.area = e.area || 0));
+            g = e.collisionPoints;
+            f = geofs.aircraft.instance.definition.contactProperties[e.contactType || e.type];
+            for (k = 0; k < g.length; k++) (g[k].part = e), (g[k].contactProperties = f), geofs.aircraft.instance.collisionPoints.push(g[k]);
+            e.volume || e.buoyancy || ((e.volume = "airfoil" == e.type ? this.definition.mass / (400 * g.length) : 0.1), (e.area = e.area || 0));
             e.dragVector = e.dragVector || [1, 1, 1];
-            e.dragVector = V3.scale(e.dragVector, 1 / f.length);
+            e.dragVector = V3.scale(e.dragVector, 1 / g.length);
         }
         e.volume && (e.buoyancy = WATER_DENSITY * GRAVITY * e.volume);
         e.controller && (geofs.aircraft.instance.controllers[e.controller.name] = e.controller);
@@ -15213,7 +15288,7 @@ geofs.aircraft.Aircraft.prototype.setVisibility = function (a) {
 geofs.aircraft.Aircraft.prototype.unloadAircraft = function () {
     for (var a in geofs.aircraft.instance.parts) {
         var b = geofs.aircraft.instance.parts[a];
-        b.object3d && (b.object3d.destroy(), delete geofs.aircraft.instance.parts[a].object3d);
+        b.object3d && (b.object3d.destroy(), delete geofs.aircraft.instance.parts[a].object3d, b.rendererInstance && b.rendererInstance.destroy());
         b.contrailEmitter && b.contrailEmitter.destroy();
     }
     geofs.aircraft.instance.parts = null;
@@ -15280,8 +15355,8 @@ geofs.aircraft.Aircraft.prototype.placePart = function (a) {
                     e = null;
                     break;
                 case "scale":
-                    var f = V3.add(a.originalScale, V3.scale(d.axis, e));
-                    a.object3d.setScale(f);
+                    var g = V3.add(a.originalScale, V3.scale(d.axis, e));
+                    a.object3d.setScale(g);
                     break;
                 case "translate":
                     a.object3d.translate(V3.scale(d.axis, e));
@@ -15300,14 +15375,17 @@ geofs.aircraft.Aircraft.prototype.placePart = function (a) {
                 case "justhide":
                     0 < e && a.object3d.visible && a.object3d.setVisibility(!1);
                     break;
+                case "render":
+                    a.rendererInstance && a.rendererInstance.update(a, e);
+                    break;
                 case "sound":
                     0 < e
                         ? d.playing ||
                           ((d.playing = !0),
-                          (f = function () {
+                          (g = function () {
                               audio.playSoundLoop(d.name, d.loop);
                           }),
-                          d.retard ? (clearTimeout(d.timeOut), (d.timeOut = setTimeout(f, d.retard))) : f())
+                          d.retard ? (clearTimeout(d.timeOut), (d.timeOut = setTimeout(g, d.retard))) : g())
                         : d.playing && (clearTimeout(d.timeOut), audio.stopSoundLoop(d.name), (d.playing = !1));
                     break;
                 case "property":
@@ -15383,7 +15461,7 @@ geofs.objects.preProcessObjects = function () {
         if (a.collisionTriangles) {
             var b = a.rotateModelOnly ? M33.setFromEuler(V3.toRadians([0, 0, 0])) : M33.setFromEuler(V3.toRadians([a.htr[1], a.htr[2], a.htr[0]]));
             for (var c = 0, d = a.collisionTriangles.length; c < d; c++) {
-                for (var e = a.collisionTriangles[c], f = 0; 3 > f; f++) e[f] = M33.transform(b, e[f]);
+                for (var e = a.collisionTriangles[c], g = 0; 3 > g; g++) e[g] = M33.transform(b, e[g]);
                 e.u = V3.sub(e[1], e[0]);
                 e.v = V3.sub(e[2], e[0]);
                 e.n = V3.cross(e.u, e.v);
@@ -15430,17 +15508,17 @@ geofs.objects.updateCollidables = function () {
 geofs.objects.getAltitudeAtLocation = function (a, b) {
     if (geofs.objects.collidableObject)
         for (var c = [a, b, 1e5], d = 0, e = geofs.objects.collidableObjectList.length; d < e; d++)
-            for (var f = geofs.objects.collidableObjectList[d], g = lla2xyz(V3.sub(c, f.location), f.location), k = [g[0], g[1], 0], m = 0, q = f.collisionTriangles.length; m < q; m++) {
-                var u = f.collisionTriangles[m],
-                    v = intersect_RayTriangle([g, k], u);
-                if (v) {
-                    if (f.collisionCallback)
+            for (var g = geofs.objects.collidableObjectList[d], f = lla2xyz(V3.sub(c, g.location), g.location), k = [f[0], f[1], 0], m = 0, p = g.collisionTriangles.length; m < p; m++) {
+                var n = g.collisionTriangles[m],
+                    r = intersect_RayTriangle([f, k], n);
+                if (r) {
+                    if (g.collisionCallback)
                         try {
-                            eval(f.collisionCallback);
+                            eval(g.collisionCallback);
                         } catch (t) {
                             geofs.debug.error(t, "objects.getAltitudeAtLocation");
                         }
-                    return { location: [a, b, v.point[2] + f.location[2]], normal: V3.normalize(u.n), object: f };
+                    return { location: [a, b, r.point[2] + g.location[2]], normal: V3.normalize(n.n), object: g };
                 }
             }
 };
@@ -15635,11 +15713,11 @@ controls.addHammerHandlers = function () {
             });
             c.on("panmove", function (d) {
                 var e = clamp(d.deltaX, -controls.controlPad.eX, controls.controlPad.eX),
-                    f = clamp(d.deltaY, -controls.controlPad.hY, controls.controlPad.hY);
+                    g = clamp(d.deltaY, -controls.controlPad.hY, controls.controlPad.hY);
                 controls.touch.roll = e * controls.controlPad.rX;
-                controls.touch.pitch = f * controls.controlPad.rY;
+                controls.touch.pitch = g * controls.controlPad.rY;
                 b.css("left", e + "px");
-                b.css("top", f + "px");
+                b.css("top", g + "px");
                 d.preventDefault();
             });
             c.on("panend pancancel", function (d) {
@@ -15887,12 +15965,14 @@ controls.axisSetters = {
     },
     brakes: {
         label: "Brakes",
+        overridesAutopilot: !0,
         process: function (a) {
             return (controls.brakes = a);
         },
     },
     airbrakesPosition: {
         label: "Air Brakes",
+        overridesAutopilot: !0,
         process: function (a) {
             controls.airbrakes.target = (a + 1) / 2;
             controls.setPartAnimationDelta(controls.airbrakes);
@@ -15900,6 +15980,7 @@ controls.axisSetters = {
     },
     hatView: {
         label: "Hat Button View",
+        overridesAutopilot: !0,
         max: 3,
         process: function (a, b) {
             var c = 0,
@@ -15913,12 +15994,14 @@ controls.axisSetters = {
     },
     lookAround: {
         label: "Look left/right",
+        overridesAutopilot: !0,
         process: function (a) {
             a != geofs.lookAroundValue && (geofs.camera.lookAround(90 * a), (geofs.lookAroundValue = a));
         },
     },
     lookUpDown: {
         label: "Look up/down",
+        overridesAutopilot: !0,
         process: function (a) {
             a != geofs.lookUpDownValue && (geofs.camera.lookAround(null, -90 * a), (geofs.lookUpDownValue = a));
         },
@@ -16417,17 +16500,17 @@ controls.joystick.configure = function () {
     controls.joystick.sticks.forEach(function (c, d) {
         c.hash = geofs.utils.hashCode(c.id);
         for (var e in c.buttons) {
-            var f = c.hash + e;
-            if (geofs.preferences.joystick.buttons[f] && controls.setters[geofs.preferences.joystick.buttons[f]]) {
-                var g = controls.setters[geofs.preferences.joystick.buttons[f]].set,
-                    k = controls.setters[geofs.preferences.joystick.buttons[f]].unset;
-                g && controls.joystick.addButtonListener(f, "buttondown", g);
-                k && controls.joystick.addButtonListener(f, "buttonup", k);
+            var g = c.hash + e;
+            if (geofs.preferences.joystick.buttons[g] && controls.setters[geofs.preferences.joystick.buttons[g]]) {
+                var f = controls.setters[geofs.preferences.joystick.buttons[g]].set,
+                    k = controls.setters[geofs.preferences.joystick.buttons[g]].unset;
+                f && controls.joystick.addButtonListener(g, "buttondown", f);
+                k && controls.joystick.addButtonListener(g, "buttonup", k);
             }
-            controls.joystick.buttons[f] = { stick: d, globalId: a, id: e };
+            controls.joystick.buttons[g] = { stick: d, globalId: a, id: e };
             a++;
         }
-        for (var m in c.axes) (f = c.hash + m), (controls.joystick.axes[f] = { stick: d, globalId: b, id: m, enabled: 0 != c.axes[m] }), b++;
+        for (var m in c.axes) (g = c.hash + m), (controls.joystick.axes[g] = { stick: d, globalId: b, id: m, enabled: 0 != c.axes[m] }), b++;
     });
 };
 controls.joystick.startCalibration = function () {
@@ -16466,26 +16549,26 @@ controls.updateJoystick = function (a) {
             var c = controls.joystick.axes[b],
                 d = geofs.preferences.joystick.axis[b],
                 e = geofs.preferences.joystick.calibration[b] || { center: 0, multiplier: 1 };
-            if ("none" != d && (d = controls.axisSetters[d])) {
-                var f = controls.joystick.getAxisValue(b, d.min, d.max);
+            if ("none" != d && (d = controls.axisSetters[d]) && (!geofs.autopilot.on || d.overridesAutopilot)) {
+                var g = controls.joystick.getAxisValue(b, d.min, d.max);
                 controls.joystick.calibrating &&
-                    ((c.range.max = Math.max(c.range.max, f)),
-                    (c.range.min = Math.min(c.range.min, f)),
+                    ((c.range.max = Math.max(c.range.max, g)),
+                    (c.range.min = Math.min(c.range.min, g)),
                     (e = c.range.max - c.range.min),
                     (e = { center: c.range.min + e / 2, multiplier: 2 / e }),
                     (geofs.preferences.joystick.calibration[b] = e));
-                f = (f - e.center) * e.multiplier;
-                geofs.preferences.joystick.multiplier[b] && (f *= -1);
-                d.process && d.process(f, a);
+                g = (g - e.center) * e.multiplier;
+                geofs.preferences.joystick.multiplier[b] && (g *= -1);
+                d.process && d.process(g, a);
             }
         }
         if (controls.joystick.buttons)
             for (b in controls.joystick.buttons)
                 if ((a = controls.joystick.buttons[b]) && "none" != geofs.preferences.joystick.buttons[b] && ((e = a.oldValue), (c = controls.joystick.checkButton(b)), c != e)) {
                     try {
-                        var g = c ? controls.joystick.buttonHandlers.buttondown[b] : controls.joystick.buttonHandlers.buttonup[b];
+                        var f = c ? controls.joystick.buttonHandlers.buttondown[b] : controls.joystick.buttonHandlers.buttonup[b];
                     } catch (k) {}
-                    if (g) for (e = 0; e < g.length; e++) g[e]();
+                    if (f) for (e = 0; e < f.length; e++) f[e]();
                     a.oldValue = c;
                 }
     }
@@ -16573,7 +16656,7 @@ geofs.autopilot = {
         elevatorPitchPID: [0.01, 0.001, 1e-7],
         bankAnglePID: [0.15, 0.001, 0.01],
         aileronsRollPID: [0.1, 0.001, 1e-7],
-        throttlePID: [0.5, 0.01, 0],
+        throttlePID: [0.5, 0.1, 10],
         effectivenessRatioMaximum: 1.5,
     },
     init: function () {
@@ -16584,6 +16667,7 @@ geofs.autopilot = {
         geofs.autopilot.PIDs.aileronsRoll = new PID(a.aileronsRollPID[0], a.aileronsRollPID[1], a.aileronsRollPID[2]);
         geofs.autopilot.PIDs.throttle = new PID(a.throttlePID[0], a.throttlePID[1], a.throttlePID[2]);
         geofs.autopilot.definition = a;
+        0 < $("#Qantas94Heavy-ap-nav").length && ((geofs.autopilot = controls.autopilot), (geofs.autopilot.UI = { update: function () {} }));
     },
     setMode: function (a) {
         a = a || geofs.autopilot.mode;
@@ -16635,34 +16719,34 @@ geofs.autopilot = {
                 c = geofs.autopilot,
                 d = c.definition,
                 e = clamp(b.kias / 150, 1, 5),
-                f = clamp(b.kias / 100, 1, d.effectivenessRatioMaximum),
-                g = geofs.nav.units.NAV1;
-            if (g.inRange && g.hasNAV) {
+                g = clamp(b.kias / 100, 1, d.effectivenessRatioMaximum),
+                f = geofs.nav.units.NAV1;
+            if (f.inRange && f.hasNAV) {
                 if ("NAV" == c.mode) {
-                    var k = clamp(10 * g.courseDeviation, -45, 45);
-                    k = fixAngle360(g.course + k);
+                    var k = clamp(10 * f.courseDeviation, -45, 45);
+                    k = fixAngle360(f.course + k);
                     c.setCourse(k, !0);
-                } else "BOTH" == c.mode && 4.5 > Math.abs(g.courseDeviation) && (c.setMode("NAV"), c.setCourse(g.course, !0));
+                } else "BOTH" == c.mode && 4.5 > Math.abs(f.courseDeviation) && (c.setMode("NAV"), c.setCourse(f.course, !0));
                 geofs.autopilot.VNAV &&
-                    ((k = (g.height / (g.distance / geofs.aircraft.instance.groundSpeed / 60)) * METERS_TO_FEET * ("to" == g.direction ? -1 : 1)),
-                    (g = g.glideAngleDeviation * geofs.aircraft.instance.groundSpeed * 10),
-                    (k += g),
+                    ((k = (f.height / (f.distance / geofs.aircraft.instance.groundSpeed / 60)) * METERS_TO_FEET * ("to" == f.direction ? -1 : 1)),
+                    (f = f.glideAngleDeviation * geofs.aircraft.instance.groundSpeed * 10),
+                    (k += f),
                     c.setVerticalSpeed(k),
                     geofs.debug.watch("verticalSpeedAP", k),
-                    geofs.debug.watch("verticalSpeedCorrection", g));
+                    geofs.debug.watch("verticalSpeedCorrection", f));
             }
-            g = fixAngle(fixAngle360(b.heading) - c.values.course);
-            g = clamp(g * d.targetBankAngleRatio, -d.maxBankAngle, d.maxBankAngle);
-            c.PIDs.bankAngle.set(g, -d.maxBankAngle, d.maxBankAngle);
+            f = fixAngle(fixAngle360(b.heading) - c.values.course);
+            f = clamp(f * d.targetBankAngleRatio, -d.maxBankAngle, d.maxBankAngle);
+            c.PIDs.bankAngle.set(f, -d.maxBankAngle, d.maxBankAngle);
             k = c.PIDs.bankAngle.compute(b.aroll, a);
             c.PIDs.aileronsRoll.set(k, -1, 1);
-            controls.roll = -c.PIDs.aileronsRoll.compute(controls.roll, a) / f;
-            controls.yaw = -g * d.yawBankAngleRatio;
+            controls.roll = -c.PIDs.aileronsRoll.compute(controls.roll, a) / g;
+            controls.yaw = -f * d.yawBankAngleRatio;
             if (!geofs.autopilot.VNAV) {
                 var m = c.values.altitude - b.altitude;
-                g = clamp(e * d.baseClimbrate, 0, d.maxClimbrate);
+                f = clamp(e * d.baseClimbrate, 0, d.maxClimbrate);
                 k = clamp(e * d.baseDescentrate, d.maxDescentrate, 0);
-                c.targetVerticalSpeed = clamp(2 * m * e, k, g);
+                c.targetVerticalSpeed = clamp(2 * m * e, k, f);
             }
             c.values.verticalSpeed &&
                 (!geofs.autopilot.VNAV && Math.abs(m) < d.verticalSpeedHoldMargin && Math.abs(c.targetVerticalSpeed) < Math.abs(c.values.verticalSpeed)
@@ -16671,7 +16755,7 @@ geofs.autopilot = {
             c.PIDs.pitchAngle.set(c.targetVerticalSpeed, d.minPitchAngle, d.maxPitchAngle);
             d = c.PIDs.pitchAngle.compute(b.verticalSpeed, a);
             c.PIDs.elevatorPitch.set(d, -1, 1);
-            controls.rawPitch = c.PIDs.elevatorPitch.compute(-b.atilt, a) / f;
+            controls.rawPitch = c.PIDs.elevatorPitch.compute(-b.atilt, a) / g;
             c.PIDs.throttle.set(c.values.speed, 0, 1);
             controls.throttle = exponentialSmoothing("apThrottle", c.PIDs.throttle.compute(b.kias, a), 0.9);
             controls.throttle = clamp(controls.throttle, 0, 1);
@@ -16736,31 +16820,31 @@ geofs.autopilot.UI = {
                 var c = $(b.currentTarget),
                     d = $(b.currentTarget).parent().find(".numberValue"),
                     e = parseInt(d.attr("step")),
-                    f = parseInt(d.attr("min")),
-                    g = parseInt(d.attr("max")),
+                    g = parseInt(d.attr("min")),
+                    f = parseInt(d.attr("max")),
                     k = 0;
                 if (c.hasClass("numberUp") || 38 == b.which) k = e;
                 if (c.hasClass("numberDown") || 40 == b.which) k = -e;
                 var m = d.attr("data-loop"),
-                    q = d.attr("data-method"),
-                    u = function (t) {
+                    p = d.attr("data-method"),
+                    n = function (t) {
                         t = parseInt(d.val()) || 0;
                         if (k) {
-                            var n = t % k;
-                            0 < n ? (t = 0 < k ? t + (k - n) : t - n) : ((t += k), (t = Math.floor(t / e) * e));
+                            var A = t % k;
+                            0 < A ? (t = 0 < k ? t + (k - A) : t - A) : ((t += k), (t = Math.floor(t / e) * e));
                         }
-                        t = m && t > g ? f : m && t < f ? g : clamp(t, f, g);
+                        t = m && t > f ? g : m && t < g ? f : clamp(t, g, f);
                         d.val(t);
-                        geofs.autopilot[q](t);
+                        geofs.autopilot[p](t);
                     },
-                    v = function () {
-                        u();
+                    r = function () {
+                        n();
                         clearTimeout(window.spinnerRepeat);
-                        window.spinnerRepeat = setTimeout(v, 50);
+                        window.spinnerRepeat = setTimeout(r, 50);
                     };
                 clearTimeout(window.spinnerRepeat);
-                k && ((window.spinnerRepeat = setTimeout(v, 500)), u());
-                "change" == b.type && u();
+                k && ((window.spinnerRepeat = setTimeout(r, 500)), n());
+                "change" == b.type && n();
                 b.stopImmediatePropagation();
             })
             .on("pointerup pointercancel mouseleave touchend", ".numberUp, .numberDown", function () {
@@ -16783,7 +16867,7 @@ geofs.autopilot.UI = {
     update: function () {
         var a = geofs.autopilot;
         for (c in this.values) {
-            var b = null == a.values[c] ? "----" : parseInt(a.values[c], 10);
+            var b = null == a.values[c] ? "-----" : parseInt(a.values[c], 10);
             this.values[c] != b && (this.$displays[c].val(b), (this.values[c] = b));
         }
         var c = geofs.nav.units.NAV1;
@@ -16803,12 +16887,11 @@ geofs.autopilot.UI = {
     },
 };
 ui.hud.autopilotIndicator = function () {};
-geofs.autopilot.setKias = geofs.autopilot.setSpeed;
-controls.autopilot = geofs.autopilot;
 geofs.map = {
     dontMoveTimeoutValue: 1e4,
     mapUpdateInterval: 1e3,
     minimumPanDistance: 2e3,
+    cloudLayerUpdatePeriod: 18e5,
     init: function (a, b, c) {
         var d = this;
         this._options = a = a || {};
@@ -16817,7 +16900,7 @@ geofs.map = {
         a.standalone || ((this.planeMarker = new geofs.api.map.marker({ zIndex: 1e3, icon: geofs.api.map.getIcon("yellow", geofs.map.icons.yellow) })), this.planeMarker.addToMap());
         this.setMapInfoWindow();
         a.norunways || this.loadRunways();
-        a.standalone ? (this.mapActive = !0) : this.startMap();
+        a.standalone && (this.mapActive = !0);
         geofs.api.map.updateMarkerLayers();
         this.ATCMode = !1;
         $(document).on("click", ".geofs-map-atc-button", function (e) {
@@ -16831,6 +16914,10 @@ geofs.map = {
         a = a.options.runway;
         var b = a.lat + "," + a.lon,
             c = a.name.split("|");
+        if ("ILS" == a.type)
+            var d = a,
+                e = geofs.nav.isNavaidInRange(d),
+                g = d.freq / 1e3 + "MHz";
         return (
             '<div class="geofs-map-popup"><header><span class="mdl-chip"><span class="geofs-map-runway-chipIcon mdl-chip__contact mdl-color-text--white">' +
             c[0] +
@@ -16850,27 +16937,35 @@ geofs.map = {
             b +
             ",0," +
             a.heading +
-            ',approach,4800,450" title="Approach"><i class="material-icons">flight_land</i></button></div>'
+            ',approach,4800,450" title="Approach"><i class="material-icons">flight_land</i></button>' +
+            ("ILS" == a.type
+                ? '<br/><button type="button" class="mdl-chip" title="Tune in ILS" onclick="geofs.radio.selectNavaid(' +
+                  d.id +
+                  ')" style="cursor: pointer;" ><span class="geofs-map-radio-chipIcon mdl-chip__contact mdl-color-text--white"><i class="material-icons">sensors</i></span><span class="mdl-chip__text">' +
+                  g +
+                  (e ? "" : " (Out of range)") +
+                  "</span></button>"
+                : "") +
+            "</div>"
         );
     },
     navaidMarkerPopup: function (a) {
         a = a.options.navaid;
         var b = a.lat + "," + a.lon,
-            c = geofs.nav.isNavaidInRange(a);
-        a.type;
-        var d = 1e3 < a.freq ? a.freq / 1e3 + "MHz" : a.freq + "KHz";
+            c = geofs.nav.isNavaidInRange(a),
+            d = 1e3 < a.freq ? a.freq / 1e3 + "MHz" : a.freq + "KHz";
         return (
             '<div class="geofs-map-popup"><header><span class="mdl-chip"><span class="mdl-chip__text"><b>' +
             a.type +
-            "</b> " +
+            '</b> <span class="geofs-navaidName">' +
             a.name +
-            " (" +
+            "</span> (" +
             a.ident +
             ') <code class="geofs-morse">' +
             geofs.utils.textToMorse(a.ident) +
             '</code></span></span></header><button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored mdl-button--mini-fab" href="http://flyto://' +
             b +
-            ',1000,0" title="Fly by"><i class="material-icons">flight</i></button><button type="button" class="mdl-chip" title="Tune in NAV/ILS" onclick="geofs.radio.selectNavaid(' +
+            ',1000,0" title="Fly by"><i class="material-icons">flight</i></button><button type="button" class="mdl-chip" title="Tune in NAV" onclick="geofs.radio.selectNavaid(' +
             a.id +
             ')" style="cursor: pointer;" ><span class="geofs-map-radio-chipIcon mdl-chip__contact mdl-color-text--white"><i class="material-icons">sensors</i></span><span class="mdl-chip__text">' +
             d +
@@ -16880,7 +16975,7 @@ geofs.map = {
         );
     },
     icons: {
-        ILS: { url: "images/map/icons/ils.png", size: [80, 80], anchor: [0, 0], offset: [0, 0], minZoom: 8 },
+        ILS: { url: "images/map/icons/ils.png?v=1", size: [30, 30], anchor: [0, 0], offset: [0, 15], minZoom: 8 },
         DME: { url: "images/map/icons/dme.png", size: [20, 20], anchor: [10, 10], minZoom: 5 },
         NDB: { url: "images/map/icons/ndb.png", size: [40, 40], anchor: [20, 20], minZoom: 7 },
         "NDB-DME": { url: "images/map/icons/ndb-dme.png", size: [40, 40], anchor: [20, 20], minZoom: 7 },
@@ -16925,7 +17020,9 @@ geofs.map = {
         if (b) {
             var c = { url: b.url, size: b.size, rotate: a.heading || 0 };
             b.offset && (c.offset = b.offset);
-            a = new geofs.api.map.marker({ coords: [a.lat, a.lon], opacity: b.opacity, radius: b.size[0] / 2, zIndex: 1, img: c, popup: geofs.map.navaidMarkerPopup, popupMinWidth: 200, pane: "overlayPane", navaid: a, minZoom: b.minZoom });
+            b = { coords: [a.lat, a.lon], opacity: b.opacity, radius: b.size[0] / 2, zIndex: 1, img: c, popupMinWidth: 200, pane: "overlayPane", navaid: a, minZoom: b.minZoom };
+            "ILS" != a.type && (b.popup = geofs.map.navaidMarkerPopup);
+            a = new geofs.api.map.marker(b);
             a.addToMap();
             return a;
         }
@@ -16952,6 +17049,7 @@ geofs.map = {
     startMap: function () {
         this.stopMap();
         this.resize();
+        geofs.preferences.weather.manual ? this.hideWeather() : this.showWeather();
         this.mapActive = !0;
     },
     stopMovingMap: function (a) {
@@ -16971,18 +17069,20 @@ geofs.map = {
             ((this.lastMapUpdate = d),
             geofs.api.map &&
                 this.mapActive &&
-                (this.dontMove || ((b = geofs.api.map.getCenterLla()), geofs.utils.llaDistanceInMeters(b, [c, a]) > this.minimumPanDistance && geofs.api.map.updateMap(c, a)), this.planeMarker.update(c, a, geofs.aircraft.instance.htr[0])));
+                (this.dontMove || ((b = geofs.api.map.getCenterLla()), geofs.utils.llaDistanceInMeters(b, [c, a]) > this.minimumPanDistance && geofs.api.map.updateMap(c, a)),
+                this.planeMarker.update(c, a, geofs.aircraft.instance.htr[0]),
+                this.weatherOverlay && geofs.utils.updateTime(this, this.cloudLayerUpdatePeriod) && (this.hideWeather(), this.showWeather())));
     },
     addPlayerMarker: function (a, b, c) {
         ui.playerMarkers[a] || ((b = { coords: [0, 0], icon: geofs.api.map.getIcon(b, geofs.map.icons[b || "blue"]), label: c || "-" }), (ui.playerMarkers[a] = new geofs.api.map.marker(b)));
         geofs.api.map._map && this.mapActive && ui.playerMarkers[a].addToMap();
         return ui.playerMarkers[a];
     },
-    updatePlayerMarker: function (a, b, c, d, e, f) {
+    updatePlayerMarker: function (a, b, c, d, e, g) {
         if (geofs.api.map._map && this.mapActive && (ui.playerMarkers[a] || this.addPlayerMarker(a, d, c), ui.playerMarkers[a])) {
-            var g = parseInt(b[2] * METERS_TO_FEET);
+            var f = parseInt(b[2] * METERS_TO_FEET);
             d = fixAngle360(b[3]);
-            c = (c || "-") + "<br/>" + ("unknown" != e ? "" + e + "<br/>" : "") + f + "kt " + parseInt(d) + "dg<br/>" + geofs.utils.displayAltitude(g);
+            c = (c || "-") + "<br/>" + ("unknown" != e ? "" + e + "<br/>" : "") + g + "kt " + parseInt(d) + "dg<br/>" + geofs.utils.displayAltitude(f);
             ui.playerMarkers[a].update(b[0], b[1], d, c);
         }
     },
@@ -17004,15 +17104,18 @@ geofs.map = {
     showWeather: function () {
         var a = this;
         this.weatherOverlay ||
-            ((this.weatherOverlay = geofs.api.map.addImageLayer(weather.realTimeCloudTexture, 0.5)),
+            ((this.weatherOverlay = geofs.api.map.addImageLayer(weather.realTimeCloudMap + "?t=" + geofs.utils.hourStamp(), 1, [
+                [81, -180],
+                [-81, 180],
+            ])),
             (this.weatherOverlayZoomHandler = function () {
-                a.weatherOverlay.setOpacity(clamp(1 - 0.1 * geofs.api.map._map.getZoom(), 0, 0.5));
+                a.weatherOverlay.setOpacity(clamp(1.3 - 0.1 * geofs.api.map._map.getZoom(), 0, 1));
             }),
             geofs.api.map._map.on("zoomend", this.weatherOverlayZoomHandler));
     },
     hideWeather: function () {
-        geofs.api.map.removeImageLayer(this.weatherOverlay);
-        geofs.api.map._map.off("zoomend", this.weatherOverlayZoomHandler);
+        this.weatherOverlay && geofs.api.map.removeImageLayer(this.weatherOverlay);
+        this.weatherOverlayZoomHandler && geofs.api.map._map.off("zoomend", this.weatherOverlayZoomHandler);
         this.weatherOverlay = null;
     },
 };
@@ -17021,7 +17124,7 @@ geofs.nav = {
     units: { NAV1: { OBS: 0 }, ADF: {} },
     frequencies: [],
     HDG: 0,
-    ADFCourse: 0,
+    ADFManCourse: 0,
     course: 0,
     bearing: 0,
     bearingToStation: 0,
@@ -17045,7 +17148,7 @@ geofs.nav = {
         var a = this;
         $.getJSON(geofs.localUrl + "data/navaids.json" + geofs.killCache, function (b) {
             b.forEach(function (c) {
-                c = { icao: c[0], ident: c[1], name: c[2], type: c[3], lat: c[4], lon: c[5], freq: c[6], DMEfreq: c[7] };
+                c = { icao: c[0], ident: c[1], name: c[2], type: c[3], lat: c[4], lon: c[5], freq: c[6], magDec: c[7], DMEfreq: c[8] };
                 a.addNavaid(c);
                 geofs.map.addNavaidMarker(c);
             });
@@ -17083,9 +17186,9 @@ geofs.nav = {
         c && geofs.autopilot.setCourse(this.HDG);
         geofs.animation.setValue("navHDG", this.HDG);
     },
-    setADFCourse: function (a, b) {
-        this.ADFCourse = fixAngle360(null != a ? a : this.ADFCourse + b);
-        geofs.animation.setValue("ADFCourse", this.ADFCourse);
+    setADFManCourse: function (a, b) {
+        this.ADFManCourse = fixAngle360(null != a ? a : this.ADFManCourse + b);
+        geofs.animation.setValue("ADFManCourse", this.ADFManCourse);
     },
     clear: function (a) {
         if (a) (this.units[a].navaid = null), (this.units[a].inRange = !1), (this.units[a].hasNAV = !1), (this.units[a].hasVNAV = !1);
@@ -17103,12 +17206,12 @@ geofs.nav = {
             d = c.navaid;
         if (d) {
             var e = geofs.nav.types[d.type],
-                f = [geofs.aircraft.instance.llaLocation[0], geofs.aircraft.instance.llaLocation[1]],
-                g = geofs.aircraft.instance.htr[0],
-                k = geofs.utils.distanceBetweenLocations(f, [d.lat, d.lon]),
+                g = [geofs.aircraft.instance.llaLocation[0], geofs.aircraft.instance.llaLocation[1]],
+                f = geofs.aircraft.instance.htr[0],
+                k = geofs.utils.distanceBetweenLocations(g, [d.lat, d.lon]),
                 m = Math.abs(k - c.distance);
             c.distance = k;
-            c.bearing = geofs.utils.bearingBetweenLocations(f, [d.lat, d.lon]);
+            c.bearing = geofs.utils.bearingBetweenLocations(g, [d.lat, d.lon]);
             c.height = geofs.aircraft.instance.llaLocation[2] - d.elevation;
             c.glideAngle = Math.atan2(c.height, c.distance) * RAD_TO_DEGREES;
             c.glideAngleDeviation = e.ILS ? (d.slope || STANDARD_GLIDE_ANGLE) - c.glideAngle : 0;
@@ -17116,8 +17219,8 @@ geofs.nav = {
                 ? ((c.course = c.OBS), (c.hasNAV = !0), (c.hasVNAV = !1))
                 : e.ILS
                 ? ((c.course = d.heading), (c.hasNAV = !0), (c.hasVNAV = !0))
-                : (e.ADF ? ((c.course = g), (c.hasNAV = !0)) : ((c.course = null), (c.hasNAV = !1)), (c.hasVNAV = !1));
-            c.bearingToStation = fixAngle(g - this.bearing);
+                : (e.ADF ? ((c.course = f), (c.hasNAV = !0)) : ((c.course = null), (c.hasNAV = !1)), (c.hasVNAV = !1));
+            c.bearingToStation = fixAngle(f - this.bearing);
             c.courseDeviation = fixAngle(c.bearing - c.course);
             90 < Math.abs(c.courseDeviation) ? ((c.direction = "from"), (c.courseDeviation = -fixAngle(c.courseDeviation - 180))) : (c.direction = "to");
             e.DME
@@ -17140,6 +17243,8 @@ geofs.nav = {
             geofs.animation.setValue(b + "Bearing", c.bearing);
             geofs.animation.setValue(b + "GlideAngleDeviation", c.glideAngleDeviation);
             geofs.animation.setValue(b + "InRange", c.inRange);
+            geofs.animation.setValue(b + "HasNAV", c.hasNAV);
+            geofs.animation.setValue(b + "HasVNAV", c.hasVNAV);
             geofs.debug.watch(b + "Course", c.course);
             geofs.debug.watch(b + "CourseDeviation", c.courseDeviation);
             geofs.debug.watch(b + "Bearing", c.bearing);
@@ -17281,6 +17386,7 @@ geofs.radio = {
 var weather = window.weather || {};
 weather.dataProxy = geofs.url + "/backend/weather/metar.php?icao=";
 weather.realTimeCloudTexture = geofs.url + "/backend/weather/clouds-2048.jpg";
+weather.realTimeCloudMap = geofs.url + "/backend/weather/clouds.png";
 weather.minimumCloudCover = 10;
 weather.updateRate = 6e4;
 weather.timeRatio = 1;
@@ -17368,14 +17474,15 @@ weather.reset = function (a) {
 weather.refresh = function (a) {
     a = a || geofs.camera.lla;
     var b = function (e) {
-        try {
-            var f = JSON.parse(e);
-        } catch (g) {
-            geofs.debug.error(g, "weather.refresh error parsing JSON data");
-        }
-        f = f || [];
-        f.timestamp = geofs.utils.now();
-        weather.set(Object.assign({}, weather.defaults, weather.definition, f), a);
+        if (g)
+            try {
+                var g = JSON.parse(e);
+            } catch (f) {
+                geofs.debug.error(f, "weather.refresh error parsing JSON data");
+            }
+        g = g || [];
+        g.timestamp = geofs.utils.now();
+        weather.set(Object.assign({}, weather.defaults, weather.definition, g), a);
     };
     if (geofs.preferences.weather.manual) weather.generateDefinition(a), weather.set(weather.manualDefinition, a);
     else {
@@ -17400,22 +17507,22 @@ weather.generateDefinition = function (a, b) {
     var c = geofs.preferences.weather.localTime,
         d = weather.timeRatio,
         e = geofs.preferences.weather.quality,
-        f = e / 100,
-        g = geofs.preferences.weather.season;
+        g = e / 100,
+        f = geofs.preferences.weather.season;
     weather.roundedLatitude = a;
     weather.manualQuality = e;
-    weather.manualSeason = g;
+    weather.manualSeason = f;
     weather.manualTimeOfDay = c;
     b &&
         ((geofs.preferences.weather.advanced.clouds = Math.min(100, 2 * e)),
         (geofs.preferences.weather.advanced.cloudBase = weather.defaults.cloudBase),
         (geofs.preferences.weather.advanced.cloudTop = weather.defaults.cloudBase + weather.defaults.cloudThickness),
-        (geofs.preferences.weather.advanced.fog = (1 - 2 * Math.abs(d - 0.5)) * (0.45 < f ? 1 - f : 0) * 100),
+        (geofs.preferences.weather.advanced.fog = (1 - 2 * Math.abs(d - 0.5)) * (0.45 < g ? 1 - g : 0) * 100),
         (geofs.preferences.weather.advanced.fogCeiling = 2 * geofs.groundElevation + 50 || 0),
         (geofs.preferences.weather.advanced.precipitationAmount = 50 < e ? 2 * (e - 50) : 0),
         (geofs.preferences.weather.advanced.windSpeedMS = e / 6),
-        (geofs.preferences.weather.advanced.turbulences = f * Math.abs(d - 0.5) * 2),
-        (geofs.preferences.weather.advanced.thermals = Math.min(1, 4 * f) * Math.abs(d - 0.5) * 2));
+        (geofs.preferences.weather.advanced.turbulences = g * Math.abs(d - 0.5) * 2),
+        (geofs.preferences.weather.advanced.thermals = Math.min(1, 4 * g) * Math.abs(d - 0.5) * 2));
     weather.manualDefinition = {
         cloudCover: geofs.preferences.weather.advanced.clouds || weather.defaults.cloudCover,
         cloudBase: geofs.preferences.weather.advanced.ceiling || weather.defaults.cloudBase,
@@ -17424,7 +17531,7 @@ weather.generateDefinition = function (a, b) {
         fogBottom: 0,
         fogCeiling: geofs.preferences.weather.advanced.fogCeiling || weather.defaults.fogCeiling,
         precipitationAmount: geofs.preferences.weather.advanced.precipitationAmount || weather.defaults.precipitationAmount,
-        precipitationType: 75 < g && 40 < Math.abs(a) ? "snow" : "rain",
+        precipitationType: 75 < f && 40 < Math.abs(a) ? "snow" : "rain",
         thunderstorm: 90 < e ? 10 * (e - 90) : 0,
         visibility: 1e4,
         windDirection: geofs.preferences.weather.advanced.windDirection || weather.defaults.windDirection,
@@ -17434,7 +17541,7 @@ weather.generateDefinition = function (a, b) {
         windLayerNb: 3,
         turbulences: geofs.preferences.weather.advanced.turbulences || weather.defaults.turbulences,
         thermals: geofs.preferences.weather.advanced.thermals || weather.defaults.thermals,
-        airTemperatureSL: clamp(0.4 * (100 - g - Math.abs(a)) * (1 - d), -50, 50),
+        airTemperatureSL: clamp(0.4 * (100 - f - Math.abs(a)) * (1 - d), -50, 50),
         timestamp: geofs.utils.now(),
     };
     return weather.manualDefinition;
@@ -17550,7 +17657,7 @@ weather.getLocalThermal = function (a) {
     b = 3 - b - weather.definition.thermals;
     a = V3.sub(a, V3.scale(weather.currentWindVectorLla, 0.1 * a[2]));
     a = geofs.perlin.get(a[0], a[1], 200);
-    c *= clamp(Math.pow(a, b) * Math.sign(a) * weather.thermals.maxspeed * weather.definition.thermals, weather.thermals.minspeed, weather.thermals.maxspeed);
+    c *= clamp(Math.pow(Math.abs(a), b) * Math.sign(a) * weather.thermals.maxspeed * weather.definition.thermals, weather.thermals.minspeed, weather.thermals.maxspeed);
     isNaN(c) && (c = 0);
     return [0, 0, c];
 };
@@ -17609,15 +17716,16 @@ weather.initWind = function (a, b) {
         for (var d = 1; d < weather.windLayerNb; d++) {
             var e = c;
             c = e + weather.windLayerHeight + Math.random() * weather.definition.windLayerHeight;
-            var f = b + (10 * Math.random() - 5),
-                g = fixAngle(a + 360 * Math.random());
-            weather.windLayers.push(new weather.Wind(g, f, e, c));
+            var g = b + (10 * Math.random() - 5),
+                f = fixAngle(a + 360 * Math.random());
+            weather.windLayers.push(new weather.Wind(f, g, e, c));
         }
     }
 };
 weather.windOff = function () {
     weather.windLayers = [];
     weather.currentWindVector = [0, 0, 0];
+    weather.currentWindVectorLla = [0, 0, 0];
     weather.currentWindVectorWC = new Cesium.Cartesian3(0, 0, 0);
     weather.currentWindDirection = 0;
     weather.currentWindSpeed = 0;
@@ -17816,8 +17924,8 @@ geofs.camera = {
         if (geofs.camera.isHandlingMouseRotation()) {
             var d = geofs.camera.definitions[geofs.camera.currentModeName],
                 e = geofs.aircraft.instance.object3d.getWorldFrame(),
-                f = M33.rotationXYZ(M33.identity(), [-geofs.camera.htr[1] * DEGREES_TO_RAD, 0, geofs.camera.htr[0] * DEGREES_TO_RAD]);
-            "follow" == geofs.camera.currentModeName ? ((d.distance += b), (a = [a, 0, c])) : ((a = M33.transform(f, [a, b, c])), (a = M33.transformByTranspose(e, a)));
+                g = M33.rotationXYZ(M33.identity(), [-geofs.camera.htr[1] * DEGREES_TO_RAD, 0, geofs.camera.htr[0] * DEGREES_TO_RAD]);
+            "follow" == geofs.camera.currentModeName ? ((d.distance += b), (a = [a, 0, c])) : ((a = M33.transform(g, [a, b, c])), (a = M33.transformByTranspose(e, a)));
             d.offsets.current = V3.add(d.offsets.current, a);
             d.offsetBounds &&
                 ((d.offsets.current[0] = clamp(d.offsets.current[0], d.offsetBounds[0], d.offsetBounds[1])),
@@ -17835,8 +17943,8 @@ geofs.camera = {
         if (geofs.camera.isHandlingMouseRotation()) {
             var d = geofs.camera.definitions[geofs.camera.currentModeName],
                 e = geofs.aircraft.instance.object3d.getWorldFrame(),
-                f = M33.rotationXYZ(M33.identity(), [-geofs.camera.htr[1] * DEGREES_TO_RAD, 0, geofs.camera.htr[0] * DEGREES_TO_RAD]);
-            "follow" == geofs.camera.currentModeName ? ((d.distance += b), (a = [a, 0, c])) : ((a = M33.transform(f, [a, b, c])), (a = M33.transformByTranspose(e, a)));
+                g = M33.rotationXYZ(M33.identity(), [-geofs.camera.htr[1] * DEGREES_TO_RAD, 0, geofs.camera.htr[0] * DEGREES_TO_RAD]);
+            "follow" == geofs.camera.currentModeName ? ((d.distance += b), (a = [a, 0, c])) : ((a = M33.transform(g, [a, b, c])), (a = M33.transformByTranspose(e, a)));
             d.offsets.current = V3.dup(a);
             "cockpit" == geofs.camera.currentModeName && (geofs.camera.hasMoved = !0);
             return !0;
@@ -17905,12 +18013,12 @@ geofs.camera = {
             if ("follow" == geofs.camera.currentModeName) {
                 e = d.orientations.current[0];
                 c = d.orientations.current[1];
-                var f = 1 - Math.exp(-a / 0.5);
-                a = d.lastUsedHtr[0] + fixAngle(b.htr[0] - d.lastUsedHtr[0]) * f;
-                f = d.lastUsedHtr[1] + fixAngle(b.htr[1] - d.lastUsedHtr[1]) * f;
-                d.lastUsedHtr = [a, f, 0];
+                var g = 1 - Math.exp(-a / 0.5);
+                a = d.lastUsedHtr[0] + fixAngle(b.htr[0] - d.lastUsedHtr[0]) * g;
+                g = d.lastUsedHtr[1] + fixAngle(b.htr[1] - d.lastUsedHtr[1]) * g;
+                d.lastUsedHtr = [a, g, 0];
                 e = a + e;
-                a = f + c;
+                a = g + c;
                 c = M33.rotationXYZ(M33.identity(), [a * DEGREES_TO_RAD, 0, e * DEGREES_TO_RAD]);
                 geofs.camera.worldPosition = V3.add(d.position, d.offsets.current);
                 e = M33.transform(c, geofs.camera.worldPosition);
@@ -17934,9 +18042,9 @@ geofs.camera = {
                     ? (geofs.camera.avoidGround(), (geofs.camera.lla = geofs.api.getCameraLla(geofs.camera.cam)), (geofs.camera.htr[0] = geofs.api.getHeading(geofs.camera.cam)))
                     : ((e = d.orientations.current[0]),
                       (a = d.orientations.current[1]),
-                      (f = d.orientations.current[2]),
+                      (g = d.orientations.current[2]),
                       d.parent && (c = geofs.aircraft.instance.parts[d.parent].object3d.getWorldFrame()),
-                      (c = M33.rotationXYZ(c, [-a * DEGREES_TO_RAD, f * DEGREES_TO_RAD, e * DEGREES_TO_RAD])),
+                      (c = M33.rotationXYZ(c, [-a * DEGREES_TO_RAD, g * DEGREES_TO_RAD, e * DEGREES_TO_RAD])),
                       (geofs.camera.htr = M33.getOrientation(c)),
                       (geofs.camera.worldPosition = V3.add(d.position, d.offsets.current)),
                       "cockpit" == geofs.camera.currentModeName &&
@@ -18000,8 +18108,15 @@ instruments.definitions = {
             rescale: !0,
             rescalePosition: !0,
             overlays: [
+                {
+                    animations: [{ type: "rotate", value: "kias", ratio: -1.5, min: 0 }],
+                    url: "images/instruments/airspeed-hand.png",
+                    anchor: { x: 10, y: 34 },
+                    size: { x: 20, y: 120 },
+                    position: { x: 0, y: 0 },
+                    class: "APPLegacyOverlayReordering",
+                },
                 { url: "images/instruments/airspeed.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 } },
-                { animations: [{ type: "rotate", value: "kias", ratio: -1.5, min: 0 }], url: "images/instruments/airspeed-hand.png", anchor: { x: 10, y: 34 }, size: { x: 20, y: 120 }, position: { x: 0, y: 0 } },
             ],
         },
     },
@@ -18092,8 +18207,15 @@ instruments.definitions = {
             rescale: !0,
             rescalePosition: !0,
             overlays: [
+                {
+                    animations: [{ type: "rotate", value: "kias", ratio: -0.6, min: 0 }],
+                    url: "images/instruments/airspeed-hand.png",
+                    anchor: { x: 10, y: 34 },
+                    size: { x: 20, y: 120 },
+                    position: { x: 0, y: 0 },
+                    class: "APPLegacyOverlayReordering",
+                },
                 { url: "images/instruments/airspeed-high.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 } },
-                { animations: [{ type: "rotate", value: "kias", ratio: -0.6, min: 0 }], url: "images/instruments/airspeed-hand.png", anchor: { x: 10, y: 34 }, size: { x: 20, y: 120 }, position: { x: 0, y: 0 } },
             ],
         },
     },
@@ -18109,8 +18231,16 @@ instruments.definitions = {
             rescale: !0,
             rescalePosition: !0,
             overlays: [
+                {
+                    animations: [{ type: "rotate", value: "kias", ratio: -0.3, min: 0 }],
+                    url: "images/instruments/airspeed-hand.png",
+                    anchor: { x: 10, y: 34 },
+                    size: { x: 20, y: 120 },
+                    position: { x: 0, y: 0 },
+                    class: "APPLegacyOverlayReordering",
+                },
                 { url: "images/instruments/airspeed-supersonic.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 } },
-                { animations: [{ type: "rotate", value: "kias", ratio: -0.3, min: 0 }], url: "images/instruments/airspeed-hand.png", anchor: { x: 10, y: 34 }, size: { x: 20, y: 120 }, position: { x: 0, y: 0 } },
+                { url: "images/instruments/machsubindicator.png", class: "geofs-overlay-moreTransparence", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 } },
                 { animations: [{ type: "rotate", value: "mach", ratio: -72, min: 0 }], url: "images/instruments/mach-hand.png", anchor: { x: 5, y: 5 }, size: { x: 11, y: 31 }, position: { x: -70, y: -70 } },
             ],
         },
@@ -18231,7 +18361,7 @@ instruments.definitions = {
                 {
                     url: "images/instruments/hdg-knob.png",
                     class: "geofs-overlay-moreTransparence",
-                    drawOrder: 100,
+                    drawOrder: 200,
                     anchor: { x: 22, y: 22 },
                     size: { x: 44, y: 44 },
                     position: { x: 80, y: -80 },
@@ -18388,20 +18518,20 @@ instruments.definitions = {
                     offset: { x: 0, y: 0 },
                     animations: [{ type: "rotate", value: "ADFBearingToStation", ratio: 1 }],
                 },
-                { url: "images/instruments/cdi/compass.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 }, position: { x: 0, y: 0 }, animations: [{ type: "rotate", value: "ADFCourse", ratio: 1 }] },
+                { url: "images/instruments/cdi/compass.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 }, position: { x: 0, y: 0 }, animations: [{ type: "rotate", value: "ADFManCourse", ratio: 1 }] },
                 { url: "images/instruments/adf/cover.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 }, position: { x: 0, y: 0 } },
                 {
                     url: "images/instruments/adf/VARKnob.png",
                     class: "geofs-overlay-moreTransparence",
-                    drawOrder: 100,
+                    drawOrder: 200,
                     anchor: { x: 22, y: 22 },
                     size: { x: 44, y: 44 },
                     position: { x: -80, y: -80 },
                     iconFrame: { x: 44, y: 44 },
                     manipulator: function (a, b) {
-                        instruments.manipulators.setADFCourse(a, b);
+                        instruments.manipulators.setADFManCourse(a, b);
                     },
-                    animations: [{ type: "rotate", value: "ADFCourse", ratio: -2 }],
+                    animations: [{ type: "rotate", value: "ADFManCourse", ratio: -2 }],
                 },
             ],
         },
@@ -18446,7 +18576,7 @@ instruments.definitions = {
                 {
                     url: "images/instruments/cdi/obs.png",
                     class: "geofs-overlay-moreTransparence",
-                    drawOrder: 100,
+                    drawOrder: 200,
                     anchor: { x: 22, y: 22 },
                     size: { x: 44, y: 44 },
                     position: { x: -80, y: -80 },
@@ -18488,8 +18618,8 @@ instruments.definitions = {
                     position: { x: 0, y: 0 },
                     animations: [{ type: "rotate", value: "heading", ratio: 1 }],
                     overlays: [
-                        { url: "images/instruments/hsi/bar.png", class: "geofs-instrument-background", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 }, animations: [{ type: "rotate", value: "NAV1OBS", ratio: 1 }] },
-                        { url: "images/instruments/hsi/grads.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 }, animations: [{ type: "rotate", value: "NAV1OBS", ratio: 1 }] },
+                        { url: "images/instruments/hsi/bar.png", class: "geofs-instrument-background", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 }, animations: [{ type: "rotate", value: "NAV1OBS", ratio: -1 }] },
+                        { url: "images/instruments/hsi/grads.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 }, animations: [{ type: "rotate", value: "NAV1OBS", ratio: -1 }] },
                         {
                             url: "images/instruments/hsi/to.png",
                             anchor: { x: 100, y: 100 },
@@ -18499,7 +18629,7 @@ instruments.definitions = {
                             offset: { x: 110, y: 69 },
                             animations: [
                                 { type: "show", value: "NAV1Direction", eq: "to" },
-                                { type: "rotate", value: "NAV1OBS", ratio: 1 },
+                                { type: "rotate", value: "NAV1OBS", ratio: -1 },
                             ],
                         },
                         {
@@ -18511,7 +18641,7 @@ instruments.definitions = {
                             offset: { x: 110, y: 115 },
                             animations: [
                                 { type: "show", value: "NAV1Direction", eq: "from" },
-                                { type: "rotate", value: "NAV1OBS", ratio: 1 },
+                                { type: "rotate", value: "NAV1OBS", ratio: -1 },
                             ],
                         },
                         {
@@ -18521,7 +18651,7 @@ instruments.definitions = {
                             position: { x: 0, y: 0 },
                             iconFrame: { x: 200, y: 200 },
                             offset: { x: 0, y: 0 },
-                            animations: [{ type: "rotate", value: "NAV1OBS", ratio: 1 }],
+                            animations: [{ type: "rotate", value: "NAV1OBS", ratio: -1 }],
                         },
                         {
                             url: "images/instruments/hsi/yellowbar.png",
@@ -18532,7 +18662,7 @@ instruments.definitions = {
                             offset: { x: 98, y: 60 },
                             animations: [
                                 { type: "translateX", value: "NAV1CourseDeviation", ratio: 5, fmin: -50, fmax: 50 },
-                                { type: "rotate", value: "NAV1OBS", ratio: 1 },
+                                { type: "rotate", value: "NAV1OBS", ratio: -1 },
                             ],
                         },
                         {
@@ -18549,7 +18679,7 @@ instruments.definitions = {
                 {
                     url: "images/instruments/hsi/courseknob.png",
                     class: "geofs-overlay-moreTransparence",
-                    drawOrder: 100,
+                    drawOrder: 200,
                     anchor: { x: 22, y: 22 },
                     size: { x: 44, y: 44 },
                     position: { x: -80, y: -80 },
@@ -18562,7 +18692,7 @@ instruments.definitions = {
                 {
                     url: "images/instruments/hsi/headingknob.png",
                     class: "geofs-overlay-moreTransparence",
-                    drawOrder: 100,
+                    drawOrder: 200,
                     anchor: { x: 22, y: 22 },
                     size: { x: 44, y: 44 },
                     position: { x: 80, y: -80 },
@@ -18929,7 +19059,39 @@ instruments.includesDefinitions = {
         { name: "deviation", node: "deviation", animations: [{ type: "translate", axis: "X", value: "NAV1CourseDeviation", ratio: 5e-4, fmin: -0.005, fmax: 0.005 }] },
         { name: "direction", node: "direction", animations: [{ type: "rotate", axis: "X", value: "NAV1Direction", eq: "from", ratio: 180 }] },
     ],
-    "3d-PFD": [{}],
+    "3d-BoeingPFD": [
+        {
+            model: "models/gauges/glassPanel/glassPanel.gltf",
+            renderer: {
+                name: "PFDBoeing",
+                width: 512,
+                height: 512,
+                images: { background: "images/instruments/BoeingPFD/background.png", attitude: "images/instruments/BoeingPFD/attitude.png", overlays: "images/instruments/BoeingPFD/overlays.png" },
+            },
+            animations: [{ type: "render", value: "geofsTime" }],
+        },
+    ],
+    "3d-AirbusPFD": [
+        {
+            model: "models/gauges/glassPanel/glassPanel.gltf",
+            renderer: {
+                name: "PFDAirbus",
+                width: 512,
+                height: 512,
+                images: { background: "images/instruments/airbusPFD/background.png", attitude: "images/instruments/airbusPFD/attitude.png", overlays: "images/instruments/airbusPFD/overlays.png" },
+            },
+            animations: [{ type: "render", value: "geofsTime" }],
+        },
+    ],
+    "3d-HUD": [
+        {
+            model: "models/gauges/glassPanel/HUD.gltf",
+            safeTransparency: !0,
+            renderer: { name: "genericHUD", width: 512, height: 512, images: { background: "images/instruments/glassHUD/background.png", overlays: "images/instruments/glassHUD/overlays.png" } },
+            animations: [{ type: "render", value: "geofsTime" }],
+            shadows: "SHADOWS_NONE",
+        },
+    ],
 };
 instruments.manipulators = {
     setNAV1OBS: function (a, b) {
@@ -18938,8 +19100,8 @@ instruments.manipulators = {
     setHDG: function (a, b) {
         geofs.nav.setHDG(null, b, !0);
     },
-    setADFCourse: function (a, b) {
-        geofs.nav.setADFCourse(null, b);
+    setADFManCourse: function (a, b) {
+        geofs.nav.setADFManCourse(null, b);
     },
 };
 instruments.init = function (a) {
@@ -19025,6 +19187,7 @@ instruments.updateScreenPositions = function () {
     instruments.gaugeOverlayPosition[0] = instruments.gaugeOverlayOrigin[0] * a;
     instruments.gaugeOverlayPosition[1] = geofs.viewportHeight - instruments.gaugeOverlayOrigin[1] * a;
     instruments.gaugeOverlayPosition[2] = instruments.gaugeOverlayOrigin[2];
+    instruments.update(!0);
 };
 var Indicator = function (a) {
     this.definition = Object.assign({}, this.definition, a);
@@ -19097,12 +19260,573 @@ Indicator.prototype.update = function (a) {
 Indicator.prototype.destroy = function () {
     this.overlay && this.overlay.destroy();
 };
-geofs.GlassPanel = function (a) {
-    this.canvas = new geofs.api.Canvas({ height: 100, width: 100 });
-    this.entity = geofs.api.viewer.entities.add({ box: { dimensions: new Cesium.Cartesian3(1, 1, 1), material: this.canvas.getImageAsURLData() } });
-    return this;
+instruments.rendererInstancesByName = {};
+instruments.Renderer = function (a) {
+    this.definition = Object.assign({}, a);
+    instruments.rendererInstancesByName[this.definition.name]
+        ? (this.reuseExistingRenderer = instruments.rendererInstancesByName[this.definition.name])
+        : ((this.canvasAPI = new geofs.api.Canvas(a)), this.loadImages(), (instruments.rendererInstancesByName[this.definition.name] = this));
 };
-geofs.GlassPanel.prototype = { update: function () {}, updateCockpitPosition: function () {}, destroy: function () {} };
+instruments.Renderer.prototype = {
+    loadImages: function () {
+        this.images = {};
+        for (var a in this.definition.images) (this.images[a] = new Image()), (this.images[a].src = this.definition.images[a]);
+    },
+    update: function (a, b) {
+        this.reuseExistingRenderer ? (b = instruments.rendererInstancesByName[this.definition.name].canvasAPI.canvas) : (instruments.renderers[this.definition.name](this), (b = this.canvasAPI.canvas));
+        if (a.safeTransparency)
+            try {
+                (a.object3d.model._model._nodeCommands[0].command._pass = 9), (a.safeTransparency = !1);
+            } catch (c) {}
+        a.object3d.model.setTextureFromCanvas(b, this.definition.textureIndex);
+    },
+    destroy: function () {
+        for (var a in this.images) (this.images[a] = null), delete this.images[a];
+        this.images = null;
+        this.canvasAPI && this.canvasAPI.destroy();
+        instruments.rendererInstancesByName[this.definition.name] = null;
+        delete instruments.rendererInstancesByName[this.definition.name];
+    },
+    drawGrads: function (a, b) {
+        var c = a.context,
+            d = b.pattern.length;
+        b.center = b.center || [0, 0];
+        b.center.x = b.center[0];
+        b.center.y = b.center[1];
+        b.size.x = b.size[0];
+        b.size.y = b.size[1];
+        b.rotation && (c.translate(b.position[0], b.position[1]), c.rotate(b.rotation), (b.position = [0, 0]));
+        b.position = V2.sub(b.position, b.center);
+        b.x = b.position[0];
+        b.y = b.position[1];
+        b.value = b.value || 0;
+        b.zero = b.zero || [0, 0];
+        b.zero.x = b.zero[0];
+        b.zero.y = b.zero[1];
+        var e = b.interval * d,
+            g = e * b.pixelRatio;
+        b.value -= ((b.size[b.orientation] - b.zero[b.orientation]) / g) * e;
+        var f = b.value % e;
+        b.value -= f;
+        f *= b.pixelRatio;
+        0 >= f && ((f += g), (b.value -= e));
+        b[b.orientation] -= f * b.direction;
+        0 > b.direction && (b[b.orientation] += b.size[b.orientation]);
+        var k = "x" == b.orientation ? "y" : "x";
+        b[k] += b.zero[k];
+        e = Math.ceil(b.size[b.orientation] / (b.interval * b.pixelRatio));
+        c.beginPath();
+        g = {};
+        for (var m = 0; m <= e + d; g = { $jscomp$loop$prop$position$23: g.$jscomp$loop$prop$position$23 }, m++)
+            (f = b.pattern[m % d]),
+                (g.$jscomp$loop$prop$position$23 = Math.round(b[b.orientation] + m * b.interval * b.direction * b.pixelRatio)),
+                f.forEach(
+                    (function (p) {
+                        return function (n) {
+                            var r = b.x,
+                                t = b.y;
+                            n.offset = n.offset || { x: 0, y: 0 };
+                            "x" == b.orientation
+                                ? ("bottom" == b.align && (t += b.size.y), "middle" == b.align && (t += b.center.y), c.moveTo(p.$jscomp$loop$prop$position$23, t), c.lineTo(p.$jscomp$loop$prop$position$23, t + n.length))
+                                : ("right" == b.align && (r += b.size.x),
+                                  "center" == b.align && (r += b.center.x),
+                                  c.moveTo(r + n.offset.x, p.$jscomp$loop$prop$position$23 + n.offset.y),
+                                  c.lineTo(r + n.offset.x + n.length, p.$jscomp$loop$prop$position$23 + n.offset.y));
+                            if (n.legend) {
+                                var A = b.value + b.interval * m;
+                                n.process && (A = n.process(A));
+                                "x" == b.orientation ? c.fillText(A, p.$jscomp$loop$prop$position$23 + n.legendOffset.x, t + n.legendOffset.y) : c.fillText(A, r + n.legendOffset.x, p.$jscomp$loop$prop$position$23 + n.legendOffset.y);
+                            }
+                        };
+                    })(g)
+                );
+        c.stroke();
+        b.sprites &&
+            b.sprites.forEach(function (p) {
+                var n = b[b.orientation] + (p.value - b.value) * b.pixelRatio * b.direction.y;
+                p.clamp && (n = clamp(n, b[k], b[k] + b.height));
+                p.destination = [b[k], n];
+                a.drawSprite(p);
+            });
+    },
+};
+instruments.renderers = {
+    PFDBoeing: function (a) {
+        var b = exponentialSmoothing("smoothKias", geofs.animation.getValue("kias"), 0.1),
+            c = [893, 980];
+        c = V2.parseInt(V2.scale(c, 0.25));
+        var d = a.canvasAPI.context;
+        a.canvasAPI.clear("#000000");
+        a.canvasAPI.drawRotatedSprite({
+            image: a.images.attitude,
+            origin: [0, 0],
+            size: [350, 1400],
+            center: [175, 700],
+            destination: c,
+            rotation: geofs.animation.getValue("aroll") * DEGREES_TO_RAD,
+            translation: [0, 5 * geofs.animation.getValue("atilt")],
+        });
+        a.canvasAPI.drawRotatedSprite({ image: a.images.overlays, origin: [245, 56], size: [23, 21], center: [11, 120], destination: c, rotation: geofs.animation.getValue("aroll") * DEGREES_TO_RAD, translation: [0, 0] });
+        d.drawImage(a.images.background, 0, 0);
+        d.fillStyle = "#00ff08";
+        d.textAlign = "center";
+        d.font = "18px sans-serif";
+        var e = "",
+            g = "",
+            f = "";
+        geofs.autopilot.on && ((e = "SPD"), "NAV" == geofs.autopilot.mode ? ((g = "VOR/LOC"), (f = geofs.autopilot.VNAV ? "G/S" : "ALT")) : ((g = "HDG SEL"), (f = "ALT")));
+        d.fillText(e, 133, 20);
+        d.fillText(g, 230, 20);
+        d.fillText(f, 325, 20);
+        2500 >= geofs.animation.getValue("haglFeet") && ((d.fillStyle = "#ffffff"), (d.textAlign = "right"), (d.font = "bold 20px sans-serif"), d.fillText(Math.floor(geofs.animation.getValue("haglFeet")), 350, 95));
+        a.canvasAPI.drawSprite({ image: a.images.overlays, origin: [101, 0], size: [13, 20], center: [6, 10], destination: [355, c[1]], translation: [0, clamp(-107 * geofs.animation.getValue("NAV1GlideAngleDeviation"), -75, 75)] });
+        a.canvasAPI.drawSprite({ image: a.images.overlays, origin: [114, 0], size: [20, 13], center: [10, 6], destination: [c[0], 390], translation: [clamp(6.5 * geofs.animation.getValue("NAV1CourseDeviation"), -75, 75), 0] });
+        a.canvasAPI.drawRotatedSprite({ image: a.images.overlays, origin: [101, 101], size: [310, 310], center: [155, 155], destination: [c[0], 602], rotation: -geofs.animation.getValue("heading") * DEGREES_TO_RAD });
+        a.canvasAPI.drawRotatedSprite({
+            image: a.images.overlays,
+            origin: [243, 88],
+            size: [26, 13],
+            center: [12, 165],
+            destination: [c[0], 602],
+            rotation: (-geofs.animation.getValue("heading") + geofs.autopilot.values.course) * DEGREES_TO_RAD,
+        });
+        d.lineWidth = 2;
+        d.fillStyle = "#FFFFFF";
+        d.strokeStyle = "#FFFFFF";
+        d.textAlign = "right";
+        d.font = "22px sans-serif";
+        d.save();
+        d.beginPath();
+        d.rect(11, 60, 90, 381);
+        d.rect(5, 210, 50, 70);
+        d.clip("evenodd");
+        a.drawGrads(a.canvasAPI, {
+            position: [64, 60],
+            zero: [0, 190],
+            size: [90, 380],
+            orientation: "y",
+            direction: -1,
+            value: b,
+            interval: 10,
+            pixelRatio: 3.16,
+            pattern: [[{ length: 10, legend: !0, legendOffset: { x: -8, y: 7 } }], [{ length: 10 }]],
+            sprites: [{ image: a.images.overlays, origin: [134, 0], size: [31, 19], center: [5, 10], value: geofs.autopilot.values.speed, clamp: !0 }],
+        });
+        d.restore();
+        d.save();
+        d.beginPath();
+        d.rect(365, 60, 84, 381);
+        d.rect(400, 210, 65, 70);
+        d.clip("evenodd");
+        d.font = "16px sans-serif";
+        a.drawGrads(a.canvasAPI, {
+            position: [385, 60],
+            zero: [0, 190],
+            size: [84, 380],
+            orientation: "y",
+            direction: -1,
+            value: geofs.animation.getValue("altitude"),
+            interval: 100,
+            pixelRatio: 0.475,
+            pattern: [[{ length: 10, legend: !0, legendOffset: { x: 60, y: 7 } }], [{ length: 10 }]],
+            sprites: [
+                { image: a.images.overlays, origin: [223, 0], size: [33, 56], center: [5, 28], value: geofs.autopilot.values.altitude, clamp: !0 },
+                { image: a.images.overlays, origin: [256, 0], size: [64, 25], center: [2, 0], value: geofs.animation.getValue("groundElevationFeet") },
+            ],
+        });
+        d.restore();
+        d.save();
+        d.beginPath();
+        d.rect(7, 220, 48, 50);
+        d.rect(404, 220, 65, 50);
+        d.rect(475, 116, 28, 262);
+        d.clip();
+        d.beginPath();
+        d.lineWidth = 3;
+        d.strokeStyle = "#FFFFFF";
+        e = clamp(35 * Math.log(Math.abs(geofs.animation.getValue("verticalSpeed") / 1e3)) + 60, 0, 125) * Math.sign(geofs.animation.getValue("verticalSpeed"));
+        d.moveTo(530, c[1]);
+        d.lineTo(482, c[1] - e);
+        d.stroke();
+        a.canvasAPI.drawSprite({
+            image: a.images.overlays,
+            origin: [166, 0],
+            size: [13, 5],
+            center: [0, 2],
+            destination: [480, c[1]],
+            translation: [0, -clamp(35 * Math.log(Math.abs(geofs.autopilot.values.verticalSpeed / 1e3)) + 60, 0, 125) * Math.sign(geofs.autopilot.values.verticalSpeed)],
+        });
+        a.canvasAPI.drawSprite({ image: a.images.overlays, origin: [0, 0], size: [16, 512], center: [0, 512], destination: [8, 256], translation: [0, 48 * geofs.utils.stickyRounding((b % 1e3) * 0.01, 0.01)] });
+        a.canvasAPI.drawSprite({ image: a.images.overlays, origin: [0, 0], size: [16, 512], center: [0, 512], destination: [24, 256], translation: [0, 48 * geofs.utils.stickyRounding((b % 100) * 0.1, 0.1)] });
+        a.canvasAPI.drawSprite({ image: a.images.overlays, origin: [16, 0], size: [16, 512], center: [0, 487], destination: [40, 256], translation: [0, (b % 10) * 25] });
+        9999 < geofs.animation.getValue("altTenThousands")
+            ? a.canvasAPI.drawSprite({
+                  image: a.images.overlays,
+                  origin: [0, 0],
+                  sprite: [16, 512],
+                  size: [14, 512],
+                  center: [0, 512],
+                  destination: [406, 256],
+                  translation: [0, 48 * geofs.utils.stickyRounding(1e-4 * geofs.animation.getValue("altTenThousands"), 0.01)],
+              })
+            : a.canvasAPI.drawSprite({ image: a.images.overlays, origin: [70, 490], size: [16, 21], center: [0, 21], destination: [406, 256], translation: [0, 0] });
+        a.canvasAPI.drawSprite({
+            image: a.images.overlays,
+            origin: [0, 0],
+            sprite: [16, 512],
+            size: [14, 512],
+            center: [0, 512],
+            destination: [420, 256],
+            translation: [0, 48 * geofs.utils.stickyRounding(0.001 * geofs.animation.getValue("altThousands"), 0.01)],
+        });
+        a.canvasAPI.drawSprite({
+            image: a.images.overlays,
+            origin: [32, 0],
+            size: [12, 512],
+            center: [0, 512],
+            destination: [434, 253],
+            translation: [0, 40 * geofs.utils.stickyRounding(0.01 * geofs.animation.getValue("altHundreds"), 0.1)],
+        });
+        a.canvasAPI.drawSprite({ image: a.images.overlays, origin: [44, 0], size: [24, 512], center: [0, 496], destination: [445, 256], translation: [0, 0.8 * geofs.animation.getValue("altTens")] });
+        d.restore();
+    },
+    PFDAirbus: function (a) {
+        var b = exponentialSmoothing("smoothKias", geofs.animation.getValue("kias"), 0.1),
+            c = [893, 980];
+        c = V2.parseInt(V2.scale(c, 0.25));
+        var d = a.canvasAPI.context;
+        a.canvasAPI.clear("#000000");
+        a.canvasAPI.drawRotatedSprite({
+            image: a.images.attitude,
+            origin: [0, 0],
+            size: [350, 1400],
+            center: [175, 700],
+            destination: c,
+            rotation: geofs.animation.getValue("aroll") * DEGREES_TO_RAD,
+            translation: [0, 5 * geofs.animation.getValue("atilt")],
+        });
+        a.canvasAPI.drawRotatedSprite({ image: a.images.overlays, origin: [248, 0], size: [36, 28], center: [18, 135], destination: c, rotation: geofs.animation.getValue("aroll") * DEGREES_TO_RAD, translation: [0, 0] });
+        d.drawImage(a.images.background, 0, 0);
+        d.fillStyle = "#00ff08";
+        d.textAlign = "center";
+        d.font = "18px sans-serif";
+        var e = "",
+            g = "",
+            f = "";
+        geofs.autopilot.on && ((e = "SPD"), "NAV" == geofs.autopilot.mode ? ((g = "NAV"), geofs.autopilot.VNAV ? ((g = "LOC"), (f = "G/S")) : (f = "ALT")) : ((g = "HDG SEL"), (f = "ALT")));
+        d.fillText(e, 80, 20);
+        d.fillText(f, 170, 20);
+        d.fillText(g, 280, 20);
+        2500 >= geofs.animation.getValue("haglFeet") && ((d.fillStyle = "#ffffff"), (d.textAlign = "right"), (d.font = "bold 20px sans-serif"), d.fillText(Math.floor(geofs.animation.getValue("haglFeet")), 350, 95));
+        a.canvasAPI.drawSprite({ image: a.images.overlays, origin: [99, 0], size: [16, 24], center: [8, 12], destination: [355, c[1]], translation: [0, clamp(-107 * geofs.animation.getValue("NAV1GlideAngleDeviation"), -75, 75)] });
+        a.canvasAPI.drawSprite({ image: a.images.overlays, origin: [116, 0], size: [24, 16], center: [12, 8], destination: [c[0], 410], translation: [clamp(6.5 * geofs.animation.getValue("NAV1CourseDeviation"), -75, 75), 0] });
+        d.lineWidth = 2;
+        d.fillStyle = "#FFFFFF";
+        d.strokeStyle = "#FFFFFF";
+        d.font = "20px sans-serif";
+        d.textAlign = "right";
+        d.save();
+        d.beginPath();
+        d.rect(14, 110, 80, 270);
+        d.clip("evenodd");
+        a.drawGrads(a.canvasAPI, {
+            position: [62, 110],
+            zero: [0, 135],
+            size: [80, 270],
+            orientation: "y",
+            direction: -1,
+            value: b,
+            interval: 10,
+            pixelRatio: 3.2,
+            pattern: [[{ length: 10, legend: !0, legendOffset: { x: -8, y: 7 } }], [{ length: 10 }]],
+            sprites: [{ image: a.images.overlays, origin: [143, 0], size: [25, 27], center: [-8, 13], value: geofs.autopilot.values.speed, clamp: !0 }],
+        });
+        d.restore();
+        d.save();
+        d.beginPath();
+        d.rect(376, 110, 50, 270);
+        d.rect(382, 227, 45, 36);
+        d.clip("evenodd");
+        a.drawGrads(a.canvasAPI, {
+            position: [418, 110],
+            size: [50, 270],
+            zero: [0, 135],
+            orientation: "y",
+            direction: -1,
+            value: geofs.animation.getValue("altitude"),
+            interval: 100,
+            pixelRatio: 0.25,
+            pattern: [
+                [
+                    {
+                        length: 6,
+                        legend: !0,
+                        legendOffset: { x: -2, y: 7 },
+                        process: function (k) {
+                            return Math.round(k / 100);
+                        },
+                    },
+                ],
+                [{ length: 6 }],
+                [{ length: 6 }],
+                [{ length: 6 }],
+                [{ length: 6 }],
+            ],
+            sprites: [
+                { image: a.images.overlays, origin: [223, 0], size: [25, 62], center: [5, 31], value: geofs.autopilot.values.altitude, clamp: !0 },
+                { image: a.images.overlays, origin: [383, 0], size: [42, 255], center: [0, 0], value: geofs.animation.getValue("groundElevationFeet") },
+            ],
+        });
+        d.restore();
+        d.save();
+        d.beginPath();
+        d.rect(105, 455, 236, 37);
+        d.clip("evenodd");
+        d.textAlign = "center";
+        a.drawGrads(a.canvasAPI, {
+            position: [105, 455],
+            zero: [118, 0],
+            size: [236, 37],
+            orientation: "x",
+            direction: 1,
+            value: geofs.animation.getValue("heading360"),
+            interval: 5,
+            pixelRatio: 4.75,
+            pattern: [
+                [
+                    {
+                        length: 10,
+                        legend: !0,
+                        legendOffset: { x: 0, y: 30 },
+                        process: function (k) {
+                            return Math.round(fixAngle360(k) / 10);
+                        },
+                    },
+                ],
+                [{ length: 5 }],
+            ],
+        });
+        d.restore();
+        d.save();
+        d.beginPath();
+        d.rect(382, 232, 45, 26);
+        d.rect(428, 223, 29, 45);
+        d.rect(473, 90, 28, 314);
+        d.clip();
+        d.beginPath();
+        d.lineWidth = 3;
+        d.strokeStyle = "#FFFFFF";
+        b = clamp(100 * Math.log(Math.abs(geofs.animation.getValue("verticalSpeed") / 1e3)) + 75, 0, 125) * Math.sign(geofs.animation.getValue("verticalSpeed"));
+        d.moveTo(530, c[1]);
+        d.lineTo(482, c[1] - b);
+        d.stroke();
+        a.canvasAPI.drawSprite({
+            image: a.images.overlays,
+            origin: [166, 0],
+            size: [13, 5],
+            center: [0, 2],
+            destination: [480, c[1]],
+            translation: [0, -clamp(35 * Math.log(Math.abs(geofs.autopilot.values.verticalSpeed / 1e3)) + 60, 0, 160) * Math.sign(geofs.autopilot.values.verticalSpeed)],
+        });
+        9999 < geofs.animation.getValue("altTenThousands") &&
+            a.canvasAPI.drawSprite({
+                image: a.images.overlays,
+                origin: [16, 0],
+                sprite: [16, 512],
+                size: [16, 512],
+                center: [0, 487],
+                destination: [382, 256],
+                translation: [0, 25 * geofs.utils.stickyRounding(1e-4 * geofs.animation.getValue("altTenThousands"), 0.01)],
+            });
+        a.canvasAPI.drawSprite({
+            image: a.images.overlays,
+            origin: [16, 0],
+            sprite: [16, 512],
+            size: [16, 512],
+            center: [0, 487],
+            destination: [397, 256],
+            translation: [0, 25 * geofs.utils.stickyRounding(0.001 * geofs.animation.getValue("altThousands"), 0.01)],
+        });
+        a.canvasAPI.drawSprite({
+            image: a.images.overlays,
+            origin: [16, 0],
+            sprite: [16, 512],
+            size: [16, 512],
+            center: [0, 487],
+            destination: [412, 256],
+            translation: [0, 25 * geofs.utils.stickyRounding(0.01 * geofs.animation.getValue("altHundreds"), 0.1)],
+        });
+        a.canvasAPI.drawSprite({ image: a.images.overlays, origin: [44, 0], size: [24, 512], center: [0, 496], destination: [430, 246], translation: [0, 0.8 * geofs.animation.getValue("altTens")] });
+        d.restore();
+    },
+    genericHUD: function (a) {
+        var b = exponentialSmoothing("smoothKias", geofs.animation.getValue("kias"), 0.1),
+            c = [256, 256],
+            d = a.canvasAPI.context;
+        a.canvasAPI.clear();
+        d.fillStyle = "#00ff00";
+        d.strokeStyle = "#00ff00";
+        d.save();
+        d.beginPath();
+        d.arc(c[0], c[1], 200, 0, 6.28);
+        d.clip();
+        a.drawGrads(a.canvasAPI, {
+            position: c,
+            center: [100, 100],
+            zero: [100, 100],
+            size: [200, 200],
+            orientation: "y",
+            direction: -1,
+            rotation: geofs.animation.getValue("aroll") * DEGREES_TO_RAD,
+            value: -geofs.animation.getValue("atilt"),
+            interval: 5,
+            pixelRatio: 20,
+            pattern: [
+                [
+                    {
+                        length: 40,
+                        offset: { x: -50, y: 0 },
+                        legend: !0,
+                        legendOffset: { x: -80, y: 5 },
+                        process: function (e) {
+                            return Math.round(e);
+                        },
+                    },
+                    {
+                        length: 40,
+                        offset: { x: 10, y: 0 },
+                        legend: !0,
+                        legendOffset: { x: 60, y: 5 },
+                        process: function (e) {
+                            return Math.round(e);
+                        },
+                    },
+                ],
+            ],
+        });
+        d.restore();
+        a.canvasAPI.drawRotatedSprite({ image: a.images.overlays, origin: [248, 0], size: [36, 28], center: [18, 210], destination: [256, 256], rotation: geofs.animation.getValue("aroll") * DEGREES_TO_RAD, translation: [0, 0] });
+        d.drawImage(a.images.background, 0, 0);
+        a.canvasAPI.drawSprite({
+            image: a.images.overlays,
+            origin: [230, 239],
+            size: [51, 30],
+            center: [26, 15],
+            destination: c,
+            translation: [clamp(6.5 * geofs.animation.getValue("NAV1CourseDeviation"), -75, 75), clamp(-107 * geofs.animation.getValue("NAV1GlideAngleDeviation"), -75, 75)],
+        });
+        d.lineWidth = 2;
+        d.font = "20px sans-serif";
+        d.textAlign = "right";
+        d.save();
+        d.beginPath();
+        d.rect(104, 116, 50, 280);
+        d.rect(68, 243, 75, 25);
+        d.clip("evenodd");
+        a.drawGrads(a.canvasAPI, {
+            position: [104, 116],
+            zero: [0, 140],
+            size: [50, 280],
+            orientation: "y",
+            direction: -1,
+            value: b,
+            interval: 10,
+            pixelRatio: 1.3,
+            align: "right",
+            pattern: [
+                [{ length: -10, legend: !0, legendOffset: { x: -14, y: 7 } }],
+                [{ length: -7 }],
+                [{ length: -7 }],
+                [{ length: -7 }],
+                [{ length: -7 }],
+                [{ length: -10 }],
+                [{ length: -7 }],
+                [{ length: -7 }],
+                [{ length: -7 }],
+                [{ length: -7 }],
+            ],
+            sprites: [{ image: a.images.overlays, origin: [143, 0], size: [25, 27], center: [-8, 13], value: geofs.autopilot.values.speed, clamp: !0 }],
+        });
+        d.restore();
+        d.save();
+        d.beginPath();
+        d.rect(358, 116, 47, 280);
+        d.rect(368, 243, 75, 25);
+        d.clip("evenodd");
+        a.drawGrads(a.canvasAPI, {
+            position: [358, 116],
+            zero: [0, 140],
+            size: [47, 280],
+            orientation: "y",
+            direction: -1,
+            value: geofs.animation.getValue("altitude"),
+            interval: 100,
+            pixelRatio: 0.13,
+            pattern: [
+                [
+                    {
+                        length: 10,
+                        legend: !0,
+                        legendOffset: { x: 47, y: 7 },
+                        process: function (e) {
+                            return Math.round(e / 100);
+                        },
+                    },
+                ],
+                [{ length: 7 }],
+                [{ length: 7 }],
+                [{ length: 7 }],
+                [{ length: 7 }],
+            ],
+            sprites: [
+                { image: a.images.overlays, origin: [223, 0], size: [25, 62], center: [5, 31], value: geofs.autopilot.values.altitude, clamp: !0 },
+                { image: a.images.overlays, origin: [383, 0], size: [42, 255], center: [0, 0], value: geofs.animation.getValue("groundElevationFeet") },
+            ],
+        });
+        d.restore();
+        d.save();
+        d.beginPath();
+        d.rect(173, 440, 165, 30);
+        d.clip("evenodd");
+        d.textAlign = "center";
+        a.drawGrads(a.canvasAPI, {
+            position: [173, 440],
+            zero: [82, 0],
+            size: [165, 30],
+            orientation: "x",
+            direction: 1,
+            value: geofs.animation.getValue("heading360"),
+            interval: 5,
+            pixelRatio: 7.25,
+            pattern: [
+                [
+                    {
+                        length: 10,
+                        legend: !0,
+                        legendOffset: { x: 0, y: 30 },
+                        process: function (e) {
+                            return Math.round(fixAngle360(e) / 10);
+                        },
+                    },
+                ],
+                [{ length: 5 }],
+            ],
+        });
+        d.restore();
+        d.font = "20px sans-serif";
+        d.textAlign = "right";
+        d.fillText(Math.round(geofs.animation.getValue("kias")), 129, 264);
+        d.fillText(Math.round(geofs.animation.getValue("altitude")), 441, 264);
+        2500 >= geofs.animation.getValue("haglFeet") && d.fillText(Math.round(geofs.animation.getValue("haglFeet")), 410, 426);
+        c = b = a = "";
+        geofs.autopilot.on && ((a = "SPD"), "NAV" == geofs.autopilot.mode ? ((b = "NAV"), geofs.autopilot.VNAV ? ((b = "LOC"), (c = "G/S")) : (c = "ALT")) : ((b = "HDG"), (c = "ALT")));
+        d.fillText(a, 143, 426);
+        d.fillText(c, 143, 446);
+        d.fillText(b, 143, 466);
+        d.textAlign = "left";
+        d.fillText("G" + geofs.animation.getValue("loadFactor").toFixed(1), 143, 110);
+    },
+};
 ("use strict");
 var audio = window.audio || {};
 audio.init = function (a) {
@@ -19118,9 +19842,9 @@ audio.init = function (a) {
         d.loaded = !1;
         d = d.effects;
         for (var e in d) {
-            var f = d[e];
-            f.lastValue = null;
-            "volume" == e && (f.ratio = 100 * (f.ratio || 1));
+            var g = d[e];
+            g.lastValue = null;
+            "volume" == e && (g.ratio = 100 * (g.ratio || 1));
         }
     }
     geofs.preferences.sound ? !1 !== audio.on && (audio.on = !0) : audio.mute();
@@ -19140,44 +19864,44 @@ audio.update = function () {
             else if (b.loaded)
                 for (var d in c) {
                     var e = c[d],
-                        f = geofs.animation.filter(e);
-                    if (e.lastValue != f) {
+                        g = geofs.animation.filter(e);
+                    if (e.lastValue != g) {
                         switch (d) {
                             case "volume":
-                                f -= 0.01 * geofs.animation.values.cameraAircraftDistance;
-                                if (0 >= f && !0 === b.playing)
+                                g -= 0.01 * geofs.animation.values.cameraAircraftDistance;
+                                if (0 >= g && !0 === b.playing)
                                     try {
                                         (b.playing = "stopping"), audio.soundplayer.stopSound(b.id);
                                     } catch (k) {}
-                                if (0 < f) {
+                                if (0 < g) {
                                     if (!b.playing)
                                         try {
                                             (b.playing = !0), audio.soundplayer.playSound(b.id);
                                         } catch (k) {}
                                     try {
-                                        audio.soundplayer.setVolume(b.id, f);
+                                        audio.soundplayer.setVolume(b.id, g);
                                     } catch (k) {}
                                 }
                                 break;
                             case "pitch":
-                                f += 0.001 * geofs.animation.values.cameraAircraftSpeed;
+                                g += 0.001 * geofs.animation.values.cameraAircraftSpeed;
                                 try {
-                                    audio.soundplayer.setRate(b.id, f);
+                                    audio.soundplayer.setRate(b.id, g);
                                 } catch (k) {}
                                 break;
                             case "play":
-                                if (0 < f && !b.playing)
+                                if (0 < g && !b.playing)
                                     try {
                                         b.playing = !0;
                                         audio.soundplayer.playSound(b.id, !1);
-                                        var g = b.id;
+                                        var f = b.id;
                                         setTimeout(function () {
-                                            audio.sounds[g].playing = !1;
+                                            audio.sounds[f].playing = !1;
                                         }, e.duration);
                                     } catch (k) {}
                                 break;
                             case "start":
-                                if (0 < f) {
+                                if (0 < g) {
                                     if (!b.playing)
                                         try {
                                             (b.playing = !0), audio.soundplayer.playSound(b.id, b.loop);
@@ -19188,7 +19912,7 @@ audio.update = function () {
                                     } catch (k) {}
                                 break;
                             case "stop":
-                                if (0 < f) {
+                                if (0 < g) {
                                     if (!0 === b.playing)
                                         try {
                                             (b.playing = "stopping"), audio.soundplayer.setVolume(b.id, 0), audio.soundplayer.stopSound(b.id);
@@ -19198,7 +19922,7 @@ audio.update = function () {
                                         (b.playing = !0), audio.soundplayer.playSound(b.id, b.loop);
                                     } catch (k) {}
                         }
-                        e.lastValue = f;
+                        e.lastValue = g;
                     }
                 }
         }
@@ -19694,8 +20418,8 @@ multiplayer.updateUsers = function (a) {
         if (!d.ad || geofs.preferences.adsb)
             try {
                 multiplayer.users[e] ? multiplayer.users[e].update(d) : (multiplayer.users[e] = new multiplayer.User(d));
-            } catch (f) {
-                geofs.debug.error(f, "exception in multiplayer.updateUsers");
+            } catch (g) {
+                geofs.debug.error(g, "exception in multiplayer.updateUsers");
             }
     }
 };
@@ -19703,21 +20427,22 @@ multiplayer.startMapUpdate = function () {
     var a = function (b) {
         multiplayer.setNbUsers(b.userCount);
         if (b && b.users) {
-            b.users.sort(function (v, t) {
-                v = v.cs.toLowerCase();
+            b.users.sort(function (r, t) {
+                (r && t) || geofs.debug.debugger();
+                r = r.cs.toLowerCase();
                 t = t.cs.toLowerCase();
-                return v > t ? 1 : v < t ? -1 : 0;
+                return r > t ? 1 : r < t ? -1 : 0;
             });
-            for (var c = $(".geofs-player-list"), d = c.is(":visible"), e = 0, f = "", g = 0, k = b.users.length; g < k; g++) {
-                var m = b.users[g],
-                    q = m.id;
-                if (multiplayer.myId != q) {
-                    var u = multiplayer.users[q] || new multiplayer.User(m);
-                    u.update(m, !0);
-                    d && ("Foo" == u.callsign ? e++ : (f += '<li data-player="' + q + '">' + u.callsign + " (" + u.aircraftName + ")</li>"));
+            for (var c = $(".geofs-player-list"), d = c.is(":visible"), e = 0, g = "", f = 0, k = b.users.length; f < k; f++) {
+                var m = b.users[f],
+                    p = m.id;
+                if (multiplayer.myId != p) {
+                    var n = multiplayer.users[p] || new multiplayer.User(m);
+                    n.update(m, !0);
+                    d && ("Foo" == n.callsign ? e++ : (g += '<li data-player="' + p + '">' + n.callsign + " (" + n.aircraftName + ")</li>"));
                 }
             }
-            d && (0 < e && (f += "<li>    ...and " + e + " Foos</li>"), c.html(f));
+            d && (0 < e && (g += "<li>    ...and " + e + " Foos</li>"), c.html(g));
         }
     };
     clearInterval(multiplayer.mapInterval);
@@ -19747,8 +20472,8 @@ multiplayer.update = function (a) {
             geofs.api.setLabelPosition(c.label, e);
             c.icon && c.icon.setLocation(e);
         }
-    } catch (f) {
-        geofs.debug.error(f, "multiplayer.update");
+    } catch (g) {
+        geofs.debug.error(g, "multiplayer.update");
     }
 };
 multiplayer.errorCallback = function (a) {
@@ -19782,29 +20507,29 @@ multiplayer.sendUpdate = function () {
             var c = $.merge($.merge([], a.llaLocation), a.htr),
                 d = V3.scale(xyz2lla(a.rigidBody.getLinearVelocity(), a.llaLocation), 0.001),
                 e = $.merge(d, a.htrAngularSpeed),
-                f = { gr: a.groundContact, as: Math.round(geofs.animation.values.kias) };
-            a.liveryId && (f.lv = a.liveryId);
-            var g = {
+                g = { gr: a.groundContact, as: Math.round(geofs.animation.values.kias) };
+            a.liveryId && (g.lv = a.liveryId);
+            var f = {
                 acid: geofs.userRecord.id,
                 sid: geofs.userRecord.sessionId,
                 id: multiplayer.myId,
                 ac: a.aircraftRecord.id,
                 co: c,
                 ve: e,
-                st: f,
+                st: g,
                 ti: multiplayer.getServerTime(),
                 m: multiplayer.chatMessage,
                 ci: multiplayer.chatMessageId,
             };
             multiplayer.flightSharing.status &&
                 multiplayer.flightSharing.peer &&
-                ((g.st.sh = { pe: multiplayer.flightSharing.peer.acid }),
+                ((f.st.sh = { pe: multiplayer.flightSharing.peer.acid }),
                 multiplayer.flightSharing.control &&
-                    ((g.st.sh.ct = [controls.rawPitch, controls.roll, controls.yaw, controls.throttle, controls.gear.position, controls.flaps.position, controls.airbrakes.position]),
-                    (g.st.sh.ve = geofs.aircraft.instance.rigidBody.getLinearVelocity().concat(geofs.aircraft.instance.rigidBody.getAngularVelocity())),
-                    (g.st.sh.st = [geofs.aircraft.instance.engine.on])));
+                    ((f.st.sh.ct = [controls.rawPitch, controls.roll, controls.yaw, controls.throttle, controls.gear.position, controls.flaps.position, controls.airbrakes.position]),
+                    (f.st.sh.ve = geofs.aircraft.instance.rigidBody.getLinearVelocity().concat(geofs.aircraft.instance.rigidBody.getAngularVelocity())),
+                    (f.st.sh.st = [geofs.aircraft.instance.engine.on])));
             multiplayer.chatMessage = "";
-            multiplayer.lastRequest = geofs.ajax.post(geofs.multiplayerHost + "/update", g, multiplayer.updateCallback, multiplayer.errorCallback);
+            multiplayer.lastRequest = geofs.ajax.post(geofs.multiplayerHost + "/update", f, multiplayer.updateCallback, multiplayer.errorCallback);
         }
     } catch (k) {
         geofs.debug.error(k, "multiplayer.sendUpdate");
@@ -20111,28 +20836,28 @@ geofs.debug.drawAtmosphere = function (a) {
     for (var b = weather.windLayers[weather.activeWindLayer], c = a[0] - geofs.debug.atmosphereSize[0]; c <= a[0] + geofs.debug.atmosphereSize[0]; c += geofs.debug.atmosphereResolution[0])
         for (var d = a[1] - geofs.debug.atmosphereSize[1]; d <= a[1] + geofs.debug.atmosphereSize[1]; d += geofs.debug.atmosphereResolution[1])
             for (var e = 50; e <= geofs.debug.atmosphereSize[2]; e += geofs.debug.atmosphereResolution[2]) {
-                var f = [c, d, e],
-                    g = b.computeTerrainLift(f);
-                f[2] = g.origin[2] + e;
-                g = V3.scale(g, b.speed);
-                var k = weather.getLocalThermal(f);
-                g = V3.add(g, k);
-                var m = clamp(g[2], 0.5, 10);
-                k = Cesium.Color.fromHsl(clamp(0.7 - 0.5 * k[2], 0, 0.9), clamp(0.5 + 0.5 * g[2], 0, 1), 0.5);
-                g = V3.scale(g, 15);
-                var q = Cesium.Cartesian3.fromDegrees(f[1], f[0], f[2]);
-                f = V3.add(f, xyz2lla(g, f));
-                f = Cesium.Cartesian3.fromDegrees(f[1], f[0], f[2]);
-                g = new Cesium.PolylineGraphics();
-                g.material = new Cesium.ColorMaterialProperty(k);
-                g.width = new Cesium.ConstantProperty(m);
-                g.arcType = new Cesium.ConstantProperty(Cesium.ArcType.NONE);
-                g.positions = new Cesium.ConstantProperty([q, f]);
-                m = new Cesium.Entity({ show: !0, polyline: g });
+                var g = [c, d, e],
+                    f = b.computeTerrainLift(g);
+                g[2] = f.origin[2] + e;
+                f = V3.scale(f, b.speed);
+                var k = weather.getLocalThermal(g);
+                f = V3.add(f, k);
+                var m = clamp(f[2], 0.5, 10);
+                k = Cesium.Color.fromHsl(clamp(0.7 - 0.5 * k[2], 0, 0.9), clamp(0.5 + 0.5 * f[2], 0, 1), 0.5);
+                f = V3.scale(f, 15);
+                var p = Cesium.Cartesian3.fromDegrees(g[1], g[0], g[2]);
+                g = V3.add(g, xyz2lla(f, g));
+                g = Cesium.Cartesian3.fromDegrees(g[1], g[0], g[2]);
+                f = new Cesium.PolylineGraphics();
+                f.material = new Cesium.ColorMaterialProperty(k);
+                f.width = new Cesium.ConstantProperty(m);
+                f.arcType = new Cesium.ConstantProperty(Cesium.ArcType.NONE);
+                f.positions = new Cesium.ConstantProperty([p, g]);
+                m = new Cesium.Entity({ show: !0, polyline: f });
                 geofs.debug.dataSource.entities.add(m);
             }
 };
 Cesium.QuantizedMeshTerrainData.prototype.nativeUpsample = Cesium.QuantizedMeshTerrainData.prototype.upsample;
-Cesium.QuantizedMeshTerrainData.prototype.upsample = function (a, b, c, d, e, f, g) {
-    if (!(d > geofs.api.viewer.scene.globe.maximumUpsamplingLevel)) return this.nativeUpsample(a, b, c, d, e, f, g);
+Cesium.QuantizedMeshTerrainData.prototype.upsample = function (a, b, c, d, e, g, f) {
+    if (!(d > geofs.api.viewer.scene.globe.maximumUpsamplingLevel)) return this.nativeUpsample(a, b, c, d, e, g, f);
 };
