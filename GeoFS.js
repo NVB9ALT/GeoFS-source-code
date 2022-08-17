@@ -1,4 +1,5 @@
-//GeoFS 3.3 beta (last update was reworked PFDs and HUDs)
+//GeoFS 3.31 official release
+
 /* @preserve
  * Leaflet 1.8.0, a JS library for interactive maps. https://leafletjs.com
  * (c) 2010-2022 Vladimir Agafonkin, (c) 2010-2011 CloudMade
@@ -6837,6 +6838,10 @@ geofs["atmosphereCommon.glsl"] =
     "#endif\n" +
     "#endif\n" +
     "\n" +
+    "const float PI = 3.14159265359;\n" +
+    "const float TWO_PI = PI * 2.0;\n" +
+    "const float FOUR_PI = PI * 4.0;\n" +
+    "\n" +
     "/*\n" +
     "* Configuration\n" +
     "*/\n" +
@@ -6846,10 +6851,11 @@ geofs["atmosphereCommon.glsl"] =
     "#define LIGHT_STEPS 4\n" +
     "\n" +
     "// This is only accessible from advanced settings\n" +
-    "#define CLOUDS_MAX_LOD 3\n" +
-    "#define MAXIMUM_CLOUDS_STEPS 150\n" +
+    "#define CLOUDS_MAX_LOD 1\n" +
+    "#define CLOUDS_MARCH_STEP 500.0\n" +
+    "#define CLOUDS_DENS_MARCH_STEP 100.0\n" +
+    "#define MAXIMUM_CLOUDS_STEPS 300\n" +
     "#define DISTANCE_QUALITY_RATIO 0.00003\n" +
-    "#define LIT_CLOUD\n" +
     "#define CLOUD_SHADOWS\n" +
     "\n" +
     "#elif defined QUALITY_6\n" +
@@ -6857,10 +6863,11 @@ geofs["atmosphereCommon.glsl"] =
     "#define PRIMARY_STEPS 16\n" +
     "#define LIGHT_STEPS 4\n" +
     "\n" +
-    "#define CLOUDS_MAX_LOD 3\n" +
-    "#define MAXIMUM_CLOUDS_STEPS 100\n" +
+    "#define CLOUDS_MAX_LOD 1\n" +
+    "#define CLOUDS_MARCH_STEP 500.0\n" +
+    "#define CLOUDS_DENS_MARCH_STEP 100.0\n" +
+    "#define MAXIMUM_CLOUDS_STEPS 200\n" +
     "#define DISTANCE_QUALITY_RATIO 0.00004\n" +
-    "#define LIT_CLOUD\n" +
     "#define CLOUD_SHADOWS\n" +
     "\n" +
     "#elif defined QUALITY_5\n" +
@@ -6870,10 +6877,11 @@ geofs["atmosphereCommon.glsl"] =
     "#define PRIMARY_STEPS 9\n" +
     "#define LIGHT_STEPS 3\n" +
     "\n" +
-    "#define CLOUDS_MAX_LOD 3\n" +
-    "#define MAXIMUM_CLOUDS_STEPS 70\n" +
+    "#define CLOUDS_MAX_LOD 1\n" +
+    "#define CLOUDS_MARCH_STEP 750.0\n" +
+    "#define CLOUDS_DENS_MARCH_STEP 150.0\n" +
+    "#define MAXIMUM_CLOUDS_STEPS 150\n" +
     "#define DISTANCE_QUALITY_RATIO 0.00005\n" +
-    "#define LIT_CLOUD\n" +
     "#define CLOUD_SHADOWS\n" +
     "\n" +
     "#elif defined QUALITY_4\n" +
@@ -6881,10 +6889,11 @@ geofs["atmosphereCommon.glsl"] =
     "#define PRIMARY_STEPS 9\n" +
     "#define LIGHT_STEPS 3\n" +
     "\n" +
-    "#define CLOUDS_MAX_LOD 3\n" +
-    "#define MAXIMUM_CLOUDS_STEPS 50\n" +
+    "#define CLOUDS_MAX_LOD 1\n" +
+    "#define CLOUDS_MARCH_STEP 750.0\n" +
+    "#define CLOUDS_DENS_MARCH_STEP 150.0\n" +
+    "#define MAXIMUM_CLOUDS_STEPS 100\n" +
     "#define DISTANCE_QUALITY_RATIO 0.00007\n" +
-    "#define LIT_CLOUD\n" +
     "#define CLOUD_SHADOWS\n" +
     "\n" +
     "#elif defined QUALITY_3\n" +
@@ -6892,8 +6901,10 @@ geofs["atmosphereCommon.glsl"] =
     "#define PRIMARY_STEPS 6\n" +
     "#define LIGHT_STEPS 2\n" +
     "\n" +
-    "#define CLOUDS_MAX_LOD 2\n" +
-    "#define MAXIMUM_CLOUDS_STEPS 40\n" +
+    "#define CLOUDS_MAX_LOD 0\n" +
+    "#define CLOUDS_MARCH_STEP 750.0\n" +
+    "#define CLOUDS_DENS_MARCH_STEP 150.0\n" +
+    "#define MAXIMUM_CLOUDS_STEPS 75\n" +
     "#define DISTANCE_QUALITY_RATIO 0.0001\n" +
     "#define CLOUD_SHADOWS\n" +
     "\n" +
@@ -6902,8 +6913,10 @@ geofs["atmosphereCommon.glsl"] =
     "#define PRIMARY_STEPS 4\n" +
     "#define LIGHT_STEPS 1\n" +
     "\n" +
-    "#define CLOUDS_MAX_LOD 2\n" +
-    "#define MAXIMUM_CLOUDS_STEPS 30\n" +
+    "#define CLOUDS_MAX_LOD 0\n" +
+    "#define CLOUDS_MARCH_STEP 1000.0\n" +
+    "#define CLOUDS_DENS_MARCH_STEP 200.0\n" +
+    "#define MAXIMUM_CLOUDS_STEPS 50\n" +
     "#define DISTANCE_QUALITY_RATIO 0.0002\n" +
     "#define CLOUD_SHADOWS\n" +
     "\n" +
@@ -6912,32 +6925,37 @@ geofs["atmosphereCommon.glsl"] =
     "#define PRIMARY_STEPS 3\n" +
     "#define LIGHT_STEPS 1\n" +
     "\n" +
-    "#define CLOUDS_MAX_LOD 2\n" +
+    "#define CLOUDS_MAX_LOD 0\n" +
+    "#define CLOUDS_MARCH_STEP 1000.0\n" +
+    "#define CLOUDS_DENS_MARCH_STEP 200.0\n" +
     "#define MAXIMUM_CLOUDS_STEPS 20\n" +
     "#define DISTANCE_QUALITY_RATIO 0.0004\n" +
     "\n" +
     "#elif defined QUALITY_0\n" +
     "\n" +
-    "#define PRIMARY_STEPS 0\n" +
-    "#define LIGHT_STEPS 0\n" +
+    "#define PRIMARY_STEPS 3\n" +
+    "#define LIGHT_STEPS 1\n" +
     "\n" +
     "#define CLOUDS_MAX_LOD 0\n" +
-    "#define MAXIMUM_CLOUDS_STEPS 0\n" +
-    "#define DISTANCE_QUALITY_RATIO 0\n" +
+    "#define CLOUDS_MARCH_STEP 1000.0\n" +
+    "#define CLOUDS_DENS_MARCH_STEP 200.0\n" +
+    "#define MAXIMUM_CLOUDS_STEPS 10\n" +
+    "#define DISTANCE_QUALITY_RATIO 0.0004\n" +
     "\n" +
     "#else //DEFAULT\n" +
     "\n" +
     "#define PRIMARY_STEPS 9\n" +
     "#define LIGHT_STEPS 2\n" +
     "\n" +
-    "#define CLOUDS_MAX_LOD 2\n" +
+    "#define CLOUDS_MAX_LOD 1\n" +
+    "#define CLOUDS_MARCH_STEP 750.0\n" +
+    "#define CLOUDS_DENS_MARCH_STEP 150.0\n" +
     "#define MAXIMUM_CLOUDS_STEPS 40\n" +
     "#define DISTANCE_QUALITY_RATIO 0.0002\n" +
     "#define CLOUD_SHADOWS\n" +
     "\n" +
     "#endif\n" +
     "\n" +
-    "#define CLOUDS_DENS_MARCH_STEP 100.0\n" +
     "#define CLOUDS_MAX_VIEWING_DISTANCE 250000.0\n" +
     "\n" +
     "/*\n" +
@@ -6958,6 +6976,34 @@ geofs["atmosphereCommon.glsl"] =
     "(-b - squaredD) / (2.0 * a),\n" +
     "(-b + squaredD) / (2.0 * a)\n" +
     ");\n" +
+    "}\n" +
+    "\n" +
+    "float reMap (float value, float old_low, float old_high, float new_low, float new_high ) {\n" +
+    "return new_low + (value - old_low) * (new_high - new_low) / (old_high - old_low);\n" +
+    "}\n" +
+    "\n" +
+    "float saturate (float value) {\n" +
+    "return clamp(value, 0.0, 1.0);\n" +
+    "}\n" +
+    "\n" +
+    "/*\n" +
+    "* Scattering functions\n" +
+    "*/\n" +
+    "float isotropic() {\n" +
+    "return 0.07957747154594767; //1.0 / (4.0 * PI);\n" +
+    "}\n" +
+    "\n" +
+    "float rayleigh(float costh) {\n" +
+    "return (3.0 / (16.0 * PI)) * (1.0 + pow(costh, 2.0));\n" +
+    "}\n" +
+    "\n" +
+    "float HenyeyGreenstein(float g, float costh)\n" +
+    "{\n" +
+    "return (1.0 - g * g) / (FOUR_PI * pow(1.0 + g * g - 2.0 * g * costh, 3.0 / 2.0));\n" +
+    "}\n" +
+    "\n" +
+    "float Schlick(float k, float costh) {\n" +
+    "return (1.0 - k * k) / (FOUR_PI * pow(1.0 - k * costh, 2.0));\n" +
     "}\n" +
     "\n" +
     "/*\n" +
@@ -7042,6 +7088,7 @@ geofs["atmosphereCommon.glsl"] =
     "//float phase_mie = allow_mie ? 3.0 / (25.1327412287 ) * ((1.0 - gg) * (mumu + 1.0)) / (pow(1.0 + gg - 2.0 * mu * g, 1.5) * (2.0 + gg)) : 0.0;\n" +
     "// allow some mie glow in front of horizon\n" +
     "// this can be wierd looking through some mountains\n" +
+    "\n" +
     "float phase_mie = (allow_mie ? 3.0 : 0.5 ) / (25.1327412287 ) * ((1.0 - gg) * (mumu + 1.0)) / (pow(1.0 + gg - 2.0 * mu * g, 1.5) * (2.0 + gg));\n" +
     "\n" +
     "// now we need to sample the 'primary' ray. this ray gathers the light that gets scattered onto it\n" +
@@ -7127,14 +7174,20 @@ geofs["atmosphereCommon.glsl"] =
     "float cloudBase_radius = realPlanetRadius + cloudBase;\n" +
     "float cloudThickness = cloudTop - cloudBase;\n" +
     "float cloudTop_radius = cloudBase_radius + cloudThickness;\n" +
-    "float layerPosition = 0.3; // set the layer base to 10% of the cloud height\n" +
+    "float layerPosition = 0.2; // set the layer base to 10% of the cloud height\n" +
     "float baseThickness = cloudThickness * layerPosition;\n" +
     "float layer = cloudBase + baseThickness;\n" +
     "\n" +
-    "float twoPi = 6.2831853071795864769252;\n" +
+    "//    float hash(float n) {\n" +
+    "//        return fract(sin(mod(n, TWO_PI)) * 753.5453123);\n" +
+    "//    }\n" +
     "\n" +
-    "float hash(float n) {\n" +
-    "return fract(sin(mod(n, twoPi)) * 753.5453123);\n" +
+    "float hash(float p)\n" +
+    "{\n" +
+    "p = fract(p * .1031);\n" +
+    "p *= p + 33.33;\n" +
+    "p *= p + p;\n" +
+    "return fract(p);\n" +
     "}\n" +
     "\n" +
     "float noise(in vec3 x) {\n" +
@@ -7146,30 +7199,21 @@ geofs["atmosphereCommon.glsl"] =
     "return mix(mix(mix( hash(n+ 0.0), hash(n+ 1.0),f.x),\n" +
     "mix( hash(n+157.0), hash(n+158.0),f.x),f.y),\n" +
     "mix(mix( hash(n+113.0), hash(n+114.0),f.x),\n" +
-    "mix( hash(n+270.0), hash(n+271.0),f.x),f.y),f.z);\n" +
+    "mix(hash(n+270.0), hash(n+271.0),f.x),f.y),f.z);\n" +
     "}\n" +
     "\n" +
     "int lastFlooredPosition;\n" +
     "float lastLiveCoverageValue = 0.0;\n" +
-    "float cloudDensity(vec3 p, vec3 offset, int lod) {\n" +
+    "float cloudDensity(vec3 p, vec3 wind, int lod, inout float heightRatio) {\n" +
     "\n" +
     "float finalCoverage = cloudCover;\n" +
     "#ifdef REALTIME_CLOUDS\n" +
     "\n" +
-    "//            //int flooredPosition = int(floor(dot(p, vec3(1.0)) / 10000.0));\n" +
-    "//            float factor = 50000.0;\n" +
-    "//            int flooredPosition = int(floor(p.x / factor)) + int(floor(p.y / factor)) + int(floor(p.z / factor));\n" +
-    "//            if (flooredPosition != lastFlooredPosition) {\n" +
-    "//                lastFlooredPosition = flooredPosition;\n" +
     "vec3 sphericalNormal = normalize(p);\n" +
+    "// TODO: investigate czm_geodeticSurfaceNormal\n" +
     "vec2 positionSurfaceC = czm_ellipsoidWgs84TextureCoordinates(sphericalNormal);\n" +
     "float sampledValue = texture2D(coverageTexture, positionSurfaceC).r;\n" +
     "lastLiveCoverageValue = clamp((sampledValue - 0.3) * 10.0, 0.0, 1.0);\n" +
-    "//            }\n" +
-    "\n" +
-    "//float colpos = float(lastLiveCoverageValue);\n" +
-    "//loudBright = vec3(colpos, 0.0, 0.0);\n" +
-    "//cloudBright = vec3(noise(vec3(colpos)), noise(vec3(colpos * 0.1)), noise(vec3(colpos * 0.01)));\n" +
     "\n" +
     "finalCoverage *= lastLiveCoverageValue;\n" +
     "#endif\n" +
@@ -7177,32 +7221,158 @@ geofs["atmosphereCommon.glsl"] =
     "if (finalCoverage <= 0.1) return 0.0;\n" +
     "\n" +
     "float height = length(p) - realPlanetRadius;\n" +
-    "float heightRatio;\n" +
+    "heightRatio = (height - cloudBase) / cloudThickness;\n" +
     "\n" +
     "float positionResolution = 0.002;\n" +
-    "p = p * positionResolution + offset;\n" +
+    "p = p * positionResolution + wind;\n" +
     "\n" +
-    "float shape = finalCoverage + finalCoverage * noise(p * 0.3);\n" +
+    "//        float shape = finalCoverage + finalCoverage * noise(p * 0.5);\n" +
+    "//        float shapeHeight = finalCoverage + finalCoverage * noise(p * 0.05);\n" +
+    "float shape = noise(p * 0.3);\n" +
+    "float shapeHeight = noise(p * 0.05);\n" +
     "\n" +
-    "if (height > layer) {\n" +
-    "heightRatio = (height - layer) / (cloudThickness * (1.0 - layerPosition));\n" +
-    "}\n" +
-    "else {\n" +
-    "heightRatio = (layer - height) / (cloudThickness * layerPosition);\n" +
-    "}\n" +
-    "\n" +
-    "//heightRatio *= noise(p * 0.1);\n" +
+    "//        float heightWeight;\n" +
+    "//        if (height > layer) {\n" +
+    "//            heightWeight = (height - layer) / (cloudThickness * (1.0 - layerPosition));\n" +
+    "//        }\n" +
+    "//        else {\n" +
+    "//            heightWeight = (layer - height) / (cloudThickness * layerPosition);\n" +
+    "//        }\n" +
     "\n" +
     "// brownian noise\n" +
-    "float bn  = 0.50000 * noise(p); p = p * 2.0;\n" +
-    "if( lod>=2 ) bn += 0.25000 * noise(p); p = p * 2.11;\n" +
-    "if( lod>=3 ) bn += 0.12500 * noise(p); p = p * 2.32;\n" +
-    "if( lod>=4 ) bn += 0.06250 * noise(p);\n" +
+    "float bn = 0.50000 * noise(p); p = p * 2.0;\n" +
+    "if( lod>=1 ) bn += 0.20000 * noise(p); p = p * 2.11;\n" +
+    "//if( lod>=2 ) bn += 0.12500 * noise(p); p = p * 2.32;\n" +
+    "//if( lod>=3 ) bn += 0.06250 * noise(p);\n" +
     "\n" +
-    "bn = mix(-0.8, bn, shape * shape) + 0.1;\n" +
-    "float dens = (bn / cloudCover) - (heightRatio * 4.2 * cloudCover); // steepness of cloud border\n" +
+    "//***********************************************\n" +
+    "float cumuloNimbus = saturate((shapeHeight - 0.5) * 2.0);\n" +
+    "cumuloNimbus *= saturate(1.0 - pow(heightRatio - 0.5, 2.0) * 4.0);\n" +
+    "\n" +
+    "float cumulus = saturate(1.0 - pow(heightRatio - 0.25, 2.0) * 25.0) * shapeHeight;\n" +
+    "\n" +
+    "float stratoCumulus = saturate(1.0 - pow(heightRatio - 0.12, 2.0) * 60.0) * (1.0 - shapeHeight);\n" +
+    "\n" +
+    "float dens = saturate(stratoCumulus + cumulus + cumuloNimbus) * 2.0 * finalCoverage;\n" +
+    "\n" +
+    "// substract detail\n" +
+    "dens -= 1.0 - shape;\n" +
+    "dens -= bn;\n" +
     "\n" +
     "return clamp(dens, 0.0, 1.0);\n" +
+    "\n" +
+    "//***********************************************\n" +
+    "//        float cumuloNimbusCore = saturate((shapeHeight - 0.5) * 1.0);\n" +
+    "//        cumuloNimbusCore *= saturate(1.0 - pow(heightRatio - 0.5, 2.0) * 4.0) * 2.0;\n" +
+    "//\n" +
+    "//        float cumulusCore = saturate(1.0 - pow(heightRatio - 0.25, 2.0) * 25.0) * shapeHeight;\n" +
+    "//\n" +
+    "//        float stratoCumulusCore = saturate(1.0 - pow(heightRatio - 0.12, 2.0) * 60.0) * (1.0 - shapeHeight);\n" +
+    "//\n" +
+    "//        float dens = saturate(stratoCumulusCore + cumulusCore + cumuloNimbusCore) * 2.0 * finalCoverage;//(cloudHeightMultiplier * cloudCore) * 5.0;// + cloudHeightMultiplier * 5.0;\n" +
+    "//\n" +
+    "//        dens -= saturate(1.0 - pow(shape, 2.0));\n" +
+    "//        dens -= bn;\n" +
+    "//\n" +
+    "//        return clamp(dens, 0.0, 1.0);\n" +
+    "\n" +
+    "\n" +
+    "//***********************************************\n" +
+    "//        float cumuloNimbusCore = saturate((shapeHeight - 0.8) * 5.0);\n" +
+    "//        cumuloNimbusCore *= saturate(1.0 - pow(heightRatio - 0.5, 2.0) * 6.0);\n" +
+    "//\n" +
+    "//        float cumulusCore = saturate(0.8 - pow(heightRatio - 0.1, 2.0) * 30.0);\n" +
+    "//\n" +
+    "//        float dens = (cumulusCore + cumuloNimbusCore) * 4.0 * finalCoverage;\n" +
+    "////        // 11.(x+0.2)-0.85)^2.(x+0.2)+0.3 // polynomial clouds profile\n" +
+    "//        dens -= saturate(2.0 - shape * shape);\n" +
+    "//        dens -= bn;\n" +
+    "//        //heightRatio = (heightRatio / cloudHeight); // rescale height ratio to ouput for lighting stage\n" +
+    "//        return clamp(dens, 0.0, 1.0);\n" +
+    "//***********************************************\n" +
+    "\n" +
+    "//***********************************************\n" +
+    "//        float cloudCore = saturate((shapeHeight - 0.8) * 5.0);\n" +
+    "//        float cloudHeight = saturate(cloudCore * 100.0 + 0.2) * finalCoverage;\n" +
+    "//        float cloudHeightMultiplier = saturate((cloudHeight - heightRatio) * 5.0);\n" +
+    "//\n" +
+    "//        //float cloudCore = cloudHeightMultiplier * cloudHeight;\n" +
+    "//        float dens = 1.0;//(cloudHeightMultiplier * cloudCore) * 5.0;// + cloudHeightMultiplier * 5.0;\n" +
+    "////        // 11.(x+0.2)-0.85)^2.(x+0.2)+0.3 // polynomial clouds profile\n" +
+    "//        //dens *= (saturate(0.8 - pow(heightRatio - 0.1, 2.0) * 30.0) + saturate(1.0 - pow(heightRatio - 0.6, 2.0) * 6.0));\n" +
+    "//\n" +
+    "//        dens -= saturate(1.0 - pow(shape, 2.0));\n" +
+    "//        dens -= bn;\n" +
+    "//        //heightRatio = (heightRatio / cloudHeight); // rescale height ratio to ouput for lighting stage\n" +
+    "//        return clamp(dens, 0.0, 1.0);\n" +
+    "//***********************************************\n" +
+    "\n" +
+    "\n" +
+    "//                bn = mix(-0.8, bn, shape * shape) + 0.1;\n" +
+    "//                float dens = (bn / cloudCover) - (heightWeight * 4.2 * cloudCover); // steepness of cloud border\n" +
+    "\n" +
+    "//                float puffiness = 2.0;//clamp(3.0 - length(windVector) * 0.2, 1.0, 4.0);\n" +
+    "//                float dens = (shape * shape) - bn;\n" +
+    "//                return dens;\n" +
+    "\n" +
+    "//        float puffiness = 2.0;//clamp(3.0 - length(windVector) * 0.2, 1.0, 4.0);\n" +
+    "//        float dens = mix(-0.5, bn, pow(shape, puffiness)) + 0.1;//(shape * shape) - bn;\n" +
+    "//        return dens;\n" +
+    "\n" +
+    "//***********************************************\n" +
+    "//float dens = shape;\n" +
+    "//dens = pow(shape, 10.0);\n" +
+    "////dens *= 30.0 * pow(0.6 - heightRatio, 2.0) * heightRatio;\n" +
+    "////dens += pow(shapeHeight, 10.0) * (pow(heightRatio, 2.0) - pow(heightRatio, 21.0));\n" +
+    "//dens += pow(shapeHeight, 10.0) * (1.0 - pow(2.0 - heightRatio, 2.0) * pow(heightRatio, 2.0));\n" +
+    "////dens *= 7.0 * pow(1.0 - heightRatio, 2.0) * heightRatio;\n" +
+    "//dens -= bn;\n" +
+    "//return clamp(dens, 0.0, 1.0);\n" +
+    "//***********************************************\n" +
+    "//        // density depending on cloud height and current height\n" +
+    "//        float cloudHeight = saturate((shapeHeight - 0.85) * 10.0) + 0.2;\n" +
+    "//        float cloudHeightMultiplier = saturate((cloudHeight - heightRatio) * 10.0);\n" +
+    "//        float lowerCumulus = saturate(1.0 - 30.0 * pow(heightRatio - 0.2, 2.0)); // lower cumulus\n" +
+    "//        float higherCumulonimbus = saturate(1.0 - 6.0 * pow(heightRatio - 0.6, 2.0)); // lower cumulus\n" +
+    "//\n" +
+    "//        //float dens = cloudHeightMultiplier; // * (lowerCumulus + higherCumulonimbus); // * shape;\n" +
+    "//        float dens = cloudHeightMultiplier * (lowerCumulus + higherCumulonimbus) * shape;\n" +
+    "//        heightRatio = cloudHeight / heightRatio; // rescale height ratio for final lighting\n" +
+    "//        dens -= bn;\n" +
+    "//        return dens;\n" +
+    "//***********************************************\n" +
+    "//        //shape = pow(shape, 2.0);\n" +
+    "//        //shapeHeight = pow(shapeHeight, 2.0);\n" +
+    "//        float cloud_anvil_amount = 0.01;\n" +
+    "//\n" +
+    "//        float heightDens = saturate(reMap ( heightRatio , 0.0 ,0.07 ,0.0 ,1.0));\n" +
+    "//        float stop = saturate(shapeHeight + 0.12);\n" +
+    "//        heightDens *= saturate(reMap( heightRatio , stop * 0.2 , stop ,1.0 ,0.0));\n" +
+    "//        heightDens = pow (heightDens , saturate( reMap( heightRatio ,0.65 ,0.95 ,1.0 , (1.0 - cloud_anvil_amount * finalCoverage))));\n" +
+    "//\n" +
+    "//        // Have density be generally increasing over height\n" +
+    "//        float dens = heightRatio ;\n" +
+    "//\n" +
+    "//        // Reduce density at base\n" +
+    "//        dens *= saturate ( reMap ( heightRatio ,0.0 ,0.2 ,0.0 ,1.0) );\n" +
+    "//\n" +
+    "//        // Apply weather_map density\n" +
+    "//        dens *= shape * 2.0;\n" +
+    "//\n" +
+    "//        // Reduce density for the anvil ( cumulonimbus clouds)\n" +
+    "//        dens *= mix(1.0 , saturate( reMap ( pow( heightRatio ,0.5) ,0.4 ,0.95 ,1.0 ,0.2) ) , cloud_anvil_amount );\n" +
+    "//\n" +
+    "//        // Reduce density at top to make better transition\n" +
+    "//        dens *= saturate ( reMap ( heightRatio ,0.9 ,1.0 ,1.0 ,0.0));\n" +
+    "//\n" +
+    "//        bn = mix( bn ,1.0 - bn , saturate ( heightRatio * 5.0));\n" +
+    "//\n" +
+    "//        bn *= 0.35 * exp (- finalCoverage * 0.75) ;\n" +
+    "//\n" +
+    "//        // Carve away more from the shape_noise using detail_noise\n" +
+    "//        dens = saturate ( reMap ( dens , bn ,1.0 ,0.0 ,1.0) );\n" +
+    "//\n" +
+    "//        return clamp(dens * heightDens, 0.0, 1.0);\n" +
     "}\n" +
     "#endif\n";
 geofs = geofs || {};
@@ -7261,11 +7431,6 @@ geofs["atmosphereOnlyFS.glsl"] =
     "if (depth >= 1.0) {\n" +
     "\n" +
     "// out of earth surface\n" +
-    "/*\n" +
-    "float cosTheta = dot(direction, normalize(czm_sunPositionWC));\n" +
-    "sundisk = smoothstep(sunAngularDiameterCos, sunAngularDiameterCos + 0.02, cosTheta) * 500000.0;\n" +
-    "color += vec4(clamp(vec3(sundisk) * czm_lightColor, 0.0, 1.0), sundisk);\n" +
-    "*/\n" +
     "elevation = length(czm_viewerPositionWC) - (realPlanetRadius);\n" +
     "\n" +
     "//distance = max(distance, 10000000.0); // max out the distance when looking at the sky to avoid clamp/arc artefact\n" +
@@ -7287,22 +7452,36 @@ geofs["atmosphereOnlyFS.glsl"] =
     "#if defined(VOLUMETRIC_CLOUDS)\n" +
     "\n" +
     "float depthMaskDistance = 0.5;\n" +
+    "\n" +
     "if (length(czm_viewerPositionWC) < cloudBase_radius) {\n" +
     "depthMaskDistance = 0.9; // try to include distant trees and object in the mask\n" +
     "}\n" +
     "\n" +
     "#if defined(CLOUD_SHADOWS)\n" +
     "\n" +
+    "float baseDistance = cloudBase_radius + baseThickness;\n" +
+    "\n" +
     "// if this is ground and sun is up and ground is below cloud base\n" +
-    "if (depth < 1.0 && czm_lightColor.z > 0.15 && length(vWorldPosition) < cloudBase_radius + baseThickness) {\n" +
+    "if (depth < 1.0 && czm_lightColor.z > 0.15 && length(vWorldPosition) < baseDistance) {\n" +
     "vec3 wind = windVector * czm_frameNumber * windSpeedRatio;\n" +
     "float mask = 1.0;\n" +
-    "vec2 toClouds = raySphereIntersect(vWorldPosition, -lightDirection, cloudBase_radius + baseThickness);\n" +
+    "vec2 toClouds = raySphereIntersect(vWorldPosition, -lightDirection, baseDistance);\n" +
     "vec3 position = vWorldPosition + (-lightDirection * toClouds.x);\n" +
     "\n" +
-    "float dens = cloudDensity(position, wind, 1);\n" +
-    "mask = clamp(1.0 - dens, 0.4, 1.0);\n" +
+    "float hr;\n" +
+    "float dens = cloudDensity(position, wind, 0, hr);\n" +
+    "mask = clamp(1.0 - dens, 0.2, 1.0);\n" +
     "color *= mask;\n" +
+    "\n" +
+    "/*\n" +
+    "// reflection\n" +
+    "vec3 surfaceNormal = normalize(vWorldPosition);\n" +
+    "vec3 reflectedDirection = reflect(-direction, surfaceNormal);\n" +
+    "toClouds = raySphereIntersect(vWorldPosition, reflectedDirection, baseDistance);\n" +
+    "position = vWorldPosition + (reflectedDirection * toClouds.x);\n" +
+    "dens = cloudDensity(position, wind, 0, hr);\n" +
+    "color += vec4(0.1) * dens;\n" +
+    "*/\n" +
     "}\n" +
     "#endif\n" +
     "#endif\n" +
@@ -7316,28 +7495,40 @@ geofs["atmosphereOnlyFS.glsl"] =
     "distance,\n" +
     "lightDirection\n" +
     ");\n" +
-    "/*\n" +
-    "if (color.r < 0.5 && color.g > 0.5 && color.b < 0.5) {\n" +
-    "color = (atmosphereColor * (1.0 - color.g)) + color;\n" +
-    "}\n" +
-    "else {\n" +
-    "*/\n" +
     "\n" +
     "color = atmosphereColor + color * (1.0 - atmosphereColor.a);\n" +
+    "\n" +
+    "#ifdef VOLUMETRIC_CLOUDS\n" +
+    "// mix in scene+atmosphere and clouds\n" +
+    "\n" +
+    "vec4 clouds = texture2D(volumetricCloudsTexture, v_textureCoordinates);\n" +
+    "\n" +
+    "clouds.rgb *= 3.0;\n" +
+    "//          clouds.rgb = atmosphereColor.rgb + clouds.rgb * (1.0 - atmosphereColor.a);\n" +
+    "color = mix(color, clouds, clouds.a * clouds.a * clamp((depth - depthMaskDistance) * 100.0, 0.0, 1.0));\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "#endif\n" +
     "\n" +
     "// tone mapping\n" +
     "float exposure = 1.0;\n" +
     "color = vec4(1.0 - exp(-exposure * color));\n" +
-    "float gamma = 0.8;\n" +
-    "color = pow(color, vec4(1.0 / gamma));\n" +
+    "//float gamma = 0.8;\n" +
+    "//color = pow(color, vec4(1.0 / gamma));\n" +
     "\n" +
     "#endif\n" +
     "\n" +
-    "#ifdef VOLUMETRIC_CLOUDS\n" +
-    "// mix in scene+atmosphere and clouds\n" +
-    "vec4 clouds = texture2D(volumetricCloudsTexture, v_textureCoordinates);\n" +
-    "color = mix(color, clouds, clouds.a * clouds.a * clamp((depth - depthMaskDistance) * 100.0, 0.0, 1.0));\n" +
-    "#endif\n" +
+    "//// Screen Space Reflection\n" +
+    "//if (depth < 1.0 && color.b > 0.5 && color.r < 0.2 && color.g < 0.2) {\n" +
+    "//    vec3 surfaceNormal = normalize(vWorldPosition);\n" +
+    "//    float incidence = clamp(dot(-direction, surfaceNormal), 0.0, 1.0);\n" +
+    "//    vec4 reflection = texture2D(volumetricCloudsTexture, vec2(v_textureCoordinates.x, v_textureCoordinates.y + incidence * 2.0));\n" +
+    "//    vec4 reflectionGround = texture2D(colorTexture, vec2(v_textureCoordinates.x, v_textureCoordinates.y + incidence * 2.0));\n" +
+    "//    color = mix(color, reflectionGround, clamp((0.3 - incidence) * 2.0, 0.0, 1.0));\n" +
+    "//    color = mix(color, reflection, clamp((0.3 - incidence) * 2.0, 0.0, 1.0) * reflection.a);\n" +
+    "//}\n" +
+    "\n" +
     "\n" +
     "// background fog (used for precipitation)\n" +
     "float backFogDensity;\n" +
@@ -7356,14 +7547,14 @@ geofs["volumetricCloudsFS.glsl"] =
     "\n" +
     "/*\n" +
     "* Volumetric clouds\n" +
-    "* inspired by works from\n" +
-    "* https://www.iquilezles.org/www/articles/derivative/derivative.htm\n" +
+    "* Based on sources:\n" +
+    "* https://patapom.com/topics/Revision2013/Revision%202013%20-%20Real-time%20Volumetric%20Rendering%20Course%20Notes.pdf\n" +
+    "* https://www.diva-portal.org/smash/get/diva2:1223894/FULLTEXT01.pdf\n" +
+    "* https://www2.imm.dtu.dk/pubdb/edoc/imm2554.pdf\n" +
     "* https://www.shadertoy.com/view/XtBXDw\n" +
-    "* https://blog.uhawkvr.com/rendering/rendering-volumetric-clouds-using-signed-distance-fields/\n" +
-    "* https://shaderbits.com/blog/creating-volumetric-ray-marcher\n" +
     "*/\n" +
-    "vec3 cloudDark = vec3(0.4,0.6,0.8); //vec3(0.25,0.3,0.35)\n" +
-    "vec3 cloudBright = vec3(0.9, 0.95, 1.0); //vec3(1.0,0.95,0.8)\n" +
+    "vec3 skyAmbientColor = vec3(0.705, 0.850, 0.952); //0.219, 0.380, 0.541\n" +
+    "vec3 groundAmbientColor = vec3(0.741, 0.898, 0.823); //0.639, 0.858, 0.721\n" +
     "float distanceQualityR = 0.00005; // LOD/quality ratio\n" +
     "float minDistance = 10.0; // avoid cloud in cockpit\n" +
     "/*\n" +
@@ -7372,14 +7563,20 @@ geofs["volumetricCloudsFS.glsl"] =
     "vec4 green = vec4(0.0, 1.0, 0.0, 1.0);\n" +
     "vec4 blue = vec4(0.0, 0.0, 1.0, 1.0);\n" +
     "*/\n" +
+    "\n" +
+    "// low def settings for atmosphere scattering used in clouds\n" +
+    "#undef PRIMARY_STEPS\n" +
+    "#undef LIGHT_STEPS\n" +
+    "#define PRIMARY_STEPS 1\n" +
+    "#define LIGHT_STEPS 0\n" +
+    "\n" +
     "vec4 calculate_clouds(\n" +
     "vec3 start,\n" +
     "vec3 dir,\n" +
     "float maxDistance,\n" +
     "vec3 light_dir,\n" +
-    "float depth,\n" +
-    "vec3 wind,\n" +
-    "vec4 atmosphereAtDistance\n" +
+    "vec3 wind\n" +
+    "//,vec4 atmosphereAtDistance\n" +
     ") {\n" +
     "\n" +
     "vec4 cloud = vec4(0.0, 0.0, 0.0, 1.0);\n" +
@@ -7391,14 +7588,6 @@ geofs["volumetricCloudsFS.glsl"] =
     "\n" +
     "// limit viewing distance based on height from cloud top\n" +
     "float absoluteMaxDistance = CLOUDS_MAX_VIEWING_DISTANCE;\n" +
-    "\n" +
-    "if (startHeight > layer) {\n" +
-    "absoluteMaxDistance = clamp(5000.0 + pow(startHeight - layer, 1.5), 5000.0, CLOUDS_MAX_VIEWING_DISTANCE);\n" +
-    "}\n" +
-    "else {\n" +
-    "absoluteMaxDistance = clamp(5000.0 + pow(layer - startHeight, 1.9), 5000.0, CLOUDS_MAX_VIEWING_DISTANCE);\n" +
-    "//absoluteMaxDistance = CLOUDS_MAX_VIEWING_DISTANCE;\n" +
-    "}\n" +
     "\n" +
     "float tmin = minDistance;\n" +
     "float tmax = maxDistance;\n" +
@@ -7445,99 +7634,167 @@ geofs["volumetricCloudsFS.glsl"] =
     "\n" +
     "float rayLength = tmax - tmin;\n" +
     "\n" +
-    "float minMarchStep = rayLength / float(MAXIMUM_CLOUDS_STEPS);\n" +
-    "minMarchStep = max(minMarchStep, CLOUDS_DENS_MARCH_STEP);\n" +
+    "float longMarchStep = rayLength / float(MAXIMUM_CLOUDS_STEPS);\n" +
+    "longMarchStep = max(longMarchStep, CLOUDS_MARCH_STEP);\n" +
+    "float shortMarchStep = CLOUDS_DENS_MARCH_STEP;\n" +
+    "float numberApproachSteps = (CLOUDS_MARCH_STEP / CLOUDS_DENS_MARCH_STEP) * 2.0;\n" +
     "\n" +
-    "float ditherAmount = texture2D(noiseTexture, mod(gl_FragCoord.xy / 512.0, 1.0)).r;\n" +
-    "float ditherDistance = ditherAmount * minMarchStep;\n" +
+    "float ditherAmount = texture2D(noiseTexture, mod(gl_FragCoord.xy / 512.0, 1.0)).r * 2.0 - 1.0;\n" +
+    "float ditherDistance = ditherAmount * shortMarchStep;\n" +
     "\n" +
     "float distance = tmin + ditherDistance;\n" +
     "float dens = 0.0;\n" +
     "float marchStep;\n" +
+    "float distanceToFirstCloud = 0.0;\n" +
+    "float lastDensity;\n" +
+    "\n" +
+    "float gInScattering = 0.9;\n" +
+    "float gOutScattering = 0.0;\n" +
+    "float kInScattering = 0.99;\n" +
+    "float dotLightRay = dot(dir, light_dir);\n" +
+    "\n" +
+    "float inScattering = Schlick(kInScattering, dotLightRay); //HenyeyGreenstein(gInScattering, dotLightRay);\n" +
+    "float outScattering = isotropic(); //HenyeyGreenstein(gOutScattering, dotLightRay);\n" +
+    "float sunScatteringPhase = mix(outScattering, inScattering, dotLightRay);\n" +
+    "float ambientScatteringPhase = isotropic();\n" +
+    "\n" +
+    "bool inCloud = false;\n" +
+    "bool rayComplete = false;\n" +
+    "float stepsBeforeExitingCloud = 0.0;\n" +
     "\n" +
     "for (int i = 0; i < MAXIMUM_CLOUDS_STEPS; i++) {\n" +
     "\n" +
     "vec3 position = start + dir * distance;\n" +
+    "float depth = distance / CLOUDS_MAX_VIEWING_DISTANCE;\n" +
     "int qualityRatio = int(distance * distanceQualityR);\n" +
     "int lod = CLOUDS_MAX_LOD - qualityRatio;\n" +
     "\n" +
-    "dens = cloudDensity(position, wind, lod);\n" +
-    "/*\n" +
-    "if (lod <= 1) {\n" +
-    "cloudBright = vec3(1.0, 0.0, 0.0);\n" +
-    "}\n" +
-    "if (lod == 2) {\n" +
-    "cloudBright = vec3(0.0, 1.0, 0.0);\n" +
-    "}\n" +
-    "if (lod == 3) {\n" +
-    "cloudBright = vec3(0.0, 0.0, 1.0);\n" +
-    "}\n" +
-    "if (lod == 4) {\n" +
-    "cloudBright = vec3(0.0, 0.5, 1.0);\n" +
-    "}\n" +
-    "*/\n" +
+    "//float percentHeightInLayer = (length(position) - cloudBase_radius) / cloudThickness;\n" +
+    "float heightRatio;\n" +
     "\n" +
-    "marchStep = minMarchStep;\n" +
+    "if (inCloud == true) {\n" +
+    "// iside cloud: short march steps at distance LOD\n" +
+    "marchStep = shortMarchStep;\n" +
+    "}\n" +
+    "else {\n" +
+    "// outside of cloud: long march steps at LOD 0\n" +
+    "marchStep = longMarchStep;\n" +
+    "lod = 0;\n" +
+    "}\n" +
+    "\n" +
+    "dens = cloudDensity(position, wind, lod, heightRatio);\n" +
+    "\n" +
+    "//marchStep = longMarchStep;\n" +
     "\n" +
     "if(dens > 0.01) {\n" +
     "\n" +
-    "marchStep = CLOUDS_DENS_MARCH_STEP;\n" +
+    "if (inCloud != true) {\n" +
+    "// just entering cloud\n" +
+    "inCloud = true;\n" +
+    "stepsBeforeExitingCloud = numberApproachSteps;\n" +
+    "distance = clamp(distance - CLOUDS_MARCH_STEP, tmin, tmax); // take one step back\n" +
+    "continue;\n" +
+    "}\n" +
     "\n" +
-    "#ifdef LIT_CLOUD\n" +
-    "// lit\n" +
-    "float dist = 100.0;\n" +
-    "float lightColor = clamp((dens - (cloudDensity(position + dist * light_dir, wind, lod))) / dist, 0.0, 1.0) * 250.0 + 0.7;\n" +
-    "vec4 densColor = vec4(mix(cloudDark, cloudBright, dens), dens);\n" +
-    "densColor.xyz *= lightColor;\n" +
-    "#else\n" +
-    "/*\n" +
-    "// An attempt at continuous surface normal integration\n" +
-    "float lighting = 0.8 - clamp((dens - lastDensity) * 10.0, 0.0, 1.0) * dot(dir, light_dir);\n" +
-    "//vec4 densColor = vec4(lighting, 0.0, 0.0, 1.0);\n" +
-    "vec4 densColor = vec4(mix(cloudDark, cloudBright, lighting), dens);\n" +
+    "//Discrete surface lighting estimation\n" +
+    "float deltaDens = clamp((dens - lastDensity) * 10.0, -1.0, 1.0);\n" +
+    "float lighting = (abs(deltaDens - dotLightRay) / 2.0) * clamp((heightRatio - 0.02) * 20.0, 0.5, 1.0);\n" +
     "lastDensity = dens;\n" +
-    "*/\n" +
     "\n" +
-    "// unlit\n" +
-    "vec4 densColor = vec4(mix(cloudDark + czm_lightColor, cloudBright, dens), dens);\n" +
-    "#endif\n" +
+    "//cloud = vec4(lighting,lighting,lighting,0.0);\n" +
+    "//break;\n" +
+    "// cloud light scattering model\n" +
+    "// (https://slsdo.github.io/volumetric-cloud/)\n" +
+    "// https://patapom.com/topics/Revision2013/Revision%202013%20-%20Real-time%20Volumetric%20Rendering%20Course%20Notes.pdf\n" +
+    "float scatteringCoeff = 0.15 * dens;\n" +
+    "float extinctionCoeff = 0.01 * dens;\n" +
     "\n" +
-    "//vec4 atmosphereToCloud = mix(vec4(0.0), atmosphereAtDistance, distance / 250000.0);\n" +
-    "//densColor.rgb = densColor.rgb + atmosphereToCloud.rgb;\n" +
-    "// mix works better than additive on horizon at night\n" +
-    "//densColor.rgb = mix(densColor.rgb * czm_lightColor, atmosphereAtDistance.rgb, distance / 250000.0);\n" +
-    "densColor.rgb = mix(densColor.rgb, atmosphereAtDistance.rgb, distance / 250000.0);\n" +
+    "// extinction for this step\n" +
+    "cloud.a *= exp(-extinctionCoeff * marchStep);\n" +
     "\n" +
-    "densColor.rgb *= densColor.a;\n" +
-    "cloud.rgb += densColor.rgb * cloud.a;\n" +
-    "cloud.a *= 1.05 - densColor.a;\n" +
+    "// how much sun directly hitting the cloud (and at some depth)\n" +
+    "float sunIntensityAtSurface = clamp(0.2 - dens, 0.0, 1.0);\n" +
+    "vec3 sunLight = lighting * czm_lightColor * sunIntensityAtSurface * czm_lightColor.z;\n" +
     "\n" +
-    "/*\n" +
-    "Phys based integration\n" +
-    "float dist = 100.0;\n" +
-    "float deltaNorm = clamp((dens - (cloudDensity(position + dist * light_dir, wind, lod))) / dist, 0.0, 1.0) * 1000.0;\n" +
-    "vec3 lightColor = mix(cloudLightDark, cloudLightBright, deltaNorm);\n" +
+    "// an approximation of ambient light (at surface and at depth)\n" +
+    "vec3 ambientSun = czm_lightColor * sunIntensityAtSurface * czm_lightColor.z * isotropic();\n" +
+    "vec3 skyAmbientLight = (skyAmbientColor * czm_lightColor.z + ambientSun);\n" +
+    "vec3 groundAmbientLight = (groundAmbientColor * czm_lightColor.z * 0.5 + ambientSun);\n" +
+    "vec3 ambientLight = mix(groundAmbientLight, skyAmbientLight, heightRatio);\n" +
     "\n" +
-    "dens *= 0.01;\n" +
-    "vec3 light = czm_lightColor * lightColor * 1.0;\n" +
-    "cloud.a *= exp(-dens * marchStep);\n" +
-    "vec3 densColor = dens * light * cloud.a * marchStep;\n" +
-    "densColor = mix(densColor, atmosphereAtDistance.rgb, distance / 250000.0);\n" +
-    "cloud.rgb += densColor;\n" +
-    "*/\n" +
+    "//sunScatteringPhase = 0.0;\n" +
+    "//ambientScatteringPhase = 0.0;\n" +
+    "\n" +
+    "// total light ouput for this step\n" +
+    "vec3 stepScattering = scatteringCoeff * marchStep * (sunScatteringPhase * sunLight + ambientScatteringPhase * ambientLight);\n" +
+    "\n" +
+    "//stepScattering = vec3(dens,dens,dens);\n" +
+    "\n" +
+    "// with extinction applied\n" +
+    "cloud.rgb += cloud.a * stepScattering;\n" +
+    "\n" +
+    "//cloud = vec4(atmosphereBlend, atmosphereBlend, atmosphereBlend, 0.0);\n" +
+    "//break;\n" +
+    "\n" +
     "// stop marching when fully opaque\n" +
     "if (cloud.a < 0.01) {\n" +
+    "//cloud.rgb = vec3(1.0, 0.0, 0.0);\n" +
     "cloud.a = 0.0;\n" +
     "break;\n" +
+    "}\n" +
+    "/*\n" +
+    "if (lod == 0) {\n" +
+    "cloud = vec4(1.0, 0.0, 0.0, 0.0);\n" +
+    "break;\n" +
+    "}\n" +
+    "if (lod == 1) {\n" +
+    "stepScattering = vec3(0.0, 1.0, 0.0);\n" +
+    "}\n" +
+    "if (lod == 2) {\n" +
+    "stepScattering = vec3(0.0, 0.0, 1.0);\n" +
+    "}\n" +
+    "if (lod == 3) {\n" +
+    "stepScattering = vec3(0.0, 0.5, 1.0);\n" +
+    "}\n" +
+    "*/\n" +
+    "if (distanceToFirstCloud == 0.0) {\n" +
+    "distanceToFirstCloud = distance;\n" +
+    "}\n" +
+    "}\n" +
+    "else {\n" +
+    "if (stepsBeforeExitingCloud > 0.0) {\n" +
+    "stepsBeforeExitingCloud--;\n" +
+    "}\n" +
+    "else {\n" +
+    "inCloud = false;\n" +
     "}\n" +
     "}\n" +
     "\n" +
     "distance += marchStep;\n" +
     "\n" +
     "if (distance > tmax) {\n" +
+    "// max distance (or more) reached\n" +
+    "if (rayComplete == true) {\n" +
+    "// if ray complete -> stop marching\n" +
     "break;\n" +
     "}\n" +
+    "else {\n" +
+    "// complete ray with one last step at max distance\n" +
+    "rayComplete = true;\n" +
+    "distance = tmax;\n" +
     "}\n" +
+    "}\n" +
+    "}\n" +
+    "\n" +
+    "// compute a generic atmosphere color to blend in along distance\n" +
+    "vec4 atmosphereAtDistance = calculate_scattering(\n" +
+    "czm_viewerPositionWC,\n" +
+    "dir,\n" +
+    "distanceToFirstCloud,\n" +
+    "light_dir\n" +
+    ") * 0.2; // account for tone mapping\n" +
+    "\n" +
+    "cloud.rgb = cloud.rgb * (1.0 - atmosphereAtDistance.a) + atmosphereAtDistance.rgb;\n" +
     "\n" +
     "cloud.a = (1.0 - cloud.a);\n" +
     "return cloud;\n" +
@@ -7552,11 +7809,9 @@ geofs["volumetricCloudsFS.glsl"] =
     "return;\n" +
     "}\n" +
     "\n" +
-    "//vec4 rawDepthColor = texture2D(depthTexture, v_textureCoordinates);\n" +
     "vec4 rawDepthColor = texture2D(czm_globeDepthTexture, v_textureCoordinates);\n" +
     "\n" +
     "// lousy mobile GPU detection\n" +
-    "\n" +
     "#if !defined(GL_EXT_frag_depth)\n" +
     "float depth = rawDepthColor.r; // depth packing algo appears to be buggy on mobile so only use the most significant element for now\n" +
     "#else\n" +
@@ -7586,36 +7841,15 @@ geofs["volumetricCloudsFS.glsl"] =
     "\n" +
     "vec3 wind = windVector * czm_frameNumber * windSpeedRatio;\n" +
     "\n" +
-    "// compute a generic atmosphere color to blend in along distance\n" +
-    "vec4 atmosphereAtDistance = calculate_scattering(\n" +
-    "czm_viewerPositionWC, // the position of the camera\n" +
-    "direction, // the camera vector (ray direction of this pixel)\n" +
-    "250000.0, // > 250000 creates a singularity at vertical down view\n" +
-    "lightDirection\n" +
-    ");\n" +
-    "\n" +
     "// render clouds\n" +
-    "vec4 cloudColor = calculate_clouds(\n" +
+    "color = calculate_clouds(\n" +
     "czm_viewerPositionWC, // the position of the camera\n" +
     "direction, // the camera vector (ray direction of this pixel)\n" +
     "distance, // max dist, essentially the scene depth\n" +
     "lightDirection, // light direction\n" +
-    "depth,\n" +
-    "wind,\n" +
-    "atmosphereAtDistance\n" +
+    "wind\n" +
+    "//,atmosphereAtDistance * 0.3 // account for later tone mapping\n" +
     ");\n" +
-    "\n" +
-    "float toneMappingFix = 3.0; // compensate for tone mapping\n" +
-    "color = vec4(cloudColor.rgb * toneMappingFix * czm_lightColor, cloudColor.a);\n" +
-    "//color.rgb += atmosphereAtDistance.rgb * (1.0 - color.a);\n" +
-    "color.rgb = mix(atmosphereAtDistance.rgb, color.rgb, cloudColor.a);\n" +
-    "\n" +
-    "// tone mapping (mecessary for atmosphere correction\n" +
-    "float exposure = 1.0;\n" +
-    "color.rgb = vec3(1.0 - exp(-exposure * color.rgb));\n" +
-    "float gamma = 0.8;\n" +
-    "color.rgb = pow(color.rgb, vec3(1.0 / gamma));\n" +
-    "\n" +
     "#endif\n" +
     "\n" +
     "gl_FragColor = color;\n" +
@@ -7635,7 +7869,8 @@ geofs["oceanFS.glsl"] =
     "\n" +
     "precision highp float;\n" +
     "\n" +
-    "const float shininess = 200.0;\n" +
+    "const float specularShininess = 200.0;\n" +
+    "const float specularPower = 2.0;\n" +
     "const float animationSpeed = 0.00005;\n" +
     "float waveAmplitude;\n" +
     "vec3 positionMC;\n" +
@@ -7723,7 +7958,7 @@ geofs["oceanFS.glsl"] =
     "vec3 surfaceToLight = normalize(mat3(czm_view) * (czm_sunPositionWC - positionMC));\n" +
     "vec3 surfaceToCamera = normalize(mat3(czm_view) * (czm_viewerPositionWC - positionMC));\n" +
     "vec3 reflectedSun = normalize(-reflect(surfaceToLight, normalEC));\n" +
-    "float specularCoefficient = pow(max(dot(reflectedSun, surfaceToCamera), 0.0), shininess * waveAmplitude);\n" +
+    "float specularCoefficient = pow(max(dot(reflectedSun, surfaceToCamera), 0.0), specularShininess * waveAmplitude) * specularPower;\n" +
     "\n" +
     "float waveHeight = clamp((0.99 + shoreRatio - dot(normalEC, up)) * 500.0, 0.0, 1.0);\n" +
     "\n" +
@@ -7743,14 +7978,17 @@ geofs["oceanFS.glsl"] =
     "//material.alpha = (specularCoefficient) * layerColor.b;\n" +
     "// sky reflection\n" +
     "vec4 waterColor = mix(horizonColor, azimutColor, reflectionCoefficient);\n" +
-    "waterColor = mix(waterColor, sunColor, specularCoefficient);\n" +
+    "waterColor = waterColor + czm_lightColorV4 * specularCoefficient;//mix(waterColor, czm_lightColorV4, specularCoefficient);\n" +
     "material.diffuse = waterColor.rgb + foam.rgb;\n" +
     "\n" +
     "//material.emission = vec3(1.0);\n" +
     "//material.specular = 1.0;\n" +
-    "//material.shininess = 10.0;\n" +
+    "//material.specularShininess = 10.0;\n" +
     "\n" +
     "material.alpha = layerColor.b * (fresnel * waterColor.a + specularCoefficient + foam.r);\n" +
+    "\n" +
+    "//        material.diffuse = vec3(0.0, 0.0, 1.0);\n" +
+    "//        material.alpha = 0.5;\n" +
     "}\n" +
     "/*\n" +
     "else if (layerColor.r + layerColor.g < 0.05) {\n" +
@@ -9240,6 +9478,7 @@ geofs.api.initWorld = function (a, b) {
         orderIndependentTranslucency: !1,
         useDefaultRenderLoop: !0,
     };
+    geofs.PRODUCTION || (c.contextOptions.webgl.preserveDrawingBuffer = !0);
     geofs.androidViewerOptions = geofs.androidViewerOptions || {};
     geofs.iosViewerOptions = geofs.iosViewerOptions || {};
     Object.assign(c, geofs.androidViewerOptions, geofs.iosViewerOptions, b);
@@ -9512,6 +9751,7 @@ geofs.api.applyAtmosphereColorModifiers = function () {
 geofs.api.showSun = function () {};
 geofs.api.hideSun = function () {};
 geofs.api.maxRenderingQualityLevel = 6;
+geofs.api.advanceSettingsPresets = { maximumScreenSpaceError: [10, 6, 4, 2, 2, 2, 2, 1], fogScreenSpaceErrorFactor: [2, 2, 2, 2, 1.8, 1.5, 1, 1], fogDensity: [5e-4, 3.2e-4, 3e-4, 2.5e-4, 2e-4, 1e-4, 5e-5, 5e-5] };
 geofs.api.renderingQualityLevels = {
     0: {
         resolutionScale: 0.7,
@@ -9526,13 +9766,13 @@ geofs.api.renderingQualityLevels = {
         scatteringQuality: 0,
         shadowMapSize: 1024,
         vegetationQuality: 1,
-        viewingDistance: 1,
+        viewingDistance: 0,
         degradedCollisions: !1,
         lowResRunways: !1,
     },
     1: {
         resolutionScale: 0.8,
-        tileCacheSize: 250,
+        tileCacheSize: 100,
         fxaa: !1,
         maximumScreenSpaceError: 6,
         globeLighting: !0,
@@ -9543,13 +9783,13 @@ geofs.api.renderingQualityLevels = {
         scatteringQuality: 0,
         shadowMapSize: 1024,
         vegetationQuality: 1,
-        viewingDistance: 0.1,
+        viewingDistance: 1,
         degradedCollisions: !0,
         lowResRunways: !0,
     },
     2: {
         resolutionScale: 0.9,
-        tileCacheSize: 250,
+        tileCacheSize: 150,
         fxaa: !0,
         maximumScreenSpaceError: 4,
         globeLighting: !0,
@@ -9560,7 +9800,7 @@ geofs.api.renderingQualityLevels = {
         scatteringQuality: 1,
         shadowMapSize: 1024,
         vegetationQuality: 1,
-        viewingDistance: 0.2,
+        viewingDistance: 2,
         degradedCollisions: !0,
         lowResRunways: !0,
     },
@@ -9577,7 +9817,7 @@ geofs.api.renderingQualityLevels = {
         scatteringQuality: 2,
         shadowMapSize: 1024,
         vegetationQuality: 2,
-        viewingDistance: 0.3,
+        viewingDistance: 3,
         degradedCollisions: !0,
         lowResRunways: !0,
     },
@@ -9594,7 +9834,7 @@ geofs.api.renderingQualityLevels = {
         scatteringQuality: 3,
         shadowMapSize: 2048,
         vegetationQuality: 2,
-        viewingDistance: 0.5,
+        viewingDistance: 4,
         degradedCollisions: !1,
         lowResRunways: !1,
     },
@@ -9611,7 +9851,7 @@ geofs.api.renderingQualityLevels = {
         scatteringQuality: 4,
         shadowMapSize: 2048,
         vegetationQuality: 3,
-        viewingDistance: 0.7,
+        viewingDistance: 5,
         degradedCollisions: !1,
         lowResRunways: !1,
     },
@@ -9628,7 +9868,7 @@ geofs.api.renderingQualityLevels = {
         scatteringQuality: 5,
         shadowMapSize: 4096,
         vegetationQuality: 4,
-        viewingDistance: 0.9,
+        viewingDistance: 6,
         degradedCollisions: !1,
         lowResRunways: !1,
     },
@@ -9659,39 +9899,41 @@ geofs.api.renderingQuality = function (a, b) {
     geofs.api.renderingSettings.volumetricClouds = geofs.preferences.graphics.volumetricClouds && geofs.api.renderingSettings.advancedAtmosphere;
     geofs.api.renderingSettings.degradedCollisions = geofs.api.renderingQualityLevels[a].degradedCollisions;
     geofs.api.renderingSettings.lowResRunways = geofs.api.renderingQualityLevels[a].lowResRunways;
-    b
-        ? ($('[gespref="geofs.preferences.graphics.quality"]').addClass("geofs-disabled"),
-          $(".geofs-advancedGraphics .slider").removeClass("geofs-disabled"),
-          $(".geofs-advancedGraphics.geofs-advanced").addClass("geofs-expanded"),
-          (geofs.preferences.graphics.quality = 0),
-          (geofs.api.renderingSettings.resolutionScale = geofs.preferences.graphics.advanced.resolutionScale),
-          (a = 10 * geofs.preferences.graphics.advanced.viewingDistance),
-          (geofs.api.renderingSettings.fogDensity = geofs.api.renderingQualityLevels[0].fogDensity / a),
-          (geofs.api.renderingSettings.maximumScreenSpaceError = geofs.api.renderingQualityLevels[0].maximumScreenSpaceError / a),
-          (geofs.api.renderingSettings.fogScreenSpaceErrorFactor = geofs.api.renderingQualityLevels[0].fogScreenSpaceErrorFactor - geofs.preferences.graphics.advanced.viewingDistance),
-          (geofs.api.renderingSettings.degradedCollisions = 0.3 > geofs.preferences.graphics.advanced.viewingDistance),
-          (geofs.api.renderingSettings.lowResRunways = 0.3 >= geofs.preferences.graphics.advanced.viewingDistance),
-          (geofs.api.renderingSettings.fxaa = geofs.preferences.graphics.advanced.fxaa),
-          (geofs.api.renderingSettings.tileCacheSize = geofs.preferences.graphics.advanced.tileCacheSize),
-          (geofs.api.renderingSettings.globeLighting = geofs.preferences.graphics.advanced.globeLighting),
-          (geofs.api.renderingSettings.dropShadow = geofs.preferences.graphics.advanced.dropShadow),
-          (geofs.api.renderingSettings.scatteringQuality = geofs.preferences.graphics.advanced.scatteringQuality),
-          (geofs.api.renderingSettings.vegetationQuality = geofs.preferences.graphics.advanced.vegetationQuality),
-          (geofs.api.renderingSettings.cloudCoverToCloudNumber = geofs.api.renderingQualityLevels[0].cloudCoverToCloudNumber * geofs.preferences.graphics.advanced.cloudDensity),
-          (geofs.api.renderingSettings.shadowMapSize = geofs.api.renderingQualityLevels[0].shadowMapSize * geofs.preferences.graphics.advanced.shadowQuality))
-        : ($('[gespref="geofs.preferences.graphics.quality"]').removeClass("geofs-disabled"),
-          $(".geofs-advancedGraphics .slider").addClass("geofs-disabled"),
-          (geofs.preferences.graphics.advanced.resolutionScale = geofs.api.renderingSettings.resolutionScale),
-          (geofs.preferences.graphics.advanced.viewingDistance = geofs.api.renderingQualityLevels[a].viewingDistance),
-          (geofs.preferences.graphics.advanced.tileCacheSize = geofs.api.renderingSettings.tileCacheSize),
-          (geofs.preferences.graphics.advanced.fxaa = geofs.api.renderingSettings.fxaa),
-          (geofs.preferences.graphics.advanced.globeLighting = geofs.api.renderingSettings.globeLighting),
-          (geofs.preferences.graphics.advanced.dropShadow = geofs.api.renderingSettings.dropShadow),
-          (geofs.preferences.graphics.advanced.shadowQuality = geofs.api.renderingSettings.shadowMapSize / geofs.api.renderingQualityLevels[0].shadowMapSize),
-          (geofs.preferences.graphics.advanced.scatteringQuality = geofs.api.renderingSettings.scatteringQuality),
-          (geofs.preferences.graphics.advanced.vegetationQuality = geofs.api.renderingSettings.vegetationQuality),
-          (geofs.preferences.graphics.advanced.cloudDensity = geofs.api.renderingSettings.cloudCoverToCloudNumber / geofs.api.renderingQualityLevels[0].cloudCoverToCloudNumber),
-          geofs.setPreferenceValues($(".geofs-advancedGraphics"), !0));
+    if (b) {
+        $('[gespref="geofs.preferences.graphics.quality"]').addClass("geofs-disabled");
+        $(".geofs-advancedGraphics .slider").removeClass("geofs-disabled");
+        $(".geofs-advancedGraphics.geofs-advanced").addClass("geofs-expanded");
+        geofs.preferences.graphics.quality = 0;
+        geofs.api.renderingSettings.resolutionScale = geofs.preferences.graphics.advanced.resolutionScale;
+        a = geofs.preferences.graphics.advanced.viewingDistance;
+        if (1 > a || 7 < a) a = 3;
+        geofs.api.renderingSettings.fogDensity = geofs.api.advanceSettingsPresets.fogDensity[a];
+        geofs.api.renderingSettings.maximumScreenSpaceError = geofs.api.advanceSettingsPresets.maximumScreenSpaceError[a];
+        geofs.api.renderingSettings.fogScreenSpaceErrorFactor = geofs.api.advanceSettingsPresets.fogScreenSpaceErrorFactor[a];
+        geofs.api.renderingSettings.degradedCollisions = 3 > geofs.preferences.graphics.advanced.viewingDistance;
+        geofs.api.renderingSettings.lowResRunways = 3 >= geofs.preferences.graphics.advanced.viewingDistance;
+        geofs.api.renderingSettings.fxaa = geofs.preferences.graphics.advanced.fxaa;
+        geofs.api.renderingSettings.tileCacheSize = geofs.preferences.graphics.advanced.tileCacheSize;
+        geofs.api.renderingSettings.globeLighting = geofs.preferences.graphics.advanced.globeLighting;
+        geofs.api.renderingSettings.dropShadow = geofs.preferences.graphics.advanced.dropShadow;
+        geofs.api.renderingSettings.scatteringQuality = geofs.preferences.graphics.advanced.scatteringQuality;
+        geofs.api.renderingSettings.vegetationQuality = geofs.preferences.graphics.advanced.vegetationQuality;
+        geofs.api.renderingSettings.cloudCoverToCloudNumber = geofs.api.renderingQualityLevels[0].cloudCoverToCloudNumber * geofs.preferences.graphics.advanced.cloudDensity;
+        geofs.api.renderingSettings.shadowMapSize = geofs.api.renderingQualityLevels[0].shadowMapSize * geofs.preferences.graphics.advanced.shadowQuality;
+    } else
+        $('[gespref="geofs.preferences.graphics.quality"]').removeClass("geofs-disabled"),
+            $(".geofs-advancedGraphics .slider").addClass("geofs-disabled"),
+            (geofs.preferences.graphics.advanced.resolutionScale = geofs.api.renderingSettings.resolutionScale),
+            (geofs.preferences.graphics.advanced.viewingDistance = geofs.api.renderingQualityLevels[a].viewingDistance),
+            (geofs.preferences.graphics.advanced.tileCacheSize = geofs.api.renderingSettings.tileCacheSize),
+            (geofs.preferences.graphics.advanced.fxaa = geofs.api.renderingSettings.fxaa),
+            (geofs.preferences.graphics.advanced.globeLighting = geofs.api.renderingSettings.globeLighting),
+            (geofs.preferences.graphics.advanced.dropShadow = geofs.api.renderingSettings.dropShadow),
+            (geofs.preferences.graphics.advanced.shadowQuality = geofs.api.renderingSettings.shadowMapSize / geofs.api.renderingQualityLevels[0].shadowMapSize),
+            (geofs.preferences.graphics.advanced.scatteringQuality = geofs.api.renderingSettings.scatteringQuality),
+            (geofs.preferences.graphics.advanced.vegetationQuality = geofs.api.renderingSettings.vegetationQuality),
+            (geofs.preferences.graphics.advanced.cloudDensity = geofs.api.renderingSettings.cloudCoverToCloudNumber / geofs.api.renderingQualityLevels[0].cloudCoverToCloudNumber),
+            geofs.setPreferenceValues($(".geofs-advancedGraphics"), !0);
     geofs.preferences.graphics.advancedAtmosphere ? $('[for="volumetricClouds"]').show() : $('[for="volumetricClouds"]').hide();
     geofs.api.renderingSettings.volumetricClouds ? $('[data-gespref="geofs.preferences.graphics.advanced.cloudDensity"]').hide() : $('[data-gespref="geofs.preferences.graphics.advanced.cloudDensity"]').show();
     geofs.fx.atmosphere.create(geofs.api.renderingSettings.advancedAtmosphere, geofs.api.renderingSettings.scatteringQuality, geofs.api.renderingSettings.volumetricClouds, !geofs.preferences.weather.manual);
@@ -9748,28 +9990,29 @@ geofs.api.setLabelPosition = function (a, b) {
     a && (V3.isValid(b) ? (a.position = new Cesium.Cartesian3.fromDegrees(b[1], b[0], b[2])) : geofs.debug.debugger());
 };
 geofs.api.getGuarantiedGroundAltitude = function (a) {
-    var b = geofs.objects.getAltitudeAtLocation(a[0], a[1]);
+    var b = geofs.objects.getAltitudeAtLocation(a);
     return b
         ? new Promise(function (c, d) {
               c([{ height: b.location[2] }]);
           })
         : Cesium.sampleTerrain(geofs.api.viewer.terrainProvider, geofs.api.viewer.terrainProvider.maximumLevel, [Cesium.Cartographic.fromDegrees(a[1], a[0])]);
 };
-geofs.api.altitudeErrorThreshold = 1;
+geofs.api.altitudeErrorThreshold = 0.2;
 geofs.api.wrongAltitudeTries = 1;
-geofs.api.getGroundAltitude = function (a, b) {
+geofs.api.getGroundAltitude = function (a, b, c) {
     if (geofs.debugOn && !V3.isValid(a)) debugger;
-    var c = geofs.groundElevation || 0;
-    a = geofs.api.viewer.scene.globe.getHeight(new Cesium.Cartographic.fromDegrees(a[1], a[0], c));
-    -1e3 > a && (a = void 0);
-    if (void 0 == a) b ? ((a = b.lastGroundAltitude || 0), (b.wrongAltitude = !0), (b.wrongValue = "undefined")) : (a = c);
+    var d = geofs.groundElevation || 0;
+    a = new Cesium.Cartographic.fromDegrees(a[1], a[0], d);
+    c = c ? geofs.api.viewer.scene.sampleHeight(a) : geofs.api.viewer.scene.globe.getHeight(a);
+    -1e3 > c && (c = void 0);
+    if (void 0 == c) b ? ((c = b.lastGroundAltitude || 0), (b.wrongAltitude = !0), (b.wrongValue = "undefined")) : (c = d);
     else if (b) {
-        if (Math.abs(b.lastGroundAltitude - a) > geofs.api.altitudeErrorThreshold && b.wrongAltitudeTries <= geofs.api.wrongAltitudeTries) return b.wrongAltitudeTries++, (b.wrongAltitude = !0), (b.wrongValue = a), b.lastGroundAltitude || 0;
+        if (Math.abs(b.lastGroundAltitude - c) > geofs.api.altitudeErrorThreshold && b.wrongAltitudeTries <= geofs.api.wrongAltitudeTries) return b.wrongAltitudeTries++, (b.wrongAltitude = !0), (b.wrongValue = c), b.lastGroundAltitude || 0;
         b.wrongAltitudeTries = 0;
-        b.lastGroundAltitude = a;
+        b.lastGroundAltitude = c;
         b.wrongAltitude = null;
     }
-    return a;
+    return c;
 };
 geofs.api.oldNormal = [0, 0, 1];
 geofs.api.normalDotThreshold = 0.95;
@@ -10071,6 +10314,10 @@ geofs.api.xyz2lla = function (a, b) {
     a = new Cesium.Cartesian3(a[0], a[1], a[2]);
     c = Cesium.Matrix4.multiplyByPoint(c, a, new Cesium.Cartesian3());
     return (d = Cesium.Cartographic.fromCartesian(c, d, new Cesium.Cartographic())) ? [d.latitude * RAD_TO_DEGREES - b[0], d.longitude * RAD_TO_DEGREES - b[1], d.height - b[2]] : [0, 0, 0];
+};
+geofs.api.takeCanvasScreenShot = function (a) {
+    var b = geofs.api.viewer.canvas.toDataURL("image/jpg");
+    a.href = b;
 };
 geofs.api.cssTransform = function (a) {
     this.container = a || ".geofs-overlay-container";
@@ -10440,27 +10687,6 @@ geofs.api.Canvas.prototype = {
         $(this.canvas).remove();
     },
 };
-window.Cesium &&
-    (Cesium.sampleTerrainMostDetailed = function (a, b) {
-        return a.readyPromise.then(function () {
-            for (var c = [], d = a.availability, e = 0; e < b.length; ++e) {
-                var g = b[e],
-                    f = a.maximumLevel;
-                d && (f = d.computeMaximumLevelAtPosition(g));
-                f = Math.min(f, a.maximumLevel);
-                var k = c[f];
-                k || (c[f] = k = []);
-                k.push(g);
-            }
-            return Promise.all(
-                c.map(function (m, p) {
-                    if (m) return Cesium.sampleTerrain(a, p, m);
-                })
-            ).then(function () {
-                return b;
-            });
-        });
-    });
 geofs.api.FlatRunwayTerrainProvider = function (a) {
     var b = this;
     this.baseProvider = a.baseProvider;
@@ -10593,7 +10819,7 @@ geofs.api.FlatRunwayTerrainProvider.prototype = {
     },
 };
 geofs.api.add3dBuildings = function () {
-    geofs.api.viewer.scene.primitives.add(new Cesium.Cesium3DTileset({ url: Cesium.IonResource.fromAssetId(354307) }));
+    geofs.buildingstileset = geofs.api.viewer.scene.primitives.add(new Cesium.Cesium3DTileset({ url: Cesium.IonResource.fromAssetId(96188), showOutline: !1, shadows: Cesium.ShadowMode.ENABLED }));
 };
 geofs.api.waterDetection = {
     initialized: !1,
@@ -10765,7 +10991,7 @@ geofs.api.map = {
     },
     setGenericLocationPopup: function () {
         var a = this,
-            b = L.popup();
+            b = L.popup({ closeButton: !1 });
         this._map.on("contextmenu click", function (c) {
             if (2 == c.originalEvent.button || geofs.isApp) {
                 b.closePopup();
@@ -10832,7 +11058,7 @@ geofs.api.map.marker = function (a) {
         : a.icon
         ? ((a.opacity = a.opacity || a.icon.options.opacity), (this._marker = L.marker(a.coords, a)))
         : (this._marker = L.circleMarker(a.coords, a));
-    a.popup && this._marker.bindPopup(a.popup, { minWidth: a.popupMinWidth, maxWidth: a.popupMaxWidth });
+    a.popup && this._marker.bindPopup(a.popup, { minWidth: a.popupMinWidth, maxWidth: a.popupMaxWidth, closeButton: !1 });
     a.label && ((this.label = a.label), (a = Object.assign({}, geofs.api.mapTooltipOptions, geofs.api.toolTipPositioning[Math.floor(4 * Math.random())])), this._marker.bindTooltip(this.label, a));
     a.minZoom && a.minZoom <= geofs.api.mapMaxZoom && geofs.api.map.markerByMinZoom[a.minZoom].push(this);
 };
@@ -10965,6 +11191,12 @@ geofs.api.color = {
     },
     mix: function (a, b, c) {
         return Cesium.Color.lerp(a, b, c, new Cesium.Color());
+    },
+    mixArray: function (a, b) {
+        b *= a.length - 1;
+        var c = parseInt(b),
+            d = parseInt(b + 1);
+        return Cesium.Color.lerp(a[c], a[d], b - Math.floor(b), new Cesium.Color());
     },
 };
 ("use strict");
@@ -11581,16 +11813,16 @@ geofs.loadModel = function (a, b) {
     b.url = a + geofs.killCache;
     return geofs.api.loadModel(b);
 };
-geofs.getGroundAltitude = function (a, b, c) {
-    var d = geofs.objects.getAltitudeAtLocation(a, b);
-    if (d) return d;
-    c = geofs.api.getGroundAltitude([a, b, 0], c);
-    return { location: [a, b, c] };
+geofs.getGroundAltitude = function (a, b) {
+    var c = geofs.objects.getAltitudeAtLocation(a);
+    if (c) return c;
+    b = geofs.api.getGroundAltitude(a, b, !1);
+    return { location: [a[0], a[1], b] };
 };
 geofs.getCollisionResult = function (a, b, c, d) {
     b && c && (geofs.isApp || geofs.api.renderingSettings.degradedCollisions || geofs.cautiousWithTerrain)
         ? ((b = geofs.getAltitudeAtPointFromCollisionResult(c, [b[0], b[1], 0])), (a = { location: [a[0], a[1], b], normal: V3.dup(c.normal), object: c.object }))
-        : (a = geofs.getGroundAltitude(a[0], a[1], d));
+        : (a = geofs.getGroundAltitude(a, d));
     return a;
 };
 geofs.getAltitudeAtPointFromCollisionResult = function (a, b) {
@@ -12006,6 +12238,7 @@ geofs.frameCallback = function (a) {
         geofs.map.updateMap(geofs.aircraft.instance.llaLocation),
         geofs.objects.update(geofs.camera.lla));
     3 > geofs.pauseLevel && (geofs.camera.update(c), weather.update(c), geofs.fx.atmosphere.update(geofs.camera.lla), geofs.preferences.graphics.waterEffect && geofs.fx.water.update(geofs.camera.lla), geofs.api.triggerExplicitRendering());
+    geofs.api.adaptativeRenderingQuality();
 };
 geofs.flyTo = function (a, b) {
     if (a) {
@@ -12127,12 +12360,12 @@ geofs.preferencesDefault = {
         quality: 3,
         enhanceColors: 0.7,
         volumetricClouds: !1,
-        advancedAtmosphere: !1,
+        advancedAtmosphere: !0,
         waterEffect: !1,
         vegetation: !1,
         contrails: !1,
         HD: !0,
-        advanced: { resolutionScale: 1, viewingDistance: 0.3, tileCacheSize: 250, fxaa: !0, globeLighting: !0, shadowQuality: 1, dropShadow: !0, cloudDensity: 0.6, vegetationQuality: 1 },
+        advanced: { resolutionScale: 1, viewingDistance: 3, tileCacheSize: 250, fxaa: !0, globeLighting: !0, shadowQuality: 1, dropShadow: !0, cloudDensity: 0.6, vegetationQuality: 1 },
     },
     interface: { transparent: !1 },
     crashDetection: !1,
@@ -13284,8 +13517,27 @@ geofs.fx.light.prototype = {
 geofs.light = geofs.fx.light;
 geofs.fx.dayNightManager = {
     daySunColor: Cesium.Color.fromCssColorString("#ffffffff"),
-    sunsetColor: Cesium.Color.fromCssColorString("#9e6241ff"),
     nightSunColor: Cesium.Color.fromCssColorString("#222222ff"),
+    nightSunColors: [
+        Cesium.Color.fromCssColorString("#3b1f12ff"),
+        Cesium.Color.fromCssColorString("#3b1f1220"),
+        Cesium.Color.fromCssColorString("#22222220"),
+        Cesium.Color.fromCssColorString("#22222220"),
+        Cesium.Color.fromCssColorString("#22222220"),
+        Cesium.Color.fromCssColorString("#22222220"),
+        Cesium.Color.fromCssColorString("#22222220"),
+        Cesium.Color.fromCssColorString("#22222220"),
+    ],
+    daySunColors: [
+        Cesium.Color.fromCssColorString("#3b1f12ff"),
+        Cesium.Color.fromCssColorString("#ab5f30ff"),
+        Cesium.Color.fromCssColorString("#ffffffff"),
+        Cesium.Color.fromCssColorString("#ffffffff"),
+        Cesium.Color.fromCssColorString("#ffffffff"),
+        Cesium.Color.fromCssColorString("#ffffffff"),
+        Cesium.Color.fromCssColorString("#ffffffff"),
+        Cesium.Color.fromCssColorString("#ffffffff"),
+    ],
     saturation: { valueRamp: [0.12, 0.12, 0.12, 0.5, 1, 1, 1] },
     brightness: { valueRamp: [4, 4, 4, 2, 1, 1, 1] },
     gamma: { valueRamp: [0.18, 0.18, 0.18, 0.5, 1, 1, 1] },
@@ -13308,10 +13560,10 @@ geofs.fx.dayNightManager = {
             a != geofs.fx.sunDotNormal &&
             ((geofs.fx.sunDotNormal = a),
             0 < a
-                ? ((geofs.fx.dayNightManager.sunColor = geofs.api.color.mix(geofs.fx.dayNightManager.sunsetColor, geofs.fx.dayNightManager.daySunColor, clamp(a, 0, 1))), (geofs.isNight = !1))
-                : ((geofs.fx.dayNightManager.sunColor = geofs.api.color.mix(geofs.fx.dayNightManager.sunsetColor, geofs.fx.dayNightManager.nightSunColor, clamp(5 * -a, 0, 1))), (geofs.isNight = !0)),
+                ? ((geofs.fx.dayNightManager.sunColor = geofs.api.color.mixArray(geofs.fx.dayNightManager.daySunColors, clamp(a, 0, 1))), (geofs.isNight = !1))
+                : ((geofs.fx.dayNightManager.sunColor = geofs.api.color.mixArray(geofs.fx.dayNightManager.nightSunColors, clamp(-a, 0, 1))), (geofs.isNight = !0)),
             (geofs.api.viewer.scene.skyBox.show = 0 > a ? !0 : !1),
-            (geofs.fx.dayNightManager.sunIntensity = clamp(a + 0.2, 0.2, 1)),
+            (geofs.fx.dayNightManager.sunIntensity = geofs.fx.dayNightManager.sunColor.alpha),
             geofs.api.setSceneLight(geofs.fx.dayNightManager.sunColor, geofs.fx.dayNightManager.sunIntensity * weather.belowCloudsBrightness * 2),
             geofs.fx.cloudManager.setCloudColors(null, null, null, 1, geofs.fx.dayNightManager.sunColor),
             geofs.fx.atmosphere.advancedAtmosphere
@@ -13328,7 +13580,7 @@ geofs.fx.atmosphere = {
     nightColor: Cesium.Color.fromCssColorString("#e0773dff"),
     brightness: 1,
     globeLoaded: !1,
-    updatePeriod: 1e4,
+    updatePeriod: 1e3,
     cloudsUpdatePeriod: 6e5,
     create: function (a, b, c, d, e) {
         var g = this;
@@ -13361,8 +13613,9 @@ geofs.fx.atmosphere = {
                   (geofs.fx.atmosphere.atmospherePostProcessStage.uniforms.cloudCover = r),
                   (geofs.fx.atmosphere.atmospherePostProcessStage.uniforms.cloudBase = weather.definition.cloudBase),
                   (geofs.fx.atmosphere.atmospherePostProcessStage.uniforms.cloudTop = weather.definition.cloudTop),
+                  (a = clamp(0.12 * b, 0.25, 1)),
                   (geofs.fx.atmosphere.cloudsPostProcessStage = new Cesium.PostProcessStage({
-                      textureScale: clamp(0.1 * b, 0.25, 1),
+                      textureScale: a,
                       fragmentShader: f + n + p + m + k + geofs["atmosphereCommon.glsl"] + geofs["volumetricCloudsFS.glsl"],
                       uniforms: { planetRadius: 6361e3, windVector: weather.currentWindVectorWC, cloudCover: r, cloudBase: weather.definition.cloudBase, cloudTop: weather.definition.cloudTop, noiseTexture: "/shaders/noise/bluenoise.png" },
                   })),
@@ -13375,7 +13628,7 @@ geofs.fx.atmosphere = {
                   (geofs.fx.atmosphere.blurStage = Cesium.PostProcessStageLibrary.createBlurStage()),
                   (geofs.fx.atmosphere.blurStage.uniforms.delta = 1),
                   (geofs.fx.atmosphere.blurStage.uniforms.sigma = 2),
-                  (geofs.fx.atmosphere.blurStage.uniforms.stepSize = clamp(7 - b, 1, 4)),
+                  (geofs.fx.atmosphere.blurStage.uniforms.stepSize = clamp(6 - b, 1, 4)),
                   (geofs.fx.atmosphere.postProcessingStages = new Cesium.PostProcessStageComposite({
                       inputPreviousStageTexture: !1,
                       stages: [
@@ -13389,11 +13642,11 @@ geofs.fx.atmosphere = {
                 g.destroy();
             });
             (function () {
-                if (g.globeLoaded) geofs.api.viewer.scene.postProcessStages.add(geofs.fx.atmosphere.postProcessingStages);
-                else
-                    var t = geofs.api.viewer.scene.globe.tileLoadProgressEvent.addEventListener(function (A) {
-                        2 < A && ((g.globeLoaded = !0), geofs.api.viewer.scene.postProcessStages.add(geofs.fx.atmosphere.postProcessingStages), t());
-                    });
+                g.globeLoaded
+                    ? geofs.api.viewer.scene.postProcessStages.add(geofs.fx.atmosphere.postProcessingStages)
+                    : (geofs.fx.atmosphere.tileLoadProgressListener = geofs.api.viewer.scene.globe.tileLoadProgressEvent.addEventListener(function (t) {
+                          2 < t && ((g.globeLoaded = !0), geofs.api.viewer.scene.postProcessStages.add(geofs.fx.atmosphere.postProcessingStages), geofs.fx.atmosphere.tileLoadProgressListener());
+                      }));
             })();
         }
     },
@@ -13450,6 +13703,7 @@ geofs.fx.atmosphere = {
             (geofs.fx.atmosphere.atmospherePostProcessStage = null),
             (geofs.fx.atmosphere.cloudsPostProcessStage = null),
             geofs.removeResizeHandler(this.resizeHandler),
+            geofs.fx.atmosphere.tileLoadProgressListener && geofs.fx.atmosphere.tileLoadProgressListener(),
             (this.resizeHandler = null));
     },
 };
@@ -13747,8 +14001,8 @@ geofs.fx.precipitation = {
     },
 };
 geofs.fx.water = {
-    dayColors: { horizonColor: Cesium.Color.fromCssColorString("#f1f9fbff"), azimutColor: Cesium.Color.fromCssColorString("#38618aff"), sunColor: Cesium.Color.fromCssColorString("#f1f0eaff") },
-    nightColors: { horizonColor: Cesium.Color.fromCssColorString("#d64b00ff"), azimutColor: Cesium.Color.fromCssColorString("#1a1c23ff"), sunColor: Cesium.Color.fromCssColorString("#ff6f00ff") },
+    dayColors: { horizonColor: Cesium.Color.fromCssColorString("#f1f9fbff"), azimutColor: Cesium.Color.fromCssColorString("#38618aff") },
+    nightColors: { horizonColor: Cesium.Color.fromCssColorString("#d69300"), azimutColor: Cesium.Color.fromCssColorString("#1a1c23ff") },
     create: function () {
         geofs.api.waterMask = geofs.api.viewer.imageryLayers.addImageryProvider(
             new Cesium.UrlTemplateImageryProvider({ url: geofs.landuseServer + "{z}/{x}/{y}.png", hasAlphaChannel: !1, enablePickFeatures: !1, maximumAnisotropy: 0, maximumLevel: 11 })
@@ -13764,7 +14018,6 @@ geofs.fx.water = {
                     geofsTime: 0,
                     horizonColor: Cesium.Color.fromCssColorString("#f1f9fbff"),
                     azimutColor: Cesium.Color.fromCssColorString("#38618aff"),
-                    sunColor: Cesium.Color.fromCssColorString("#f1f0eaff"),
                     normalMap: "/shaders/oceannormal3.jpg",
                     foamTexture: "/shaders/seafoam.jpg",
                     lightsTexture: "/shaders/noise/citylights.png",
@@ -13780,8 +14033,7 @@ geofs.fx.water = {
         geofs.fx.water.material &&
             (clamp((a *= 2), 0, 1),
             (geofs.fx.water.material.uniforms.horizonColor = geofs.api.color.mix(geofs.fx.water.dayColors.horizonColor, geofs.fx.water.nightColors.horizonColor, a)),
-            (geofs.fx.water.material.uniforms.azimutColor = geofs.api.color.mix(geofs.fx.water.dayColors.azimutColor, geofs.fx.water.nightColors.azimutColor, a)),
-            (geofs.fx.water.material.uniforms.sunColor = geofs.fx.dayNightManager.sunColor));
+            (geofs.fx.water.material.uniforms.azimutColor = geofs.api.color.mix(geofs.fx.water.dayColors.azimutColor, geofs.fx.water.nightColors.azimutColor, a)));
     },
     update: function (a) {
         geofs.fx.water.material &&
@@ -14808,7 +15060,7 @@ flight.interpolator = {
 };
 flight.terrainElevationManagement = function () {
     var a = geofs.aircraft.instance;
-    a.collResult = geofs.getCollisionResult([a.llaLocation[0], a.llaLocation[1], 0], null, null, flight.currentAltitudeTestContext);
+    a.collResult = geofs.getCollisionResult([a.llaLocation[0], a.llaLocation[1], a.llaLocation[2]], null, null, flight.currentAltitudeTestContext);
     var b = a.collResult.location[2];
     geofs.groundElevation = b;
     geofs.relativeAltitude = a.llaLocation[2] - geofs.groundElevation;
@@ -14818,7 +15070,7 @@ flight.terrainElevationManagement = function () {
         : (a.collResult.normal = [0, 0, 1]);
     if (!flight.recorder.playing) {
         if (geofs.cautiousWithTerrain) {
-            var c = geofs.getGroundAltitude(a.lastLlaLocation[0], a.lastLlaLocation[1], flight.pastAltitudeTestContext).location[2],
+            var c = geofs.getGroundAltitude(a.lastLlaLocation, flight.pastAltitudeTestContext).location[2],
                 d = c - flight.elevationAtPreviousLocation;
             flight.skipCollisionResponse = !1;
             if (0.2 < Math.abs(d)) {
@@ -15505,20 +15757,25 @@ geofs.objects.updateCollidables = function () {
         V3.length(b) < a.collisionRadius && ((a.metricOffset = b), (geofs.objects.collidableObject = !0), geofs.objects.collidableObjectList.push(a));
     });
 };
-geofs.objects.getAltitudeAtLocation = function (a, b) {
+geofs.objects.areCollidableObjectAtLocation = function (a, b) {
+    return geofs.objects.collidableObject ? !0 : !1;
+};
+geofs.objects.getAltitudeAtLocation = function (a) {
     if (geofs.objects.collidableObject)
-        for (var c = [a, b, 1e5], d = 0, e = geofs.objects.collidableObjectList.length; d < e; d++)
-            for (var g = geofs.objects.collidableObjectList[d], f = lla2xyz(V3.sub(c, g.location), g.location), k = [f[0], f[1], 0], m = 0, p = g.collisionTriangles.length; m < p; m++) {
-                var n = g.collisionTriangles[m],
-                    r = intersect_RayTriangle([f, k], n);
-                if (r) {
-                    if (g.collisionCallback)
+        for (var b = [a[0], a[1], 1e5], c = 0, d = geofs.objects.collidableObjectList.length; c < d; c++)
+            for (var e = geofs.objects.collidableObjectList[c], g = lla2xyz(V3.sub(b, e.location), e.location), f = [g[0], g[1], 0], k = 0, m = e.collisionTriangles.length; k < m; k++) {
+                var p = e.collisionTriangles[k],
+                    n = intersect_RayTriangle([g, f], p);
+                if (n) {
+                    b = n.point[2] + e.location[2];
+                    if (e.thickness && a[2] < b - e.thickness) return null;
+                    if (e.collisionCallback)
                         try {
-                            eval(g.collisionCallback);
-                        } catch (t) {
-                            geofs.debug.error(t, "objects.getAltitudeAtLocation");
+                            eval(e.collisionCallback);
+                        } catch (r) {
+                            geofs.debug.error(r, "objects.getAltitudeAtLocation");
                         }
-                    return { location: [a, b, r.point[2] + g.location[2]], normal: V3.normalize(n.n), object: g };
+                    return { location: [a[0], a[1], b], normal: V3.normalize(p.n), object: e };
                 }
             }
 };
@@ -15600,7 +15857,8 @@ controls.init = function () {
             controls.mouse.lastX = a.pageX;
             controls.mouse.lastY = a.pageY;
         } else
-            "mouse" == controls.mode &&
+            "mouse" != controls.mode ||
+                controls.altKeyPressed ||
                 ((controls.mouse.xValue = clamp((a.pageX - controls.mouse.oX - controls.mouse.cX) * controls.mouse.rX, -1, 1)),
                 (controls.mouse.yValue = clamp((a.pageY - controls.mouse.tY - controls.mouse.cY) * controls.mouse.rY, -1, 1)),
                 (controls.keyboard.override = !1));
@@ -16667,7 +16925,7 @@ geofs.autopilot = {
         geofs.autopilot.PIDs.aileronsRoll = new PID(a.aileronsRollPID[0], a.aileronsRollPID[1], a.aileronsRollPID[2]);
         geofs.autopilot.PIDs.throttle = new PID(a.throttlePID[0], a.throttlePID[1], a.throttlePID[2]);
         geofs.autopilot.definition = a;
-        0 < $("#Qantas94Heavy-ap-nav").length && ((geofs.autopilot = controls.autopilot), (geofs.autopilot.UI = { update: function () {} }));
+        0 < $("#Qantas94Heavy-ap-nav").length && ((geofs.autopilot = controls.autopilot), (geofs.autopilot.UI = { update: function () {} }), (geofs.autopilot.values = { course: 0, altitude: 0, speed: 0, verticalSpeed: 0 }));
     },
     setMode: function (a) {
         a = a || geofs.autopilot.mode;
@@ -17011,6 +17269,7 @@ geofs.map = {
             popup: geofs.map.runwayMarkerPopup,
             pane: "overlayPane",
             popupMinWidth: 200,
+            closeButton: !1,
             keepToFront: !0,
             runway: a,
         });
@@ -17020,7 +17279,7 @@ geofs.map = {
         if (b) {
             var c = { url: b.url, size: b.size, rotate: a.heading || 0 };
             b.offset && (c.offset = b.offset);
-            b = { coords: [a.lat, a.lon], opacity: b.opacity, radius: b.size[0] / 2, zIndex: 1, img: c, popupMinWidth: 200, pane: "overlayPane", navaid: a, minZoom: b.minZoom };
+            b = { coords: [a.lat, a.lon], opacity: b.opacity, radius: b.size[0] / 2, zIndex: 1, img: c, popupMinWidth: 200, closeButton: !1, pane: "overlayPane", navaid: a, minZoom: b.minZoom };
             "ILS" != a.type && (b.popup = geofs.map.navaidMarkerPopup);
             a = new geofs.api.map.marker(b);
             a.addToMap();
@@ -17220,7 +17479,7 @@ geofs.nav = {
                 : e.ILS
                 ? ((c.course = d.heading), (c.hasNAV = !0), (c.hasVNAV = !0))
                 : (e.ADF ? ((c.course = f), (c.hasNAV = !0)) : ((c.course = null), (c.hasNAV = !1)), (c.hasVNAV = !1));
-            c.bearingToStation = fixAngle(f - this.bearing);
+            c.bearingToStation = fixAngle(f - c.bearing);
             c.courseDeviation = fixAngle(c.bearing - c.course);
             90 < Math.abs(c.courseDeviation) ? ((c.direction = "from"), (c.courseDeviation = -fixAngle(c.courseDeviation - 180))) : (c.direction = "to");
             e.DME
@@ -17261,7 +17520,7 @@ geofs.radio = {
     units: { NAV1: { frequency: 0, rawFrequency: 0 }, ADF: { frequency: 0, rawFrequency: 0 } },
     frequencyScanInterval: 5e3,
     NAVFrequencyRange: [108e3, 117950],
-    ADFFrequencyRange: [190, 535],
+    ADFFrequencyRange: [190, 1750],
     init: function () {
         var a = this;
         this.$radioNavFreq = $('[name="NAVFrequency"]');
@@ -17333,10 +17592,7 @@ geofs.radio = {
         for (var a in this.units) this.scanUnitFrequency(a);
     },
     selectNavaid: function (a) {
-        if ((a = geofs.nav.navaids[a])) geofs.radio.setSelectedNavaidFrequencies(a.freq), "NDB-DME" == a.type && geofs.radio.setSelectedNavaidFrequencies(a.DMEfreq), this.scanFrequenciesAround(), this.show();
-    },
-    setSelectedNavaidFrequencies: function (a) {
-        1e3 <= a ? this.tuneNAVFrequency(a, null, "NAV1") : this.tuneADFFrequency(a);
+        if ((a = geofs.nav.navaids[a])) geofs.nav.types[a.type].ADF ? this.tuneADFFrequency(a.freq) : this.tuneNAVFrequency(a.freq, null, "NAV1"), this.scanFrequenciesAround(), this.show();
     },
     tuneNAVFrequency: function (a, b, c) {
         var d = this.units[c];
@@ -17384,9 +17640,9 @@ geofs.radio = {
 };
 ("use strict");
 var weather = window.weather || {};
-weather.dataProxy = geofs.url + "/backend/weather/metar.php?icao=";
-weather.realTimeCloudTexture = geofs.url + "/backend/weather/clouds-2048.jpg";
-weather.realTimeCloudMap = geofs.url + "/backend/weather/clouds.png";
+weather.dataProxy = "/backend/weather/metar.php?icao=";
+weather.realTimeCloudTexture = "/backend/weather/clouds-2048.jpg";
+weather.realTimeCloudMap = "/backend/weather/clouds.png";
 weather.minimumCloudCover = 10;
 weather.updateRate = 6e4;
 weather.timeRatio = 1;
@@ -17397,7 +17653,7 @@ weather.defaults = {
     cloudCover: 0,
     cloudBase: 1e3,
     cloudTop: 3e3,
-    cloudThickness: 2e3,
+    cloudThickness: 4e3,
     cloudCoverThickness: 200,
     fogDensity: 0,
     fogCeiling: 1e3,
@@ -17474,7 +17730,7 @@ weather.reset = function (a) {
 weather.refresh = function (a) {
     a = a || geofs.camera.lla;
     var b = function (e) {
-        if (g)
+        if (e)
             try {
                 var g = JSON.parse(e);
             } catch (f) {
@@ -17695,8 +17951,8 @@ weather.Wind.prototype.computeAndSet = function (a) {
 weather.Wind.prototype.computeTerrainLift = function (a) {
     a = a || geofs.aircraft.instance.llaLocation;
     var b = V3.sub(a, xyz2lla(V3.scale(this.vector, 100), a)),
-        c = geofs.getGroundAltitude(a[0], a[1]).location[2],
-        d = geofs.getGroundAltitude(b[0], b[1]).location[2];
+        c = geofs.getGroundAltitude(a).location[2],
+        d = geofs.getGroundAltitude(b).location[2];
     b = a[2] - c;
     var e = c - d;
     d = clamp(5 * e, 10, 500);
@@ -18536,6 +18792,42 @@ instruments.definitions = {
             ],
         },
     },
+    rmi: {
+        container: ".geofs-instruments-container",
+        stackX: !0,
+        overlay: {
+            url: "images/instruments/background.png",
+            class: "geofs-instrument-background",
+            size: { x: 200, y: 200 },
+            anchor: { x: 100, y: 100 },
+            position: { x: 0, y: 110 },
+            rescale: !0,
+            rescalePosition: !0,
+            overlays: [
+                { url: "images/instruments/rmi/background.png", class: "geofs-instrument-background", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 } },
+                {
+                    url: "images/instruments/rmi/ADFNeedle.png",
+                    anchor: { x: 100, y: 100 },
+                    size: { x: 200, y: 200 },
+                    position: { x: 0, y: 0 },
+                    iconFrame: { x: 200, y: 200 },
+                    offset: { x: 0, y: 0 },
+                    animations: [{ type: "rotate", value: "ADFBearingToStation", ratio: 1 }],
+                },
+                {
+                    url: "images/instruments/rmi/VORNeedle.png",
+                    anchor: { x: 100, y: 100 },
+                    size: { x: 200, y: 200 },
+                    position: { x: 0, y: 0 },
+                    iconFrame: { x: 200, y: 200 },
+                    offset: { x: 0, y: 0 },
+                    animations: [{ type: "rotate", value: "NAV1BearingToStation", ratio: 1 }],
+                },
+                { url: "images/instruments/rmi/compass.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 }, position: { x: 0, y: 0 }, animations: [{ type: "rotate", value: "heading", ratio: 1 }] },
+                { url: "images/instruments/rmi/cover.png", anchor: { x: 100, y: 100 }, size: { x: 200, y: 200 }, position: { x: 0, y: 0 } },
+            ],
+        },
+    },
     cdi: {
         container: ".geofs-instruments-container",
         stackX: !0,
@@ -19059,9 +19351,16 @@ instruments.includesDefinitions = {
         { name: "deviation", node: "deviation", animations: [{ type: "translate", axis: "X", value: "NAV1CourseDeviation", ratio: 5e-4, fmin: -0.005, fmax: 0.005 }] },
         { name: "direction", node: "direction", animations: [{ type: "rotate", axis: "X", value: "NAV1Direction", eq: "from", ratio: 180 }] },
     ],
+    "3d-rmi": [
+        { model: "models/gauges/rmi/rmi.gltf" },
+        { name: "compass", node: "compass", animations: [{ type: "rotate", axis: "Y", value: "heading", ratio: 1 }] },
+        { name: "ADFNeedle", node: "ADFNeedle", animations: [{ type: "rotate", axis: "Y", value: "ADFBearingToStation", ratio: 1 }] },
+        { name: "VORNeedle", node: "VORNeedle", animations: [{ type: "rotate", axis: "Y", value: "NAV1BearingToStation", ratio: 1 }] },
+    ],
     "3d-BoeingPFD": [
         {
             model: "models/gauges/glassPanel/glassPanel.gltf",
+            shadows: "SHADOWS_NONE",
             renderer: {
                 name: "PFDBoeing",
                 width: 512,
@@ -19074,6 +19373,7 @@ instruments.includesDefinitions = {
     "3d-AirbusPFD": [
         {
             model: "models/gauges/glassPanel/glassPanel.gltf",
+            shadows: "SHADOWS_NONE",
             renderer: {
                 name: "PFDAirbus",
                 width: 512,
@@ -19088,6 +19388,14 @@ instruments.includesDefinitions = {
             model: "models/gauges/glassPanel/HUD.gltf",
             safeTransparency: !0,
             renderer: { name: "genericHUD", width: 512, height: 512, images: { background: "images/instruments/glassHUD/background.png", overlays: "images/instruments/glassHUD/overlays.png" } },
+            animations: [{ type: "render", value: "geofsTime" }],
+            shadows: "SHADOWS_NONE",
+        },
+    ],
+    "3d-G1000": [
+        {
+            model: "models/gauges/glassPanel/g1000.gltf",
+            renderer: { name: "G1000", width: 1024, height: 1024, images: { background: "images/instruments/G1000/background.png", overlays: "images/instruments/G1000/overlays.png" } },
             animations: [{ type: "render", value: "geofsTime" }],
             shadows: "SHADOWS_NONE",
         },
@@ -19290,26 +19598,28 @@ instruments.Renderer.prototype = {
     drawGrads: function (a, b) {
         var c = a.context,
             d = b.pattern.length;
+        b.position.x = b.position[0];
+        b.position.y = b.position[1];
         b.center = b.center || [0, 0];
         b.center.x = b.center[0];
         b.center.y = b.center[1];
         b.size.x = b.size[0];
         b.size.y = b.size[1];
         b.rotation && (c.translate(b.position[0], b.position[1]), c.rotate(b.rotation), (b.position = [0, 0]));
-        b.position = V2.sub(b.position, b.center);
-        b.x = b.position[0];
-        b.y = b.position[1];
+        var e = V2.sub(b.position, b.center);
+        b.x = e[0];
+        b.y = e[1];
         b.value = b.value || 0;
         b.zero = b.zero || [0, 0];
         b.zero.x = b.zero[0];
         b.zero.y = b.zero[1];
-        var e = b.interval * d,
-            g = e * b.pixelRatio;
+        e = b.interval * d;
+        var g = e * b.pixelRatio;
         b.value -= ((b.size[b.orientation] - b.zero[b.orientation]) / g) * e;
         var f = b.value % e;
         b.value -= f;
         f *= b.pixelRatio;
-        0 >= f && ((f += g), (b.value -= e));
+        f <= 0.5 * -g && ((f += g), (b.value -= e));
         b[b.orientation] -= f * b.direction;
         0 > b.direction && (b[b.orientation] += b.size[b.orientation]);
         var k = "x" == b.orientation ? "y" : "x";
@@ -19343,8 +19653,8 @@ instruments.Renderer.prototype = {
         c.stroke();
         b.sprites &&
             b.sprites.forEach(function (p) {
-                var n = b[b.orientation] + (p.value - b.value) * b.pixelRatio * b.direction.y;
-                p.clamp && (n = clamp(n, b[k], b[k] + b.height));
+                var n = b[b.orientation] + (p.value - b.value) * b.pixelRatio * b.direction;
+                p.clamp && (n = clamp(n, b.position[b.orientation], b.position[b.orientation] + b.height));
                 p.destination = [b[k], n];
                 a.drawSprite(p);
             });
@@ -19720,7 +20030,7 @@ instruments.renderers = {
         d.textAlign = "right";
         d.save();
         d.beginPath();
-        d.rect(104, 116, 50, 280);
+        d.rect(84, 116, 70, 280);
         d.rect(68, 243, 75, 25);
         d.clip("evenodd");
         a.drawGrads(a.canvasAPI, {
@@ -19826,6 +20136,220 @@ instruments.renderers = {
         d.textAlign = "left";
         d.fillText("G" + geofs.animation.getValue("loadFactor").toFixed(1), 143, 110);
     },
+    G1000: function (a) {
+        var b = exponentialSmoothing("smoothKias", geofs.animation.getValue("kias"), 0.1),
+            c = [460, 288],
+            d = a.canvasAPI.context;
+        d.fillStyle = "#ffffff";
+        d.strokeStyle = "#ffffff";
+        a.canvasAPI.clear();
+        d.save();
+        d.translate(c[0], c[1]);
+        var e = clamp(8 * geofs.animation.getValue("atilt"), -1e3, 1e3),
+            g = geofs.animation.getValue("aroll") * DEGREES_TO_RAD;
+        d.rotate(g);
+        d.fillStyle = "#004bff";
+        d.beginPath();
+        d.rect(-1e3, -2e3 - e, 2e3, 2e3);
+        d.fill();
+        d.fillStyle = "#553108";
+        d.beginPath();
+        d.rect(-1e3, 0 - e, 2e3, 2e3);
+        d.fill();
+        d.lineWidth = 2;
+        d.moveTo(-1e3, 0 - e);
+        d.lineTo(1e3, 0 - e);
+        d.stroke();
+        d.restore();
+        d.save();
+        d.beginPath();
+        d.arc(c[0], c[1], 200, 0, 6.28);
+        d.clip();
+        d.font = "24px sans-serif";
+        d.lineWidth = 2;
+        d.textAlign = "center";
+        a.drawGrads(a.canvasAPI, {
+            position: c,
+            center: [100, 100],
+            zero: [100, 100],
+            size: [200, 200],
+            orientation: "y",
+            direction: -1,
+            rotation: geofs.animation.getValue("aroll") * DEGREES_TO_RAD,
+            value: -geofs.animation.getValue("atilt"),
+            interval: 2.5,
+            pixelRatio: 8,
+            pattern: [
+                [
+                    {
+                        length: 50,
+                        offset: { x: -50, y: 0 },
+                        legend: !0,
+                        legendOffset: { x: -65, y: 8 },
+                        process: function (f) {
+                            return Math.abs(Math.round(f));
+                        },
+                    },
+                    {
+                        length: 50,
+                        offset: { x: 0, y: 0 },
+                        legend: !0,
+                        legendOffset: { x: 65, y: 8 },
+                        process: function (f) {
+                            return Math.abs(Math.round(f));
+                        },
+                    },
+                ],
+                [{ length: 20, offset: { x: -10, y: 0 } }],
+                [{ length: 40, offset: { x: -20, y: 0 } }],
+                [{ length: 20, offset: { x: -10, y: 0 } }],
+            ],
+        });
+        d.restore();
+        a.canvasAPI.drawRotatedSprite({ image: a.images.overlays, origin: [101, 27], size: [32, 32], center: [16, 187], destination: c, rotation: geofs.animation.getValue("aroll") * DEGREES_TO_RAD, translation: [0, 0] });
+        e = (-geofs.animation.getValue("heading") + geofs.animation.getValue("NAV1OBS")) * DEGREES_TO_RAD;
+        d.fillStyle = "#00000055";
+        d.beginPath();
+        d.arc(c[0], 586, 145, 0, 6.28);
+        d.fill();
+        a.canvasAPI.drawRotatedSprite({ image: a.images.overlays, origin: [101, 101], size: [310, 310], center: [155, 155], destination: [c[0], 586], rotation: -geofs.animation.getValue("heading") * DEGREES_TO_RAD });
+        a.canvasAPI.drawRotatedSprite({
+            image: a.images.overlays,
+            origin: [422, 101],
+            size: [30, 13],
+            center: [15, 153],
+            destination: [c[0], 586],
+            rotation: (geofs.animation.getValue("navHDG") - geofs.animation.getValue("heading")) * DEGREES_TO_RAD,
+        });
+        a.canvasAPI.drawRotatedSprite({ image: a.images.overlays, origin: [184, 71], size: [144, 16], center: [72, 8], destination: [c[0], 586], rotation: e });
+        a.canvasAPI.drawRotatedSprite({ image: a.images.overlays, origin: [422, 128], size: [30, 258], center: [15, 129], destination: [c[0], 586], rotation: e });
+        a.canvasAPI.drawRotatedSprite({ image: a.images.overlays, origin: [455, 185], size: [22, 14], center: [11, 71], destination: [c[0], 586], rotation: e + ("to" == geofs.animation.getValue("NAV1Direction") ? 0 : PI) });
+        a.canvasAPI.drawRotatedSprite({
+            image: a.images.overlays,
+            origin: [455, 202],
+            size: [4, 106],
+            center: [2, 53],
+            destination: [c[0], 586],
+            rotation: e,
+            translation: [clamp(6.5 * -geofs.animation.getValue("NAV1CourseDeviation"), -75, 75), 0],
+        });
+        d.drawImage(a.images.background, 0, 0);
+        d.lineWidth = 2;
+        d.font = "20px monospace";
+        d.textAlign = "right";
+        d.fillStyle = "#ffffff";
+        d.strokeStyle = "#ffffff";
+        d.save();
+        d.beginPath();
+        d.rect(154, 114, 87, 342);
+        d.rect(160, 268, 46, 42);
+        d.rect(206, 253, 22, 70);
+        d.clip("evenodd");
+        a.drawGrads(a.canvasAPI, {
+            position: [154, 114],
+            zero: [0, 171],
+            size: [87, 342],
+            orientation: "y",
+            direction: -1,
+            value: b,
+            interval: 5,
+            pixelRatio: 6,
+            align: "right",
+            pattern: [[{ length: -10, legend: !0, legendOffset: { x: -14, y: 7 } }], [{ length: -7 }]],
+            sprites: [{ image: a.images.overlays, origin: [143, 0], size: [25, 27], center: [-8, 13], value: geofs.autopilot.values.speed, clamp: !0 }],
+        });
+        d.restore();
+        d.save();
+        d.beginPath();
+        d.rect(680, 114, 131, 342);
+        d.rect(720, 268, 54, 42);
+        d.rect(774, 257, 34, 64);
+        d.textAlign = "left";
+        d.clip("evenodd");
+        a.drawGrads(a.canvasAPI, {
+            position: [705, 114],
+            size: [108, 342],
+            zero: [0, 171],
+            orientation: "y",
+            direction: -1,
+            value: geofs.animation.getValue("altitude"),
+            interval: 20,
+            pixelRatio: 0.5,
+            pattern: [
+                [
+                    {
+                        length: 10,
+                        legend: !0,
+                        legendOffset: { x: 15, y: 7 },
+                        process: function (f) {
+                            return Math.round(f);
+                        },
+                    },
+                ],
+                [{ length: 5 }],
+                [{ length: 5 }],
+                [{ length: 5 }],
+                [{ length: 5 }],
+            ],
+            sprites: [{ image: a.images.overlays, origin: [68, 0], size: [13, 26], center: [0, 13], value: geofs.autopilot.values.altitude, clamp: !0 }],
+        });
+        d.restore();
+        d.save();
+        d.beginPath();
+        d.rect(160, 268, 46, 42);
+        d.rect(206, 253, 22, 70);
+        d.rect(720, 268, 54, 42);
+        d.rect(774, 257, 34, 64);
+        d.clip();
+        a.canvasAPI.drawSprite({ image: a.images.overlays, origin: [16, 0], size: [16, 512], center: [0, 446], destination: [164, 272], translation: [0, 35 * geofs.utils.stickyRounding((b % 1e3) * 0.01, 0.01)] });
+        a.canvasAPI.drawSprite({ image: a.images.overlays, origin: [16, 0], size: [16, 512], center: [0, 446], destination: [185, 272], translation: [0, 35 * geofs.utils.stickyRounding((b % 100) * 0.1, 0.1)] });
+        a.canvasAPI.drawSprite({ image: a.images.overlays, origin: [16, 0], size: [16, 512], center: [0, 446], destination: [208, 272], translation: [0, (b % 10) * 35] });
+        a.canvasAPI.drawSprite({
+            image: a.images.overlays,
+            origin: [16, 0],
+            sprite: [16, 512],
+            size: [16, 512],
+            center: [0, 446],
+            destination: [720, 272],
+            translation: [0, 35 * geofs.utils.stickyRounding(1e-4 * geofs.animation.getValue("altTenThousands"), 0.01)],
+        });
+        a.canvasAPI.drawSprite({
+            image: a.images.overlays,
+            origin: [16, 0],
+            sprite: [16, 512],
+            size: [16, 512],
+            center: [0, 446],
+            destination: [740, 272],
+            translation: [0, 35 * geofs.utils.stickyRounding(0.001 * geofs.animation.getValue("altThousands"), 0.01)],
+        });
+        a.canvasAPI.drawSprite({
+            image: a.images.overlays,
+            origin: [32, 0],
+            size: [12, 512],
+            center: [0, 442],
+            destination: [761, 269],
+            translation: [0, 40 * geofs.utils.stickyRounding(0.01 * geofs.animation.getValue("altHundreds"), 0.1)],
+        });
+        a.canvasAPI.drawSprite({ image: a.images.overlays, origin: [44, 0], size: [24, 512], center: [0, 458], destination: [780, 270], translation: [0, 1.5 * geofs.animation.getValue("altTens")] });
+        d.restore();
+        a.canvasAPI.drawSprite({ image: a.images.overlays, origin: [101, 0], size: [13, 21], center: [0, 10], destination: [685, c[1]], translation: [0, clamp(-107 * geofs.animation.getValue("NAV1GlideAngleDeviation"), -90, 90)] });
+        b = clamp(0.07 * geofs.animation.getValue("verticalSpeed"), -150, 150);
+        a.canvasAPI.drawSprite({ image: a.images.overlays, origin: [133, 36], size: [68, 20], center: [0, 10], destination: [811, 288], translation: [0, -b] });
+        d.font = "22px monospace";
+        d.textAlign = "right";
+        d.fillText(10 * Math.round(geofs.animation.getValue("verticalSpeed") / 10), 877, 295 - b);
+        d.font = "32px monospace";
+        d.textAlign = "center";
+        d.fillText(Math.round(geofs.animation.getValue("heading360")) + "\u00b0", 460, 425);
+        d.font = "26px monospace";
+        d.textAlign = "left";
+        d.fillStyle = "#ff00ff";
+        c = b = a = "";
+        geofs.autopilot.on && ((a = "SPD"), "NAV" == geofs.autopilot.mode ? ((b = "NAV"), geofs.autopilot.VNAV ? ((b = "LOC"), (c = "G/S")) : (c = "ALT")) : ((b = "HDG"), (c = "ALT")));
+        d.fillText(a, 270, 24);
+        d.fillText(c, 397, 24);
+        d.fillText(b, 489, 24);
+    },
 };
 ("use strict");
 var audio = window.audio || {};
@@ -19860,7 +20384,8 @@ audio.update = function () {
         for (var a in audio.sounds) {
             var b = audio.sounds[a],
                 c = b.effects;
-            if (b.file && !b.loading && !b.loaded && audio.soundplayer.loadMP3) audio.soundplayer.loadMP3(b.id, b.file + geofs.killCache, b.cut[0], b.cut[1], b.lowLatency || !1, b.fadeDuration || 0), (b.loading = !0);
+            if (b.file && !b.loading && !b.loaded && audio.soundplayer.loadMP3)
+                (b.file = b.file.replace(".ogg", ".mp3")), audio.soundplayer.loadMP3(b.id, b.file + geofs.killCache, b.cut[0], b.cut[1], b.lowLatency || !1, b.fadeDuration || 0), (b.loading = !0);
             else if (b.loaded)
                 for (var d in c) {
                     var e = c[d],
