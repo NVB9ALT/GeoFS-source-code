@@ -1,5 +1,3 @@
-//GeoFS 3.31 official release
-
 /* @preserve
  * Leaflet 1.8.0, a JS library for interactive maps. https://leafletjs.com
  * (c) 2010-2022 Vladimir Agafonkin, (c) 2010-2011 CloudMade
@@ -6860,7 +6858,7 @@ geofs["atmosphereCommon.glsl"] =
     "\n" +
     "#elif defined QUALITY_6\n" +
     "\n" +
-    "#define PRIMARY_STEPS 16\n" +
+    "#define PRIMARY_STEPS 12\n" +
     "#define LIGHT_STEPS 4\n" +
     "\n" +
     "#define CLOUDS_MAX_LOD 1\n" +
@@ -6910,7 +6908,7 @@ geofs["atmosphereCommon.glsl"] =
     "\n" +
     "#elif defined QUALITY_2\n" +
     "\n" +
-    "#define PRIMARY_STEPS 4\n" +
+    "#define PRIMARY_STEPS 6\n" +
     "#define LIGHT_STEPS 1\n" +
     "\n" +
     "#define CLOUDS_MAX_LOD 0\n" +
@@ -7855,6 +7853,7 @@ geofs["volumetricCloudsFS.glsl"] =
     "gl_FragColor = color;\n" +
     "}\n";
 geofs = geofs || {};
+//make lightsFS.glsl of city lights?
 geofs["oceanFS.glsl"] =
     "" +
     "/*\n" +
@@ -9568,6 +9567,7 @@ geofs.api.frameCallbackWrapper = function (a, b) {
                     a.callbacks[d](geofs.api.precisionTime);
                 } catch (e) {
                     geofs.debug.error(e, "geofs.api.frameCallbackWrapper general"), geofs.debug.throw(e);
+						  throw(e) //NVB9
                 }
 };
 geofs.api.configureOutsideView = function () {
@@ -10191,6 +10191,7 @@ geofs.api.getModelFromScreenCoords = function (a, b) {
 };
 geofs.api.getNodeNameFromScreenCoords = function (a, b) {
     return (a = geofs.api.getModelFromScreenCoords(a, b)) && a.node ? a.node.name : null;
+	 //console.log((a = geofs.api.getModelFromScreenCoords(a, b)) && a.node ? a.node : null)
 };
 geofs.fromHeadingPitchRoll = function (a, b, c) {
     b = Cesium.Quaternion.fromAxisAngle(Cesium.Cartesian3.UNIT_X, -b);
@@ -14321,6 +14322,7 @@ geofs.fx.vegetation = {
                 });
                 c.lods[e] = d;
                 for (e = 0; e < d.thicketNumber; e++) d.availableThickets.push(e), new geofs.api.Model(null, { url: d.url, asCesiumInstance: !0, collectionId: d.collectionId, location: c.collectionBaseLocation, rotation: [0, 0, 0] });
+					 //the important part:
                 geofs.api.commitInstanceCollection(d.collectionId);
                 geofs.api.instanceCollections[d.collectionId]._readyPromise.promise.then(function () {
                     d.textures && geofs.api.changeModelTexture(geofs.api.instanceCollections[d.collectionId]._model, d.textures[geofs.season], 0);
@@ -15868,6 +15870,7 @@ controls.init = function () {
     });
     $(document).on("mousemove", function (a) {
         controls.mouseHandler(a);
+		  //console.log(a.pageY)
     });
     controls.mouseDownHandler = function (a) {
         controls.mouse.down = a.which;
@@ -15883,6 +15886,7 @@ controls.init = function () {
             geofs.camera.saveOffset());
         controls.mouse.clickedElement = a.currentTarget;
         controls.mouse.clickedNode = geofs.api.getNodeNameFromScreenCoords(a.pageX - controls.mouse.oX, a.pageY - controls.mouse.oY);
+		  controls.mouse.clickedModel = geofs.api.getModelFromScreenCoords(a.pageX - controls.mouse.oX, a.pageY - controls.mouse.oY)
         controls.mouse.clickedNode && controls.runNodeClickHandlers(controls.mouse.clickedNode);
     };
     controls.mouseUpHandler = function (a) {
@@ -17486,7 +17490,7 @@ geofs.nav = {
                 ? ((this.hasDME = !0),
                   (c.DME = (Math.sqrt(c.distance * c.distance + c.height * c.height) * METERS_TO_NM).toFixed(1)),
                   (c.speedToSignal = (m / a) * MS_TO_KNOTS),
-                  (c.timeToSignal = Math.round(geofs.nav.distance / geofs.aircraft.instance.groundSpeed / 60)))
+                  (c.timeToSignal = Math.round(unit.distance / geofs.aircraft.instance.groundSpeed / 60)))
                 : ((c.DME = null), (c.speedToSignal = null), (c.timeToSignal = null));
             c.distance > e.range || 50 < c.glideAngle
                 ? ((c.inRange = !1), (c.course = 0), (c.courseDeviation = 0), (c.glideAngleDeviation = 0), (c.direction = ""), (c.distance = 0), (c.DME = null), (c.speedToSignal = null), (c.timeToSignal = null))
@@ -17531,6 +17535,12 @@ geofs.radio = {
         this.$radioTTSDisplay = $('[name="timeToStation"]');
         $(document).on("click", ".geofs-radio-pad", function (b) {
             geofs.radio.toggle();
+        });
+        $(document).on("click", ".geofs-radio-ident", function (b) {
+            b = b.currentTarget;
+            var c = b.getAttribute("data-unit");
+            $(".geofs-radio-ident").removeClass("on");
+            a.units[c].identEnabled ? geofs.radio.disableAllIdent() : (b.classList.add("on"), geofs.radio.disableAllIdent(), geofs.radio.enableUnitIdent(c));
         });
         this.navKnob = new Indicator({
             container: ".geofs-nav-frequency",
@@ -17586,7 +17596,7 @@ geofs.radio = {
     },
     scanUnitFrequency: function (a) {
         var b = geofs.nav.frequencies[this.units[a].frequency];
-        b && b.length ? (geofs.utils.sortLocationByDistance(geofs.aircraft.instance.llaLocation, b), geofs.nav.setNavaid(b[0], a)) : geofs.nav.clear(a);
+        b && b.length ? (geofs.utils.sortLocationByDistance(geofs.aircraft.instance.llaLocation, b), geofs.nav.setNavaid(b[0], a), this.startIdent(a)) : (this.stopIdent(a), geofs.nav.clear(a));
     },
     scanFrequenciesAround: function () {
         for (var a in this.units) this.scanUnitFrequency(a);
@@ -17616,6 +17626,36 @@ geofs.radio = {
     displayADFFrequency: function (a) {
         this.units.ADF.frequency = a || this.units.ADF.frequency;
         this.$radioADFFreq.val(this.units.ADF.frequency);
+    },
+    enableUnitIdent: function (a) {
+        this.units[a].identEnabled = !0;
+        this.startIdent(a);
+    },
+    disableAllIdent: function () {
+        for (var a in this.units) this.units[a].identEnabled = !1;
+        this.stopIdent();
+    },
+    startIdent: function (a) {
+        if (this.units[a].identEnabled) {
+            var b = geofs.nav.units[a],
+                c = b.navaid;
+            c &&
+                (((c = c.ident), b.inRange)
+                    ? c != this.units[a].indenting &&
+                      (this.stopIdent(),
+                      (this.units[a].indenting = c),
+                      (a = c.split("").map(function (d) {
+                          return "sounds/morse/" + d + ".ogg";
+                      })),
+                      (this.identSequencer = audio.impl.html5.playSequence(a, 1e4)))
+                    : this.stopIdent());
+        }
+    },
+    stopIdent: function (a) {
+        if (!a || this.units[a].identEnabled) {
+            for (var b in this.units) this.units[b].indenting = null;
+            this.identSequencer && (this.identSequencer.stop(), (this.identSequencer = null));
+        }
     },
     update: function (a) {
         this.visible &&
@@ -19581,12 +19621,14 @@ instruments.Renderer.prototype = {
         for (var a in this.definition.images) (this.images[a] = new Image()), (this.images[a].src = this.definition.images[a]);
     },
     update: function (a, b) {
-        this.reuseExistingRenderer ? (b = instruments.rendererInstancesByName[this.definition.name].canvasAPI.canvas) : (instruments.renderers[this.definition.name](this), (b = this.canvasAPI.canvas));
-        if (a.safeTransparency)
-            try {
-                (a.object3d.model._model._nodeCommands[0].command._pass = 9), (a.safeTransparency = !1);
-            } catch (c) {}
-        a.object3d.model.setTextureFromCanvas(b, this.definition.textureIndex);
+        if (!geofs.debugGlassPanel) {
+            this.reuseExistingRenderer ? (b = instruments.rendererInstancesByName[this.definition.name].canvasAPI.canvas) : (instruments.renderers[this.definition.name](this), (b = this.canvasAPI.canvas));
+            if (a.safeTransparency)
+                try {
+                    (a.object3d.model._model._nodeCommands[0].command._pass = 9), (a.safeTransparency = !1);
+                } catch (c) {}
+            a.object3d.model.setTextureFromCanvas(b, this.definition.textureIndex);
+        }
     },
     destroy: function () {
         for (var a in this.images) (this.images[a] = null), delete this.images[a];
@@ -19976,165 +20018,167 @@ instruments.renderers = {
         a.canvasAPI.clear();
         d.fillStyle = "#00ff00";
         d.strokeStyle = "#00ff00";
-        d.save();
-        d.beginPath();
-        d.arc(c[0], c[1], 200, 0, 6.28);
-        d.clip();
-        a.drawGrads(a.canvasAPI, {
-            position: c,
-            center: [100, 100],
-            zero: [100, 100],
-            size: [200, 200],
-            orientation: "y",
-            direction: -1,
-            rotation: geofs.animation.getValue("aroll") * DEGREES_TO_RAD,
-            value: -geofs.animation.getValue("atilt"),
-            interval: 5,
-            pixelRatio: 20,
-            pattern: [
-                [
-                    {
-                        length: 40,
-                        offset: { x: -50, y: 0 },
-                        legend: !0,
-                        legendOffset: { x: -80, y: 5 },
-                        process: function (e) {
-                            return Math.round(e);
-                        },
-                    },
-                    {
-                        length: 40,
-                        offset: { x: 10, y: 0 },
-                        legend: !0,
-                        legendOffset: { x: 60, y: 5 },
-                        process: function (e) {
-                            return Math.round(e);
-                        },
-                    },
-                ],
-            ],
-        });
-        d.restore();
-        a.canvasAPI.drawRotatedSprite({ image: a.images.overlays, origin: [248, 0], size: [36, 28], center: [18, 210], destination: [256, 256], rotation: geofs.animation.getValue("aroll") * DEGREES_TO_RAD, translation: [0, 0] });
-        d.drawImage(a.images.background, 0, 0);
-        a.canvasAPI.drawSprite({
-            image: a.images.overlays,
-            origin: [230, 239],
-            size: [51, 30],
-            center: [26, 15],
-            destination: c,
-            translation: [clamp(6.5 * geofs.animation.getValue("NAV1CourseDeviation"), -75, 75), clamp(-107 * geofs.animation.getValue("NAV1GlideAngleDeviation"), -75, 75)],
-        });
-        d.lineWidth = 2;
-        d.font = "20px sans-serif";
-        d.textAlign = "right";
-        d.save();
-        d.beginPath();
-        d.rect(84, 116, 70, 280);
-        d.rect(68, 243, 75, 25);
-        d.clip("evenodd");
-        a.drawGrads(a.canvasAPI, {
-            position: [104, 116],
-            zero: [0, 140],
-            size: [50, 280],
-            orientation: "y",
-            direction: -1,
-            value: b,
-            interval: 10,
-            pixelRatio: 1.3,
-            align: "right",
-            pattern: [
-                [{ length: -10, legend: !0, legendOffset: { x: -14, y: 7 } }],
-                [{ length: -7 }],
-                [{ length: -7 }],
-                [{ length: -7 }],
-                [{ length: -7 }],
-                [{ length: -10 }],
-                [{ length: -7 }],
-                [{ length: -7 }],
-                [{ length: -7 }],
-                [{ length: -7 }],
-            ],
-            sprites: [{ image: a.images.overlays, origin: [143, 0], size: [25, 27], center: [-8, 13], value: geofs.autopilot.values.speed, clamp: !0 }],
-        });
-        d.restore();
-        d.save();
-        d.beginPath();
-        d.rect(358, 116, 47, 280);
-        d.rect(368, 243, 75, 25);
-        d.clip("evenodd");
-        a.drawGrads(a.canvasAPI, {
-            position: [358, 116],
-            zero: [0, 140],
-            size: [47, 280],
-            orientation: "y",
-            direction: -1,
-            value: geofs.animation.getValue("altitude"),
-            interval: 100,
-            pixelRatio: 0.13,
-            pattern: [
-                [
-                    {
-                        length: 10,
-                        legend: !0,
-                        legendOffset: { x: 47, y: 7 },
-                        process: function (e) {
-                            return Math.round(e / 100);
-                        },
-                    },
-                ],
-                [{ length: 7 }],
-                [{ length: 7 }],
-                [{ length: 7 }],
-                [{ length: 7 }],
-            ],
-            sprites: [
-                { image: a.images.overlays, origin: [223, 0], size: [25, 62], center: [5, 31], value: geofs.autopilot.values.altitude, clamp: !0 },
-                { image: a.images.overlays, origin: [383, 0], size: [42, 255], center: [0, 0], value: geofs.animation.getValue("groundElevationFeet") },
-            ],
-        });
-        d.restore();
-        d.save();
-        d.beginPath();
-        d.rect(173, 440, 165, 30);
-        d.clip("evenodd");
-        d.textAlign = "center";
-        a.drawGrads(a.canvasAPI, {
-            position: [173, 440],
-            zero: [82, 0],
-            size: [165, 30],
-            orientation: "x",
-            direction: 1,
-            value: geofs.animation.getValue("heading360"),
-            interval: 5,
-            pixelRatio: 7.25,
-            pattern: [
-                [
-                    {
-                        length: 10,
-                        legend: !0,
-                        legendOffset: { x: 0, y: 30 },
-                        process: function (e) {
-                            return Math.round(fixAngle360(e) / 10);
-                        },
-                    },
-                ],
-                [{ length: 5 }],
-            ],
-        });
-        d.restore();
-        d.font = "20px sans-serif";
-        d.textAlign = "right";
-        d.fillText(Math.round(geofs.animation.getValue("kias")), 129, 264);
-        d.fillText(Math.round(geofs.animation.getValue("altitude")), 441, 264);
-        2500 >= geofs.animation.getValue("haglFeet") && d.fillText(Math.round(geofs.animation.getValue("haglFeet")), 410, 426);
-        c = b = a = "";
-        geofs.autopilot.on && ((a = "SPD"), "NAV" == geofs.autopilot.mode ? ((b = "NAV"), geofs.autopilot.VNAV ? ((b = "LOC"), (c = "G/S")) : (c = "ALT")) : ((b = "HDG"), (c = "ALT")));
-        d.fillText(a, 143, 426);
-        d.fillText(c, 143, 446);
-        d.fillText(b, 143, 466);
-        d.textAlign = "left";
-        d.fillText("G" + geofs.animation.getValue("loadFactor").toFixed(1), 143, 110);
+        geofs.debugHUD
+            ? d.fillText(Math.round(geofs.animation.getValue("kias")), 129, 264)
+            : (d.save(),
+              d.beginPath(),
+              d.arc(c[0], c[1], 200, 0, 6.28),
+              d.clip(),
+              a.drawGrads(a.canvasAPI, {
+                  position: c,
+                  center: [100, 100],
+                  zero: [100, 100],
+                  size: [200, 200],
+                  orientation: "y",
+                  direction: -1,
+                  rotation: geofs.animation.getValue("aroll") * DEGREES_TO_RAD,
+                  value: -geofs.animation.getValue("atilt"),
+                  interval: 5,
+                  pixelRatio: 20,
+                  pattern: [
+                      [
+                          {
+                              length: 40,
+                              offset: { x: -50, y: 0 },
+                              legend: !0,
+                              legendOffset: { x: -80, y: 5 },
+                              process: function (e) {
+                                  return Math.round(e);
+                              },
+                          },
+                          {
+                              length: 40,
+                              offset: { x: 10, y: 0 },
+                              legend: !0,
+                              legendOffset: { x: 60, y: 5 },
+                              process: function (e) {
+                                  return Math.round(e);
+                              },
+                          },
+                      ],
+                  ],
+              }),
+              d.restore(),
+              a.canvasAPI.drawRotatedSprite({ image: a.images.overlays, origin: [248, 0], size: [36, 28], center: [18, 210], destination: [256, 256], rotation: geofs.animation.getValue("aroll") * DEGREES_TO_RAD, translation: [0, 0] }),
+              d.drawImage(a.images.background, 0, 0),
+              a.canvasAPI.drawSprite({
+                  image: a.images.overlays,
+                  origin: [230, 239],
+                  size: [51, 30],
+                  center: [26, 15],
+                  destination: c,
+                  translation: [clamp(6.5 * geofs.animation.getValue("NAV1CourseDeviation"), -75, 75), clamp(-107 * geofs.animation.getValue("NAV1GlideAngleDeviation"), -75, 75)],
+              }),
+              (d.lineWidth = 2),
+              (d.font = "20px sans-serif"),
+              (d.textAlign = "right"),
+              d.save(),
+              d.beginPath(),
+              d.rect(84, 116, 90, 280),
+              d.rect(68, 243, 75, 25),
+              d.clip("evenodd"),
+              a.drawGrads(a.canvasAPI, {
+                  position: [104, 116],
+                  zero: [0, 140],
+                  size: [50, 280],
+                  orientation: "y",
+                  direction: -1,
+                  value: b,
+                  interval: 10,
+                  pixelRatio: 1.3,
+                  align: "right",
+                  pattern: [
+                      [{ length: -10, legend: !0, legendOffset: { x: -14, y: 7 } }],
+                      [{ length: -7 }],
+                      [{ length: -7 }],
+                      [{ length: -7 }],
+                      [{ length: -7 }],
+                      [{ length: -10 }],
+                      [{ length: -7 }],
+                      [{ length: -7 }],
+                      [{ length: -7 }],
+                      [{ length: -7 }],
+                  ],
+                  sprites: [{ image: a.images.overlays, origin: [143, 0], size: [15, 27], center: [-50, 13], value: geofs.autopilot.values.speed, clamp: !0 }],
+              }),
+              d.restore(),
+              d.save(),
+              d.beginPath(),
+              d.rect(350, 116, 60, 280),
+              d.rect(368, 243, 75, 25),
+              d.clip("evenodd"),
+              a.drawGrads(a.canvasAPI, {
+                  position: [358, 116],
+                  zero: [0, 140],
+                  size: [47, 280],
+                  orientation: "y",
+                  direction: -1,
+                  value: geofs.animation.getValue("altitude"),
+                  interval: 100,
+                  pixelRatio: 0.13,
+                  pattern: [
+                      [
+                          {
+                              length: 10,
+                              legend: !0,
+                              legendOffset: { x: 47, y: 7 },
+                              process: function (e) {
+                                  return Math.round(e / 100);
+                              },
+                          },
+                      ],
+                      [{ length: 7 }],
+                      [{ length: 7 }],
+                      [{ length: 7 }],
+                      [{ length: 7 }],
+                  ],
+                  sprites: [
+                      { image: a.images.overlays, origin: [223, 0], size: [25, 62], center: [9, 31], value: geofs.autopilot.values.altitude, clamp: !0 },
+                      { image: a.images.overlays, origin: [383, 0], size: [42, 255], center: [0, 0], value: geofs.animation.getValue("groundElevationFeet") },
+                  ],
+              }),
+              d.restore(),
+              d.save(),
+              d.beginPath(),
+              d.rect(173, 440, 165, 30),
+              d.clip("evenodd"),
+              (d.textAlign = "center"),
+              a.drawGrads(a.canvasAPI, {
+                  position: [173, 440],
+                  zero: [82, 0],
+                  size: [165, 30],
+                  orientation: "x",
+                  direction: 1,
+                  value: geofs.animation.getValue("heading360"),
+                  interval: 5,
+                  pixelRatio: 7.25,
+                  pattern: [
+                      [
+                          {
+                              length: 10,
+                              legend: !0,
+                              legendOffset: { x: 0, y: 30 },
+                              process: function (e) {
+                                  return Math.round(fixAngle360(e) / 10);
+                              },
+                          },
+                      ],
+                      [{ length: 5 }],
+                  ],
+              }),
+              d.restore(),
+              (d.font = "20px sans-serif"),
+              (d.textAlign = "right"),
+              d.fillText(Math.round(geofs.animation.getValue("kias")), 129, 264),
+              d.fillText(Math.round(geofs.animation.getValue("altitude")), 441, 264),
+              2500 >= geofs.animation.getValue("haglFeet") && d.fillText(Math.round(geofs.animation.getValue("haglFeet")), 410, 426),
+              (c = b = a = ""),
+              geofs.autopilot.on && ((a = "SPD"), "NAV" == geofs.autopilot.mode ? ((b = "NAV"), geofs.autopilot.VNAV ? ((b = "LOC"), (c = "G/S")) : (c = "ALT")) : ((b = "HDG"), (c = "ALT"))),
+              d.fillText(a, 143, 426),
+              d.fillText(c, 143, 446),
+              d.fillText(b, 143, 466),
+              (d.textAlign = "left"),
+              d.fillText("G" + geofs.animation.getValue("loadFactor").toFixed(1), 143, 110));
     },
     G1000: function (a) {
         var b = exponentialSmoothing("smoothKias", geofs.animation.getValue("kias"), 0.1),
@@ -20592,18 +20636,50 @@ audio.impl.html5 = {
         c && a.element.play();
         return a;
     },
-    playFile: function (a, b) {
-        geofs.preferences.sound &&
-            ((a = new Audio(a)),
-            b &&
-                a.addEventListener(
-                    "timeupdate",
-                    function () {
-                        this.currentTime > this.duration - 3 && ((this.currentTime = 0), this.play());
-                    },
-                    !1
-                ),
-            a.play());
+    playFile: function (a, b, c) {
+        if (geofs.preferences.sound)
+            return (
+                (a = new Audio(a)),
+                b &&
+                    a.addEventListener(
+                        "timeupdate",
+                        function () {
+                            this.currentTime > this.duration - 3 && ((this.currentTime = 0), this.play());
+                        },
+                        !1
+                    ),
+                a.play(),
+                c && a.addEventListener("ended", c),
+                a
+            );
+    },
+    playSequence: function (a, b) {
+        var c = {
+            index: 0,
+            files: a,
+            loop: b || 0,
+            stop: function () {
+                this.loop = 0;
+                clearTimeout(this.playTimeout);
+                this.audioElement && (this.audioElement.pause(), (this.audioElement = null));
+            },
+            player: function () {
+                var d = 50;
+                if (c.index == c.files.length)
+                    if (0 <= --c.loop) (c.index = 0), (d = 1e3);
+                    else {
+                        c.stop();
+                        c = null;
+                        return;
+                    }
+                c.playTimeout = setTimeout(function () {
+                    c.audioElement = audio.impl.html5.playFile(c.files[c.index], !1, c.player);
+                    c.index++;
+                }, d);
+            },
+        };
+        c.player();
+        return c;
     },
     playSound: function (a) {
         a = audio.sounds[a];
